@@ -63,16 +63,20 @@ public class ExecPNPNMLExporter extends PetriNetPNMLExporter {
 			}
 
 			if (lTrans.getAction() != null && !lTrans.getAction().equals("")) {
-				tsHelper.setTaskAndAction(doc, ts, lTrans.getLabel(), lTrans.getAction());
+				tsHelper.setTaskAndAction(doc, ts, lTrans.getTask(), lTrans.getAction());
 			}
 		}
-		
+		if (transition instanceof AutomaticTransition) {
+			AutomaticTransition aTrans = (AutomaticTransition) transition;
+			if (aTrans.getXsltURL() != null) {
+				tsHelper.setFireXsltURL(doc, ts, aTrans.getXsltURL());
+			}
+		}
 		if (transition instanceof LabeledTransition) {
 			LabeledTransition lTrans = (LabeledTransition) transition;
 			if (lTrans.getAction() != null && !lTrans.getAction().equals("")) {
-				tsHelper.setTaskAndAction(doc, ts, lTrans.getLabel(), lTrans.getAction());
+				tsHelper.setTaskAndAction(doc, ts, lTrans.getTask(), lTrans.getAction());
 			}
-
 			tnode.setAttribute("type", "receive");
 		} else {
 			tnode.setAttribute("type", "automatic");
@@ -83,6 +87,10 @@ public class ExecPNPNMLExporter extends PetriNetPNMLExporter {
 		
 		if (transition.getRolename() != null) {
 			tsHelper.setRolename(doc, ts, transition.getRolename());
+		}
+		
+		if (transition.getContextPlaceID() != null) {
+			tsHelper.setContextPlaceID(doc, ts, transition.getContextPlaceID());
 		}
 		
 		// get incoming places out of petri net model

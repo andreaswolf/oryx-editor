@@ -41,7 +41,6 @@ public class OpenIDAuthenticationServlet extends HttpServlet {
     private ConsumerManager manager;
 
     public static final String OPENID_SESSION_IDENTIFIER = "openid";
-    public static final String REPOSITORY_REDIRECT = "/poem/repository";
 
     public void init(ServletConfig config) throws ServletException {
 	super.init(config);
@@ -94,7 +93,8 @@ public class OpenIDAuthenticationServlet extends HttpServlet {
 		    identifier.getIdentifier());
 
 	    req.setAttribute("identifier", identifier.getIdentifier());
-	    resp.sendRedirect(req.getContextPath() + REPOSITORY_REDIRECT);
+	    this.getServletContext().getRequestDispatcher("/return.jsp")
+		    .forward(req, resp);
 	}
     }
 

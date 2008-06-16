@@ -8,9 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.batik.transcoder.TranscoderException;
-
 import org.b3mn.poem.Identity;
-import org.b3mn.poem.Persistance;
 
 public class ImageRenderer {
 
@@ -18,7 +16,6 @@ public class ImageRenderer {
     	setResponseHeaders(res);
     	try {
     		String SvgRepresentation = object.read().getSvg();
-    		Persistance.commit();
     		if(SvgRepresentation == null) {
     			SvgRepresentation = "<svg xmlns=\"http://www.w3.org/2000/svg\" " +
     					"xmlns:oryx=\"http://oryx-editor.org\" id=\"oryx_1\" width=\"800\" " +

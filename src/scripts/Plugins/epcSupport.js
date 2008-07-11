@@ -50,15 +50,15 @@ ORYX.Plugins.EPCSupport = Clazz.extend({
 			'minShape': 0,
 			'maxShape': 0});
 			
-		this.facade.offer({
-			'name':"Import EPC",
-			'functionality': this.importEPC.bind(this),
-			'group': "epc",
-			'icon': ORYX.PATH + "images/epc_import.png",
-			'description': "Import an EPML file",
-			'index': 2,
-			'minShape': 0,
-			'maxShape': 0});
+//		this.facade.offer({
+//			'name':"Import EPC",
+//			'functionality': this.importEPC.bind(this),
+//			'group': "epc",
+//			'icon': ORYX.PATH + "images/epc_import.png",
+//			'description': "Import an EPML file",
+//			'index': 2,
+//			'minShape': 0,
+//			'maxShape': 0});
 
 //		Syntax Check has been migrated to syntaxchecker.js-Framework		
 
@@ -89,7 +89,6 @@ ORYX.Plugins.EPCSupport = Clazz.extend({
 
 		this.facade.raiseEvent({type:'loading.enable', text:'Exporting model'});
 		var xmlSerializer = new XMLSerializer();
-		var index = location.href.lastIndexOf("/");
 
 		
 		// TODO: a Syntax Syntax-Check should be triggered, here.
@@ -125,7 +124,7 @@ ORYX.Plugins.EPCSupport = Clazz.extend({
 		/*
 		 * Transform eRDF -> RDF
 		 */
-		var erdf2rdfXslt = location.href.substring(0, index) + "/lib/extract-rdf.xsl";
+		var erdf2rdfXslt = ORYX.PATH + "/lib/extract-rdf.xsl";
 
 		var rdfResultString;
 		rdfResult = this.transformString(serializedDOM, erdf2rdfXslt, true);
@@ -133,14 +132,16 @@ ORYX.Plugins.EPCSupport = Clazz.extend({
 			rdfResultString = rdfResult;
 			rdfResult = null;
 		} else {
-			rdfResultString =
-				xmlSerializer.serializeToString(rdfResult);
+			rdfResultString = xmlSerializer.serializeToString(rdfResult);
+			if (!rdfResultString.startsWith("<?xml")) {
+				rdfResultString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + rdfResultString;
+			}
 		}
 		
 		/*
 		 * Transform RDF -> EPML
 		 */
-		var rdf2epmlXslt = location.href.substring(0, index) + "/xslt/RDF2EPML.xslt";
+		var rdf2epmlXslt = ORYX.PATH + "/xslt/RDF2EPML.xslt";
 		
 		var epmlResult = this.transformDOM(rdfResult, rdf2epmlXslt, true);
 		var epmlResultString;
@@ -148,8 +149,10 @@ ORYX.Plugins.EPCSupport = Clazz.extend({
 			epmlResultString = epmlResult;
 			epmlResult = null;
 		} else {
-			epmlResultString =
-				xmlSerializer.serializeToString(epmlResult);
+			epmlResultString = xmlSerializer.serializeToString(epmlResult);
+			if (!epmlResultString.startsWith("<?xml")) {
+				epmlResultString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + epmlResultString;
+			}
 		}
 		
 		/*
@@ -158,7 +161,7 @@ ORYX.Plugins.EPCSupport = Clazz.extend({
 
 // 		Note: This is uncommented due to the fact, that the epml2amlXslt does not work properly
 //
-//		var epml2amlXslt = location.href.substring(0, index) + "/xslt/EPML2AML_2.xslt";
+//		var epml2amlXslt = ORYX.PATH +  + "/xslt/EPML2AML_2.xslt";
 //		
 //		var amlResultString = this.transformString(epmlResultString, epml2amlXslt, false);
 //		if (amlResultString.substr(0, 12) != "Parse Error:") {
@@ -227,30 +230,66 @@ ORYX.Plugins.EPCSupport = Clazz.extend({
 	 * 
 	 */
 	openUploadDialog: function(){
-		var resource = location.href;
-		dialog = new Ext.Window({ 
+		
+		var form = new Ext.form.FormPanel({
+			frame : true,
+			defaultType : 'textfield',
+		 	waitMsgTarget : true,
+		  	labelAlign : 'left',
+		  	buttonAlign: 'right',
+		  	fileUpload : true,
+		  	enctype : 'multipart/form-data',
+		  	items : [
+		  	{
+		    	fieldLabel : 'File',
+		    	inputType : 'file'
+		  	}]
+		});
+
+		var submit =form.addButton({
+			text:"Submit",
+			handler: function()
+			{
+				form.form.submit({
+		      		url:'./epc-upload',
+		      		waitMsg: "Importing...",
+		      		success: function(f,a){
+						dialog.hide();
+						var erdf = a.response.responseText.substring(a.response.responseText.indexOf("content:'")+9, a.response.responseText.indexOf("'}"));
+		        		erdf = erdf.replace(/&lt;/g, "<");
+						erdf = erdf.replace(/&gt;/g, ">");
+						alert(erdf);
+						var parser = new DOMParser();
+						var parsedErdf = parser.parseFromString('<?xml version="1.0" encoding="utf-8"?><html>'+erdf+'</html>',"text/xml");	
+						alert(parsedErdf);
+						// TODO ..
+		      		},
+					failure: function(f,a){
+						dialog.hide();
+						Ext.MessageBox.show({
+           					title: 'Error',
+          	 				msg: a.response.responseText.substring(a.response.responseText.indexOf("content:'")+9, a.response.responseText.indexOf("'}")),
+           					buttons: Ext.MessageBox.OK,
+           					icon: Ext.MessageBox.ERROR
+       					});
+		      		}
+		  		});
+		  	}
+		})
+
+
+		var dialog = new Ext.Window({ 
 			autoCreate: true, 
 			title: 'Upload File', 
-			height: 180, 
-			width: 300, 
+			height: 130, 
+			width: 400, 
 			modal:true,
 			collapsible:false,
 			fixedcenter: true, 
 			shadow:true, 
 			proxyDrag: true,
 			resizable:false,
-			html: '<div>'+
-						'<span class="ext-mb-text" style="font-family: Verdana; font-size: 9pt;" >'+
-							'Select an EPML (.epml) file and import it.<br /><br />'+
-						'</span>'+
-					'</div>'+
-					'<div>'+
-						'<form action="./epc-upload?resource='+resource+'" enctype="multipart/form-data" method="post">'+
-							'<input type="file" name="uploadfile" /><br /><br />'+
-							'<input type="submit" value="Import EPC" />'+
-							'<input type="button" onclick="dialog.hide()" value="Cancel" />'+
-						'</form>'+
-					'</div>',
+			items: [new Ext.form.Label({text: "Select an EPML (.epml) file and import it.", style: 'font-size:12px;'}),form]
 		});
 		dialog.on('hide', function(){
 			dialog.destroy(true);
@@ -318,6 +357,38 @@ ORYX.Plugins.EPCSupport = Clazz.extend({
 			submitForm.action= "./download";
 			submitForm.submit();
 		}		
+	},
+	
+	loadERDF: function(form){
+		
+		
+		
+		Ext.Ajax.request({
+			method: "POST",
+			url: ModelProperties.app.current_model.access.edit_uri,
+			params: {
+				subject: openid,
+				predicate: predicate
+			},
+			success: function(response, options) {
+				if (typeof success == typeof function(){}) {
+					var new_access = Ext.util.JSON.decode(response.responseText);
+					// TODO add response validation
+					ModelProperties.app.current_model.access.access_rights.push(new_access);
+					
+					if (typeof success == typeof function(){}) {
+						success(response, options)
+					}
+				}
+			},
+			
+			failure: function(response, options) {
+				if (typeof failure == typeof function(){}) {
+					failure(response, options);
+				}
+			}
+		})
+
 	}
 	
 });

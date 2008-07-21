@@ -112,7 +112,7 @@
 					"type":"String",
 					"title":"Pools",
 					"value":"",
-					"description":"A Business Process Diagramm shall contain one or more Pools.",
+					"description":"A Business Process Diagram shall contain one or more Pools.",
 					"readonly":false,
 					"optional":false,
 					"length":"50",
@@ -149,7 +149,8 @@
 				"conditional_start",
 				"default_start",
 				"tc",
-				"fromtoall"
+				"fromtoall",
+				"FromEventbasedGateway"
 			],
 			"properties": [
 				{
@@ -313,7 +314,7 @@
 					"type":"String",
 					"title":"Properties",
 					"value":"",
-					"description":"Describes local Properties may added to the activity. These Properties are only for use within the processing of the activity",
+					"description":"Local Properties may be added to the activity. These Properties only apply within the processing of the activity.",
 					"readonly": 	false,
 					"optional": 	true,
 					"length":""
@@ -394,7 +395,7 @@
 					"type":"Integer",
 					"title":"CompletionQuantity",
 					"value":1,
-					"description":"Defines the number of tokens that must be generate from the activity",
+					"description":"Defines the number of tokens that must be generated from the activity",
 					"readonly":false,
 					"optional":false,
 					"refToView":"",
@@ -692,9 +693,9 @@
 					]
 				},
 				{
-					"id":"Message",
+					"id":"MessageRef",
 					"type":"String",
-					"title":"Message",
+					"title":"MessageRef",
 					"value":"",
 					"description":"",
 					"readonly":false,
@@ -703,9 +704,9 @@
 					"length":"50"
 				},
 				{
-					"id":"Instatiate",
+					"id":"Instantiate",
 					"type":"Boolean",
-					"title":"Instatiate",
+					"title":"Instantiate",
 					"value":false,
 					"description":"",
 					"readonly":false,
@@ -757,24 +758,15 @@
 					"refToView":"taskrect",
 					"fill":true,
 					"stroke":false
-				},
-				{
-					"id":"isskipable",
-					"type":"Boolean",
-					"title":"isSkipable",
-					"value":false,
-					"description":"",
-					"readonly":false,
-					"optional":false
-				}				
+				}		
 			]
 		},
  		{
 			"type": "node",
-			"id":"collapsedSubprocess",
+			"id":"CollapsedSubprocess",
 			"title":"Collapsed Subprocess",
 			"groups":["Activities"],
-			"description":"An subprocess.",
+			"description":"A subprocess.",
 			"view":"activity/node.collapsed.subprocess.svg",
 			"icon":"new_subprocess.png",
 			"roles": [
@@ -951,7 +943,7 @@
 					"type":"String",
 					"title":"Properties",
 					"value":"",
-					"description":"Describes local Properties may added to the activity. These Properties are only for use within the processing of the activity",
+					"description":"Local Properties may be added to the activity. These Properties only apply within the processing of the activity.",
 					"readonly": 	false,
 					"optional": 	true,
 					"length":""
@@ -1366,10 +1358,10 @@
 		},
 		{
 			"type": "node",
-			"id":"expandedSubprocess",
+			"id":"Subprocess",
 			"title":"Expanded Subprocess",
 			"groups":["Activities"],
-			"description":"An subprocess.",
+			"description":"A subprocess.",
 			"view":"activity/node.expanded.subprocess.svg",
 			"icon":"new_task.png",
 			"roles": [
@@ -1547,7 +1539,7 @@
 					"type":"String",
 					"title":"Properties",
 					"value":"",
-					"description":"Describes local Properties may added to the activity. These Properties are only for use within the processing of the activity",
+					"description":"Local Properties may be added to the activity. These Properties only apply within the processing of the activity.",
 					"readonly": 	false,
 					"optional": 	true,
 					"length":""
@@ -1963,7 +1955,7 @@
 		{
 			"type": "node",
 			"id":"Exclusive_Databased_Gateway",
-			"title":"Exclusive Data-based (XOR) Gateway",
+			"title":"Data-based Exclusive (XOR) Gateway",
 			"groups":["Gateways"],
 			"description":"A decision point.",
 			"view":"gateway/node.gateway.xor.databased.svg",
@@ -2169,15 +2161,13 @@
 		{
 			"type": "node",
 			"id":"Exclusive_Eventbased_Gateway",
-			"title":"Exclusive Event-based (XOR) Gateway",
+			"title":"Event-based Exclusive (XOR) Gateway",
 			"groups":["Gateways"],
 			"description":"A decision point.",
 			"view":"gateway/node.gateway.xor.eventbased.svg",
 			"icon":"new_gateway_xor_event.png",
 			"roles": [
-				"sequence_start",
 				"sequence_end",
-				"conditional_start",
 				"tc",
 				"fromtoall"
 			],
@@ -2863,24 +2853,39 @@
 				var lanes = shape.getChildNodes(false).findAll(function(node) {
 					return (node.getStencil().id() === "http://b3mn.org/stencilset/bpmn1.1#Lane");
 				});
-				
+
 				if(lanes.length > 0) {
 					
 					// only one lane in pool
 					if(lanes.length == 1) {
-						lanes.first().setProperty("oryx-showcaption", false);
+						
+						// test whether the sole lane has child lanes
+						var childLanes = lanes.first().getChildNodes(false).findAll(function(node) {
+							return (node.getStencil().id() === "http://b3mn.org/stencilset/bpmn1.1#Lane");
+						});
+						if(childLanes.length > 0) {
+							lanes.first().setProperty("oryx-showcaption", true);
+						} else {
+							lanes.first().setProperty("oryx-showcaption", false);
+						}
+						
 					} else {
 						lanes.each(function(lane) {
 							lane.setProperty("oryx-showcaption", true);
 						});
 					}
 					
-					
 					lanes = lanes.sortBy(function(lane) {
 						return lane.bounds.upperLeft().y;
 					});
 					
 					var shapeWidth = shape.bounds.width();
+					lanes.each(function(lane) {
+						if(lane.isChanged) {
+							shapeWidth = lane.bounds.width() + 30;
+						}
+					});
+					
 					var shapeHeight = 0;
 					var topBound = 0;
 					lanes.each(function(lane) {
@@ -2895,7 +2900,7 @@
 					});
 					
 					var upl = shape.bounds.upperLeft();
-					shape.bounds.set(upl.x, upl.y, shape.bounds.lowerRight().x, upl.y + shapeHeight);
+					shape.bounds.set(upl.x, upl.y, upl.x + shapeWidth, upl.y + shapeHeight);
 				}
  			},
 			"properties": [
@@ -2973,7 +2978,7 @@
 					"type":"Boolean",
 					"title":"BoundaryVisible",
 					"value":true,
-					"description":"Defines, if the rectangular boundary for the Pool is visible.",
+					"description":"Defines if the rectangular boundary for the Pool is visible.",
 					"readonly":false,
 					"optional":false,
 					"refToView": ["border", "c", "caption", "captionDisableAntialiasing"]
@@ -2983,7 +2988,7 @@
 					"type":"Boolean",
 					"title":"MainPool",
 					"value":false,
-					"description":"Defines, if the current Pool is the main Pool of the diagram.",
+					"description":"Defines if the current Pool is the main Pool of the diagram.",
 					"readonly":false,
 					"optional":false
 				},
@@ -3294,7 +3299,7 @@
 					"type":"Boolean",
 					"title":"BoundaryVisible",
 					"value":true,
-					"description":"Defines, if the rectangular boundary for the Pool is visible.",
+					"description":"Defines if the rectangular boundary for the Pool is visible.",
 					"readonly":false,
 					"optional":false,
 					"refToView": ["border", "c"]
@@ -3304,7 +3309,7 @@
 					"type":"Boolean",
 					"title":"MainPool",
 					"value":false,
-					"description":"Defines, if the current Pool is the main Pool of the diagram.",
+					"description":"Defines if the current Pool is the main Pool of the diagram.",
 					"readonly":false,
 					"optional":false
 				},
@@ -3551,6 +3556,14 @@
 					});
 					
 					var shapeWidth = shape.bounds.width();
+					
+					lanes.each(function(lane) {
+						if(lane.isChanged) {
+							shapeWidth = lane.bounds.width() + 30;
+						}
+					});
+					
+					
 					var shapeHeight = 0;
 					var topBound = 0;
 					lanes.each(function(lane) {
@@ -3565,7 +3578,7 @@
 					});
 					
 					var upl = shape.bounds.upperLeft();
-					shape.bounds.set(upl.x, upl.y, shape.bounds.lowerRight().x, upl.y + shapeHeight);
+					shape.bounds.set(upl.x, upl.y, upl.x + shapeWidth, upl.y + shapeHeight);
 				}
  			},			
 			"properties": [
@@ -3667,7 +3680,7 @@
 			"id":"Group",
 			"title":"Group",
 			"groups":["Artifacts"],
-			"description":"A group box element",
+			"description":"A group box element.",
 			"view":"artifact/node.group.svg",
 			"icon":"new_group.png",
 			"roles": [
@@ -3757,7 +3770,7 @@
 			"id":"TextAnnotation",
 			"title":"Text Annotation",
 			"groups":["Artifacts"],
-			"description":"A text annotation",
+			"description":"A text annotation.",
 			"view":"artifact/node.text.annotation.svg",
 			"icon":"new_text_annotation.png",
 			"roles": [
@@ -3847,7 +3860,7 @@
 			"type": "node",
 			"id":"DataObject",
 			"title":"Data Object",
-			"description":"A data object",
+			"description":"A data object.",
 			"groups":["Artifacts"],
 			"view":"artifact/node.data.object.svg",
 			"icon":"new_data_object.png",
@@ -3926,7 +3939,7 @@
 					"type":"String",
 					"title":"Name",
 					"value":"",
-					"description":"Text description",
+					"description":"Text description.",
 					"readonly":false,
 					"optional":true,
 					"refToView":"text_name",
@@ -4431,7 +4444,7 @@
 			"id":"StartConditionalEvent",
 			"title":"Start Conditional Event",
 			"groups":["Start Events"],
-			"description":"A rule event without incoming edges.",
+			"description":"A conditional event without incoming edges.",
 			"view":"startevent/node.event.conditional.start.svg",
 			"icon":"startevent/node.event.conditional.start.png",
 			"roles": [
@@ -4851,7 +4864,7 @@
 		},
 		{
 			"type": "node",
-			"id":"IntermediateEventCatching",
+			"id":"IntermediateEvent",
 			"title":"Intermediate Event",
 			"groups":["Catching Intermediate Events"],
 			"description":"An intermediate event with incoming and outgoing edges.",
@@ -5006,7 +5019,8 @@
 				"tc",
 				"fromtoall",
 				"IntermediateEventOnActivityBoundary",
-				"IntermediateEventOnSubprocessBoundary"
+				"IntermediateEventOnSubprocessBoundary",
+				"FromEventbasedGateway"
 				
 			],
 			"properties": [
@@ -5352,7 +5366,7 @@
 		},
 		{
 			"type": "node",
-			"id":"IntermediateTimerEventCatching",
+			"id":"IntermediateTimerEvent",
 			"title":"Intermediate Timer Event",
 			"groups":["Catching Intermediate Events"],
 			"description":"An intermediate timer event with incoming and outgoing edges.",
@@ -5366,7 +5380,8 @@
 				"tc",
 				"fromtoall",
 				"IntermediateEventOnActivityBoundary",
-				"IntermediateEventOnSubprocessBoundary"
+				"IntermediateEventOnSubprocessBoundary",
+				"FromEventbasedGateway"
 			],
 			"properties": [
 				{
@@ -5673,7 +5688,6 @@
 				"from_task_event",
 				"onBoundaryOnly",
 				"fromtoall",
-				"IntermediateEventOnActivityBoundary",
 				"IntermediateEventOnSubprocessBoundary"
 			],
 			"properties": [
@@ -6097,7 +6111,7 @@
 			"id":"IntermediateConditionalEvent",
 			"title":"Intermediate Conditional Event",
 			"groups":["Catching Intermediate Events"],
-			"description":"An intermediate rule event with incoming and outgoing edges.",
+			"description":"An intermediate conditional event with incoming and outgoing edges.",
 			"view":"intermediateevent/node.event.conditional.intermediate.svg",
 			"icon":"intermediateevent/node.event.conditional.intermediate.png",
 			"roles":[
@@ -6258,7 +6272,8 @@
 				"tc",
 				"fromtoall",
 				"IntermediateEventOnActivityBoundary",
-				"IntermediateEventOnSubprocessBoundary"
+				"IntermediateEventOnSubprocessBoundary",
+				"FromEventbasedGateway"
 			],
 			"properties": [
 				{
@@ -7309,10 +7324,10 @@
 		},
 		{
 			"type": "node",
-			"id":"MessageEndEvent",
+			"id":"EndMessageEvent",
 			"title":"Message End Event",
 			"groups":["End Events"],
-			"description":"An event without outgoing edges.",
+			"description":"A message event without outgoing edges.",
 			"view":"endevent/node.event.message.end.svg",
 			"icon":"endevent/node.event.message.end.png",
 			"roles":[
@@ -7475,10 +7490,10 @@
 		},
 		{
 			"type": "node",
-			"id":"ErrorEndEvent",
+			"id":"EndErrorEvent",
 			"title":"Error End Event",
 			"groups":["End Events"],
-			"description":"An event without outgoing edges.",
+			"description":"An error event without outgoing edges.",
 			"view":"endevent/node.event.error.end.svg",
 			"icon":"endevent/node.event.error.end.png",
 			"roles":[
@@ -7608,10 +7623,10 @@
 		},
 		{
 			"type": "node",
-			"id":"CancelEndEvent",
+			"id":"EndCancelEvent",
 			"title":"Cancel End Event",
 			"groups":["End Events"],
-			"description":"An event without outgoing edges.",
+			"description":"A cancel event without outgoing edges.",
 			"view":"endevent/node.event.cancel.end.svg",
 			"icon":"endevent/node.event.cancel.end.png",
 			"roles":[
@@ -7732,10 +7747,10 @@
 		},
 		{
 			"type": "node",
-			"id":"CompensationEndEvent",
+			"id":"EndCompensationEvent",
 			"title":"Compensation End Event",
 			"groups":["End Events"],
-			"description":"An event without outgoing edges.",
+			"description":"A compensation event without outgoing edges.",
 			"view":"endevent/node.event.compensation.end.svg",
 			"icon":"endevent/node.event.compensation.end.png",
 			"roles":[
@@ -7867,10 +7882,10 @@
 		},
 		{
 			"type": "node",
-			"id":"SignalEndEvent",
+			"id":"EndSignalEvent",
 			"title":"Signal End Event",
 			"groups":["End Events"],
-			"description":"An event without outgoing edges.",
+			"description":"A signal event without outgoing edges.",
 			"view":"endevent/node.event.signal.end.svg",
 			"icon":"endevent/node.event.signal.end.png",
 			"roles":[
@@ -8002,10 +8017,10 @@
 		},
 		{
 			"type": "node",
-			"id":"MultipleEndEvent",
+			"id":"EndMultipleEvent",
 			"title":"Multiple End Event",
 			"groups":["End Events"],
-			"description":"An event without outgoing edges.",
+			"description":"A multiple event without outgoing edges.",
 			"view":"endevent/node.event.multiple.end.svg",
 			"icon":"endevent/node.event.multiple.end.png",
 			"roles":[
@@ -8126,10 +8141,10 @@
 		},
 		{
 			"type": "node",
-			"id":"TerminateEndEvent",
+			"id":"EndTerminateEvent",
 			"title":"Terminate Flow",
 			"groups":["End Events"],
-			"description":"An event without outgoing edges.",
+			"description":"A terminate event without outgoing edges.",
 			"view":"endevent/node.event.terminate.end.svg",
 			"icon":"endevent/node.event.terminate.end.png",
 			"roles":[
@@ -8912,6 +8927,10 @@
 					{
 						"from":"sequence_start",
 						"to":["sequence_end"]
+					},
+					{
+						"from":"Exclusive_Eventbased_Gateway",
+						"to":["FromEventbasedGateway"]
 					}
 				]
 			},
@@ -8930,6 +8949,10 @@
 					{
 						"from":"conditional_start",
 						"to":["sequence_end"]
+					},
+					{
+						"from":"Exclusive_Eventbased_Gateway",
+						"to":["FromEventbasedGateway"]
 					}
 				]
 			},
@@ -9010,11 +9033,11 @@
 				"role":"IntermediateEventOnSubprocessBoundary",
 				"connects": [
 					{
-						"from":"collapsedSubprocess",
+						"from":"CollapsedSubprocess",
 						"to":["IntermediateEventOnSubprocessBoundary"]
 					},
 					{
-						"from":"expandedSubprocess",
+						"from":"Subprocess",
 						"to":["IntermediateEventOnSubprocessBoundary"]
 					}
 				]
@@ -9096,7 +9119,7 @@
 				]
 			}, 
 			{
-				"role": "expandedSubprocess",
+				"role": "Subprocess",
 				"contains": [
 					"tc"
 				]

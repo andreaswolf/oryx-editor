@@ -34,24 +34,13 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 	construct: function(facade) {
 		this.facade = facade;
 
-        this.facade.offer({
-			'name':"ImportBPEL",
-			'functionality': this.openUploadDialog.bind(this),
-			'group': "BPEL",
-			'icon': ORYX.PATH + "images/folder_page_white.png",
-			'description': "Import a BPEL file",
-			'index': 1,
-			'minShape': 0,
-			'maxShape': 0}); 
-	
-
 	    this.facade.offer({
 			'name':"ExportBPEL",
 			'functionality': this.download.bind(this),
 			'group': "BPEL",
 			'icon': ORYX.PATH + "images/BPEL.png",
 			'description': "Export BPEL to XML file",
-			'index': 2,
+			'index': 1,
 			'minShape': 0,
 			'maxShape': 0});
 			
@@ -59,83 +48,7 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 	},
 	
 	
-    /**
-	 * Opens a upload dialog.
-	 * 
-	 */
-	openUploadDialog: function(){
-		
-		var form = new Ext.form.FormPanel({
-			frame : true,
-			defaultType : 'textfield',
-		 	waitMsgTarget : true,
-		  	labelAlign : 'left',
-		  	buttonAlign: 'right',
-		  	fileUpload : true,
-		  	enctype : 'multipart/form-data',
-		  	items : [
-		  	{
-		    	fieldLabel : 'File',
-		    	inputType : 'file'
-		  	}]
-		});
-
-		var submit =form.addButton({
-			text:"Submit",
-			handler: function()
-			{
-				form.form.submit({
-		      		url: ORYX.PATH + '/bpelimporter',
-		      		waitMsg: "Importing...",
-		      		success: function(f,a){
-						dialog.hide();
-/*
-						Ext.MessageBox.show({
-           					title: 'Success',
-          	 				msg: a.response.responseText.substring(a.response.responseText.indexOf("content:'")+9, a.response.responseText.indexOf("'}")),
-           					buttons: Ext.MessageBox.OK,
-           					icon: Ext.MessageBox.ERROR
-       					});
-*/
-						//var erdf = a.response.responseText;
-						//var parsedErdf = parser.parseFromString('<?xml version="1.0" encoding="utf-8"?><html>'+erdf+'</html>',"text/xml");	
-						//alert(erdf);
-		      		},
-					failure: function(f,a){
-						dialog.hide();
-/*
-						Ext.MessageBox.show({
-           					title: 'Error',
-          	 				msg: a.response.responseText.substring(a.response.responseText.indexOf("content:'")+9, a.response.responseText.indexOf("'}")),
-           					buttons: Ext.MessageBox.OK,
-           					icon: Ext.MessageBox.ERROR
-       					});
-*/
-		      		}
-		  		});
-		  	}
-		})
-
-
-		var dialog = new Ext.Window({ 
-			autoCreate: true, 
-			title: 'Upload File', 
-			height: 130, 
-			width: 400, 
-			modal:true,
-			collapsible:false,
-			fixedcenter: true, 
-			shadow:true, 
-			proxyDrag: true,
-			resizable:false,
-			items: [new Ext.form.Label({text: "Select a file and upload it.", style: 'font-size:12px;'}),form]
-		});
-		dialog.on('hide', function(){
-			dialog.destroy(true);
-			delete dialog;
-		});
-		dialog.show();
-	},
+    
 	
 	
 
@@ -155,72 +68,42 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 			this.facade.raiseEvent({type:'loading.enable'});
 		
 			this.linksWriten= new Array();
-			var BpelCount=0;
-			var filename= "default";
-			var avoidServer = "true";
 			
-			//sets the name of the zip file, in filename, with the Project Name
-			
-			var CanvasStencilProper = this.facade.getCanvas().getStencil().properties();
-			var canvasShapeProper= this.facade.getCanvas().properties;
-			CanvasStencilProper.each((function(propertie){
-				propertieName = propertie.prefix()+"-"+propertie.id();
-				if(propertieName==="oryx-title" && canvasShapeProper[propertieName]!=="")
-					filename=canvasShapeProper[propertieName];
-				if(propertieName==="oryx-avoidServer" && canvasShapeProper[propertieName]!=="")
-					avoidServer=canvasShapeProper[propertieName];
-			}).bind(this));
-			
-			//holds the name of the output files
-			var outputFiles = [];
-			//holds the name of the output data (XML for each BPEL)
-			var outputData = [];
-			
-			
+			//holds the output data
+			var outputData;	
+			var counter = 0;
 			
 			//do the XML generator for each BPEL 
 			//get the Name of the current Bpel shape .........
 			this.facade.getCanvas().getChildShapes().each((function(children){
+				counter ++;
 				var stencilName = children.getStencil().id();
-				var stencilProper = children.getStencil().properties();
-				var shapeProper= children.properties;
 				var namespace = children.getStencil().namespace();
 				//if the stencil name is BPEL, in this case is necessary to add the name of the stencil in the outputfiles and generate the##################
 				if( (namespace+ "BPEL") ==stencilName){
-
 				
 					var stencilProper = children.getStencil().properties();
 					var shapeProper= children.properties;
 					stencilProper.each((function(propertie){
 						propertieName = propertie.prefix()+"-"+propertie.id();
-						if(propertieName ==="oryx-name"){
-							if(shapeProper[propertieName]!="")
-								outputFiles.push(shapeProper[propertieName]);
-							else
-								outputFiles.push("default");
-						}
 					}).bind(this));
 					
 					var myBpel= document.createElementNS("","process");
 					var xmlobj = this.ParsingElement(myBpel,children);	
 			
-					// var _xml =new XMLWriter();
-					// _xml.BeginNode("Process");
-					// this.toXML(_xml,xmlobj);
-					// _xml.Close();
-					 BpelCount++;
-					// var tmpXml=_xml.ToString();
 					var XMLserial = new XMLSerializer();
 					var tmpXml= XMLserial.serializeToString(myBpel);
 					//use document.evaluate to the XPATH.... new XMLSerializer().serializeToStream(d)   d.appendChild(document.createElement("Variables"))
 					// view rules of XPATH and <process xmlns="http://www.w3.org/1999/xhtml" FirePHP-Window-6="ss" name="fdfss"/>
 					//do the restrictions of the json is necessary to change some characters to known available strings ( to be changed in the PHP file)
 					
-					outputData.push(tmpXml);
+					outputData = tmpXml;
 				}
 			}).bind(this));
 			
 			//starts download process
+
+/*
 			if(avoidServer && outputData.length === 1){
                 var win = window.open('data:application/xhtml+xml,' + outputData[0], 'Bpel file');	
 			} else {			
@@ -230,7 +113,18 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 					this.openDownloadWindow(outputFiles, outputData, true);
 				}		
 			}	
-			
+*/  
+            // now wir limit that the user cann just edit one BPEL model 
+            if (counter === 1) {
+                var win = window.open('data:application/xhtml+xml,' + outputData, 'Bpel file');
+            } else {
+            	Ext.MessageBox.show({
+            	    title: 'Error',
+            	    msg: 'no BPEL process exists',
+            	    buttons: Ext.MessageBox.OK,
+           			icon: Ext.MessageBox.ERROR
+            	})
+            }
 			this.facade.raiseEvent({type:'loading.disable'});
 	},
 	
@@ -243,9 +137,11 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 	 * 
 	 * @param {Object} file The file name to add the extension to.
 	 */
+/*
 	addFileExtension: function(file) {
 		return file + ".bpel";
 	},
+*/
 	
 	/**
 	 * Creates a hidden form element to communicate parameter values
@@ -254,6 +150,7 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 	 * @param {Object} name  The name of the hidden field
 	 * @param {Object} value The value of the hidden field
 	 */
+/*
 	createHiddenElement: function(name, value) {
 		var newElement = document.createElement("input");
 		newElement.name=name;
@@ -261,6 +158,7 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 		newElement.value = value;
 		return newElement
 	},
+*/
 	
 	/**
 	 * Opens a download window for downloading the given content.
@@ -276,7 +174,8 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 	 *                                                     
 	 * @param {Object} zip         True, if it is a zip file, false otherwise
 	 */
-	openDownloadWindow: function(outputFile, outputData, zip) {	
+	/*
+openDownloadWindow: function(outputFile, outputData, zip) {	
     	var win = window.open("");
 
 		if (win != null) {
@@ -305,6 +204,7 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 			submitForm.submit();
 		}		
 	},
+*/
 	
 
 	
@@ -793,15 +693,10 @@ ORYX.Plugins.BpelGenerator = Clazz.extend({
 						//since the first element is a if it would be treated like a "special case"
 						
 						this.createChild(trueActivity, ifElem);
-						
-						
-						
-						
+														
 						while(false_cond){
 							if(!trueActivity)
-								break;
-							
-															
+								break;													
 							
 							var subElem= document.createElementNS("","elseif");
 							ifElem.appendChild(subElem);

@@ -1,5 +1,7 @@
 package de.hpi.bpmn;
 
+import de.hpi.bpmn.exec.ExecDataObject;
+
 public class BPMNFactory {
 	
 	public BPMNDiagram createBPMNDiagram() {
@@ -170,14 +172,6 @@ public class BPMNFactory {
 
 	public MessageFlow createMessageFlow() {
 		return new MessageFlow();
-	}
-
-	public DefaultFlow createDefaultFlow() {
-		return new DefaultFlow();
-	}
-
-	public ConditionalFlow createConditionalFlow() {
-		return new ConditionalFlow();
 	}
 
 	public Association createAssociation() {

@@ -56,6 +56,19 @@
 -->
 
 	<servlet>
+		<display-name>BPEL Export</display-name>
+		<servlet-name>BPEL</servlet-name>
+		<servlet-class>
+			org.oryxeditor.server.BPEL4CHOR
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BPEL</servlet-name>
+		<url-pattern>/bpel</url-pattern>
+	</servlet-mapping>
+	
+
+	<servlet>
 		<display-name>Oryx BPMN to PNML Export</display-name>
 		<servlet-name>ExportServlet</servlet-name>
 		<servlet-class>
@@ -89,6 +102,16 @@
 	<servlet-mapping>
 		<servlet-name>BPELImporter</servlet-name>
 		<url-pattern>/bpelimporter</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<display-name>Oryx BPEL EXPORTER</display-name>
+		<servlet-name>BPELExporter</servlet-name>
+		<servlet-class>org.oryxeditor.server.BPELExporter</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>BPELExporter</servlet-name>
+		<url-pattern>/bpelexporter</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>
@@ -202,6 +225,18 @@
 	<servlet-mapping>
 		<servlet-name>StepThroughChecker</servlet-name>
 		<url-pattern>/stepthroughchecker</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<display-name>XForms Export</display-name>
+		<servlet-name>XFormsExportServlet</servlet-name>
+		<servlet-class>
+			org.oryxeditor.server.XFormsExportServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>XFormsExportServlet</servlet-name>
+		<url-pattern>/xforms</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

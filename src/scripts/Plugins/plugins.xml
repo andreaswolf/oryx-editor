@@ -23,10 +23,6 @@
 		<plugin source="epcSupport.js" name="ORYX.Plugins.EPCSupport">
 			<requires namespace="http://b3mn.org/stencilset/epc#"/>	
 		</plugin>
-		
-		<plugin source="amlSupport.js" name="ORYX.Plugins.AMLSupport">
-			<requires namespace="http://b3mn.org/stencilset/epc#"/>	
-		</plugin>	
 			
 		<plugin source="arisSupport.js" name="ORYX.Plugins.ARISSupport">
 			<requires namespace="http://b3mn.org/stencilset/epc#"/>	
@@ -34,12 +30,7 @@
 				
 		<plugin source="adHocCC.js" name="ORYX.Plugins.AdHocCC">
 			<requires namespace="http://b3mn.org/stencilset/bpmnexec#"/>	
-		</plugin>
-
-		<plugin source="treeGraphSupport.js" name="ORYX.Plugins.TreeGraphSupport">
-			<requires namespace="http://b3mn.org/stencilset/treeGraph#"/>	
-		</plugin>
-		
+		</plugin>		
 		
 		<!-- following plugins don't require Ext -->
 		<plugin source="arrangement.js" name="ORYX.Plugins.Arrangement">
@@ -90,12 +81,6 @@
 			<requires namespace="http://b3mn.org/stencilset/bpmn#"/>
 			<requires namespace="http://b3mn.org/stencilset/bpmn1.1#"/>
 		</plugin>
-
-		<!--
-		<plugin source="bpel4chor.js" name="ORYX.Plugins.Bpel4ChorTransformation">
-			<requires namespace="http://b3mn.org/stencilset/bpmn#"/>	
-		</plugin>
-		-->
 				
 		<!-- plugin for BPEL import and export --> 
 		<plugin source="bpelSupport.js" name="ORYX.Plugins.BPELSupport">
@@ -124,16 +109,6 @@
 		<plugin source="bpmn1.1DiamondSwitch.js" name="ORYX.Plugins.BPMN11DiamondSwitch">
 			<requires namespace="http://b3mn.org/stencilset/bpmn1.1#"/>
 		</plugin>
-		
-		<!-- Following Plugins are examples to demonstrate certain functionality -->
-		
-		<!--		
-		<plugin source="epc2bpmn.js" name="ORYX.Plugins.EPC2BPMN">
-			<requires namespace="http://b3mn.org/stencilset/bpmn#"/>	
-		</plugin>
-		<plugin source="autoLayout.js" name="ORYX.Plugins.AutoLayout" />
-		<plugin source="overlayexample.js" name="ORYX.Plugins.OverlayExample" />
-		-->
 		
 
 	</plugins>

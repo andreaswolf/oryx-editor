@@ -71,7 +71,14 @@ public class HighConverter extends StandardConverter {
 	}
 	
 	protected HighFlowRelationship addInhibitorFlowRelationship(PetriNet net,
-			de.hpi.petrinet.Place source, de.hpi.petrinet.Transition target) {	
+			de.hpi.petrinet.Place source, de.hpi.petrinet.Transition target) {
+		for (HighFlowRelationship rel : (List<HighFlowRelationship>)target.getIncomingFlowRelationships()){
+			if ((Place)rel.getSource() == source){
+				// there is already a connection, perhaps return null or raise error?
+				return rel;
+			}
+		}
+		
 		HighFlowRelationship rel = (HighFlowRelationship)addFlowRelationship(net, source, target);
 		if (rel == null){
 			return null;
@@ -116,12 +123,32 @@ public class HighConverter extends StandardConverter {
 		for(List<Edge> edges : (List<List<Edge>>)de.hpi.bpmn.analysis.Combination.findCombinations(gateway.getOutgoingEdges())){
 			if(edges.size() == 0)
 				continue;
-			Transition t = addSilentTransition(net, "orSplit_"+gateway.getId(), gateway, 1);
+			Transition t = addSilentTransition(net, generateOrSplitId(gateway, edges), gateway, 0);
 			for(Edge edge : edges){
 				addFlowRelationship(net, t, c.map.get(edge));
 			}
 			addFlowRelationship(net, c.map.get(gateway.getIncomingEdges().get(0)), t);
 		}
+	}
+	
+	/*
+	 * Overwrite this if other id generation is needed (like in step through mapping)
+	 */
+	public String generateOrSplitId(String gatewayId, String[] firingEdgesIds){
+		String resourceId = "orSplit_"+gatewayId;
+		for(String edgeId : firingEdgesIds){
+			resourceId += edgeId;
+		}
+		return resourceId; 
+	}
+	
+	// Other interfaces to generateOrSplitId(String gatewayId, String[] firingEdgesIds)
+	public String generateOrSplitId(ORGateway gateway, List<Edge> firingEdges){
+		String[] firingEdgesIds = new String[firingEdges.size()];
+		for(int i = 0; i < firingEdges.size(); i++){
+			firingEdgesIds[i] = firingEdges.get(i).getId();
+		}
+		return generateOrSplitId(gateway.getId(), firingEdgesIds);
 	}
 
 	protected void handleORJoin(PetriNet net, ORGateway gateway,
@@ -170,7 +197,7 @@ public class HighConverter extends StandardConverter {
 			if(incomingBPMN instanceof SequenceFlow){
 				incomingBPMN = (DiagramObject)((SequenceFlow)incomingTransition.getBPMNObj()).getSource();
 			}
-
+			
 			addInhibitorFlowRelationship(net, edge, gatewayTransition);
 			
 			if(!checkDominator((Node)incomingBPMN, (Node)gatewayTransition.getBPMNObj(), c)){
@@ -260,7 +287,7 @@ public class HighConverter extends StandardConverter {
 
 		addFlowRelationship(net, pl.ok, t);
 		addFlowRelationship(net, t, c.map.get(getOutgoingSequenceFlow(event)));
-		((HighConversionContext)c).addAncestorExcpTransition(event.getProcess(), t);
+		((HighConversionContext)c).addAncestorExcpTransition((SubProcess)event.getActivity(), t);
 	}
 
 	@Override

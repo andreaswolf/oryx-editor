@@ -295,7 +295,7 @@
             Compressing Oryx into build destination
         </echo>
         <concat destfile='${editor-build-root}/oryx.js'>
-            <fileset file="license"/>
+            <fileset file="LICENSE"/>
             <fileset file="${compress.temp}"/>
         </concat>
         

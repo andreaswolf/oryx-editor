@@ -61,6 +61,7 @@ MOVI.namespace("util");
 		this._highlightMarkers = {};
 		
 		for(key in shapes) {
+			if (shapes[key] instanceof Function){continue}
 			var shape = modelviewer.canvas.shapes[key];
 			
 			if(shape.parentShape!=null) {
@@ -97,6 +98,7 @@ MOVI.namespace("util");
 		_init: function() {
 			// create highlighting markers
 			for(key in this._selectableShapes) {
+				if (this._selectableShapes[key] instanceof Function){continue}
 				var s = this._selectableShapes[key];
 				var marker = new Marker(s);
 				marker.setRectClassName(_HIGHLIGHT_RECT_CLASS_NAME);
@@ -143,6 +145,7 @@ MOVI.namespace("util");
 		
 		_reset: function() {
 			for(key in this._selectedShapes) {
+				if (this._selectableShapes[key] instanceof Function){continue}
 				var s = this._selectedShapes[key];
 				this._selectionMarker.removeShape(s);
 				delete this._selectedShapes[key];
@@ -158,6 +161,7 @@ MOVI.namespace("util");
 			if(!YAHOO.lang.isArray(shapes)) shapes = [shapes];
 			
 			for(key in shapes) {
+				if (shapes[key] instanceof Function){continue}
 				var s = shapes[key];
 				
 				this.unhighlight(s);
@@ -185,6 +189,7 @@ MOVI.namespace("util");
 			if(!YAHOO.lang.isArray(shapes)) shapes = [shapes];
 			
 			for(key in shapes) {
+				if (shapes[key] instanceof Function || !shapes[key]){continue}
 				var s = shapes[key];
 				delete this._selectedShapes[s.resourceId];
 				this._selectionMarker.removeShape(s);
@@ -230,6 +235,7 @@ MOVI.namespace("util");
 		getSelectedShapes: function() {
 			var selected = new Array();
 			for(key in this._selectedShapes)
+				if (this._selectedShapes[key] instanceof Function){continue}
 				selected.push(this._selectedShapes[key]);
 			return selected;
 		},
@@ -246,7 +252,6 @@ MOVI.namespace("util");
 		/**
 		 * Specify callback to be executed when the selection changes
 		 * (shapes are added to or removed from the current selection)
-		 * Example: 
 		 * @param {Function} callback The callback method
 		 * @param {Object} scope (optional) The execution scope of the callback 
 		 * (in none is specified the context of the ShapeSelect object is used)
@@ -255,7 +260,7 @@ MOVI.namespace("util");
 		 */
 		onSelectionChanged: function(callback, scope, data) {
 			if(!YAHOO.lang.isFunction(callback)) {
-				throw new TypeError("Specified callback is not a function.", "error", "shapeselect.js");
+				throw new TypeError("Specified callback is not a function.", "shapeselect.js");
 				return;
 			}
 			if(!scope) scope = this;

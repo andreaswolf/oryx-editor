@@ -142,14 +142,39 @@ MOVI.namespace("util");
 		 * @private
 	     */
 		_update: function() {
+			var zoomFactor = 1;
 			if(!this._canvas) {
 				this._canvas = this._marker.canvas;
-				if(this._canvas) this._canvas.appendChild(this);
+				if(this._canvas) {
+					this._canvas.appendChild(this);
+					
+					// now that we have our canvas and therefore the model viewer we can subscribe
+					// to the zoom event
+					this._canvas.getModelViewer().onZoomLevelChangeStart.subscribe(function() {
+						if(!this.hasClass(_BUBBLE_VISIBLE_CLASS_NAME)) {
+							this._showOnZoomEnd = false;
+						} else {
+							this.hide();
+							this._showOnZoomEnd = true;
+						}
+					}, this, true);
+					this._canvas.getModelViewer().onZoomLevelChangeEnd.subscribe(function() {
+						this._update();
+						if(this._showOnZoomEnd) this.show();
+					}, this, true);
+					
+					zoomFactor = this._canvas.getModelViewer().getZoomLevel() / 100;
+					
+				}
+			} else {
+				zoomFactor = this._canvas.getModelViewer().getZoomLevel() / 100;
 			}
+			
 			var bounds = this._marker.getAbsBounds();
-			this.setStyle("left", bounds.lowerRight.x + "px");
-			this.setStyle("top", 
-				(bounds.upperLeft.y + (bounds.lowerRight.y-bounds.upperLeft.y)*0.6) + "px");
+			var left = Math.round(bounds.lowerRight.x * zoomFactor);
+			var top = Math.round((bounds.upperLeft.y + (bounds.lowerRight.y-bounds.upperLeft.y)*0.6) * zoomFactor);
+			this.setStyle("left", left + "px");
+			this.setStyle("top", top + "px");
 		},
 		
 		/**
@@ -215,6 +240,7 @@ MOVI.namespace("util");
 			var canvasEl = new Element(this.get("element").parentNode.parentNode);
 			var elements = canvasEl.getElementsByClassName(_BUBBLE_VISIBLE_CLASS_NAME);
 			for(key in elements) {
+				if (elements[key] instanceof Function || !elements[key]){continue}
 				var zIndex = parseInt((new Element(elements[key].parentNode)).getStyle("z-index"), 10);
 				if(zIndex>maxZIndex) maxZIndex = zIndex;
 			}

@@ -43,6 +43,7 @@
 		    		<div class="yui-u">
 						<div id="modelnavigator" />
 						<div id="toolbar" />
+						<div id="zoomslider" />
 			    	</div>
 
 				</div>
@@ -97,12 +98,18 @@
 				});
 				toolbar.showGroupCaptions();
 				
+				// create zoom slider
+				zoomslider = new MOVI.widget.ZoomSlider("zoomslider", modelviewer)
+				
 				// enable resizing
 				var resize = new YAHOO.util.Resize("modelviewer", {
 		            handles: ['b'],
 		            minHeight: 150
 		        });
-				resize.on("resize", modelnavigator.update, modelnavigator, true);
+				resize.on("resize", function() {
+				    modelnavigator.update.call(modelnavigator);
+				    zoomslider.onChange.call(zoomslider);
+				}, this, true);
 				resize.reset();
 			}
 			

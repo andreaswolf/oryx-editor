@@ -13,6 +13,7 @@ import de.hpi.bpmn.Process;
 import de.hpi.bpel4chor.model.SubProcess;
 import de.hpi.bpmn.Activity;
 import de.hpi.bpel4chor.model.activities.BlockActivity;
+import de.hpi.bpmn2bpel.model.BPELDataObject;
 import de.hpi.bpmn2bpel.model.FoldedTask;
 import de.hpi.bpel4chor.model.activities.Gateway;
 import de.hpi.bpel4chor.model.activities.Handler;
@@ -23,6 +24,7 @@ import de.hpi.bpel4chor.model.connections.Transition;
 import de.hpi.bpel4chor.model.supporting.Expression;
 import de.hpi.bpel4chor.util.Output;
 import de.hpi.bpmn.BPMNDiagram;
+import de.hpi.bpmn.DataObject;
 import de.hpi.bpmn.EndEvent;
 import de.hpi.bpmn.Node;
 import de.hpi.bpmn.SequenceFlow;
@@ -85,6 +87,54 @@ public class SequenceFlowFactory {
 		this.output = output;
 		this.basicFactory = new BasicActivityFactory(diagram, document,
 				this.output);
+		this.supportingFactory = new SupportingFactory(diagram, document,
+				this.output);
+		this.structuredFactory = new StructuredElementsFactory(diagram,
+				document, this.output);
+		this.componentizer = new Componentizer(diagram, container, this.output);
+
+		// // determine if container is error or message handler
+		// if (container instanceof SubProcess) {
+		// SubProcess sub = (SubProcess)container;
+		// if (sub.getBlockActivity() instanceof Handler) {
+		// Handler handler = (Handler)sub.getBlockActivity();
+		// if (handler.getHandlerType().equals(Handler.TYPE_FAULT)) {
+		// this.errorHandler = true;
+		// this.messageHandler = false;
+		// } else if (handler.getHandlerType().equals(Handler.TYPE_MESSAGE)){
+		// this.messageHandler = true;
+		// this.errorHandler = false;
+		// } else {
+		// this.messageHandler = false;
+		// this.errorHandler = false;
+		// }
+		// }
+		// }
+	}
+	
+	/**
+	 * Constructor. Initializes the sequence flow factory with the diagram and
+	 * the container that contains the sequence flow to be transformed. Also 
+	 * passes BPEL process element because of namespace prefix issues.
+	 * 
+	 * @param diagram
+	 *            The diagram the container belongs to.
+	 * @param document
+	 *            The document to create the BPEL elements for.
+	 * @param container
+	 *            The container that contains the sequence flow that will be
+	 *            transformed.
+	 * @param output
+	 *            The {@link Output} to print errors to.
+	 */
+	public SequenceFlowFactory(BPMNDiagram diagram, Document document,
+			Container4BPEL container, Output output, Element processElement) {
+		this.diagram = diagram;
+		this.container = container;
+		this.document = document;
+		this.output = output;
+		this.basicFactory = new BasicActivityFactory(diagram, document,
+				this.output, processElement);
 		this.supportingFactory = new SupportingFactory(diagram, document,
 				this.output);
 		this.structuredFactory = new StructuredElementsFactory(diagram,
@@ -961,15 +1011,20 @@ public class SequenceFlowFactory {
 						this.container instanceof Process);
 			}
 		} else if (start.getSuccessor().equals(end.getPredecessor())) {
-			Activity successor = (Activity) start.getSuccessor();
+			Node successor = start.getSuccessor();
 			Element result = null;
-			if (successor instanceof Task) {
+			List<Element> resultElements = null;
+			if (successor instanceof FoldedTask) {
 				result = mapTask((Task) successor);
 				// } else if (successor instanceof BlockActivity) {
 				// return mapBlockActivity((BlockActivity)successor);
 				// } else if (successor instanceof IntermediateEvent) {
 				// return mapIntermediateEvent((IntermediateEvent)successor);
-			} else {
+			} else if (successor instanceof Task) {
+				/* Handles the trivial case Start, one task, end */
+				resultElements = mapActivity(successor, null);
+			}
+			else {
 				this.output.addError(
 						"A trivial component was not generated correctly",
 						successor.getId());
@@ -983,14 +1038,18 @@ public class SequenceFlowFactory {
 				Element receive = this.basicFactory.createReceiveElement(start,
 						this.container instanceof Process);
 
-				if (result.getNodeName().equals("sequence")) {
+				if (result != null && result.getNodeName().equals("sequence")) {
 					result.insertBefore(receive, result.getFirstChild());
 					return result;
 				}
+				
+				
 				Element resultSequence = this.document
 						.createElement("sequence");
 				resultSequence.appendChild(receive);
-				resultSequence.appendChild(result);
+				for (Element e : resultElements) {
+					resultSequence.appendChild(e);
+				}
 				return resultSequence;
 			}
 
@@ -1106,7 +1165,7 @@ public class SequenceFlowFactory {
 	 * @return The created BPEL element the activity represents or null if the
 	 *         activity could not be mapped.
 	 */
-	public Element mapActivity(Node act, List<Link> links) {
+	public List<Element> mapActivity(Node act, List<Link> links) {
 		return mapActivity(act, links, null);
 	}
 
@@ -1125,12 +1184,24 @@ public class SequenceFlowFactory {
 	 * @return The created BPEL4Chor element the activity represents or null if
 	 *         the activity could not be mapped.
 	 */
-	public Element mapActivity(Node act, List<Link> links, Expression joinCond) {
+	public List<Element> mapActivity(Node act, List<Link> links, Expression joinCond) {
+		ArrayList<Element> elements = new ArrayList<Element>();
 		Element element = null;
 		// if (act instanceof BlockActivity) {
 		// element = mapBlockActivity((BlockActivity)act);
 		/* } else */if (act instanceof Task) {
-			element = mapTask((Task) act);
+			
+			/* Insert assign task, if an DataObject is connected */
+			DataObject dataObject = ((Task)act).getFirstInputDataObject();
+			if (dataObject instanceof BPELDataObject) {
+				Element assign = this.basicFactory.createAssignElement((BPELDataObject) dataObject, (Task) act);
+				if (assign != null) {
+					elements.add(assign);
+				}
+			}
+			
+			
+			elements.add(mapTask((Task) act));
 		} // else if (act instanceof IntermediateEvent) {
 		// element = mapIntermediateEvent((IntermediateEvent)act);
 		// } else {
@@ -1141,7 +1212,7 @@ public class SequenceFlowFactory {
 		if (element != null) {
 			createSourcesAndTargets(act, element, links, joinCond);
 		}
-		return element;
+		return elements;
 	}
 
 	/**
@@ -1159,15 +1230,18 @@ public class SequenceFlowFactory {
 	 */
 	private Element mapSequence(Component comp, List<Link> links) {
 		Element result = this.document.createElement("sequence");
-		Element element = mapActivity(comp.getSourceObject(), links);
-		if (element != null) {
-			result.appendChild(element);
+		List<Element> elements = mapActivity(comp.getSourceObject(), links);
+		
+		/* Append mapped elements. Typically this is a sequence of an assign and
+		 * an invoke element */
+		for(Element element : elements) {
+			result.appendChild(element);			
 		}
 		
 		for (Node node : comp.getChildNodes()) {
-			element = mapActivity(node, links);
-			if (element != null) {
-				result.appendChild(element);
+			elements = mapActivity(node, links);
+			for(Element element : elements) {
+				result.appendChild(element);			
 			}
 		}
 //		for (Iterator<Activity> it = comp.getActivities().iterator(); it
@@ -1178,10 +1252,11 @@ public class SequenceFlowFactory {
 //			}
 //		}
 
-		element = mapActivity(comp.getSinkObject(), links);
-		if (element != null) {
-			result.appendChild(element);
+		elements = mapActivity(comp.getSinkObject(), links);
+		for(Element element : elements) {
+			result.appendChild(element);			
 		}
+		
 		return result;
 	}
 
@@ -2089,6 +2164,38 @@ public class SequenceFlowFactory {
 			}
 		}
 
-		return mapTrivial(start, end);
+		Element sequence = mapTrivial(start, end);
+		
+		
+		/* Assign response message content */
+		
+		Element responseAssign = this.document.createElement("assign");
+		Element copy = this.document.createElement("copy");
+		
+		/* Create from part */
+		Element from = this.document.createElement("from");
+		Element literal = this.document.createElement("literal");
+		literal.setTextContent("Process finished");
+		from.appendChild(literal);
+		copy.appendChild(from);
+		
+		/* Create to part */
+		Element to = this.document.createElement("to");
+		to.setAttribute("part", "payload");
+		to.setAttribute("variable", "output");
+		copy.appendChild(to);
+		
+		responseAssign.appendChild(copy);
+		sequence.appendChild(responseAssign);
+		
+		/* Append reply for process response */
+		Element reply = this.document.createElement("reply");
+		reply.setAttribute("partnerLink", "InvokeProcessPartnerLink");
+		reply.setAttribute("portType", "tns:InvokeProcess");
+		reply.setAttribute("operation", "process");
+		reply.setAttribute("variable", "output");
+		sequence.appendChild(reply);
+		
+		return sequence;
 	}
 }

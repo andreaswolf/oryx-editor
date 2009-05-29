@@ -26,23 +26,38 @@ MOVI.namespace("widget");
 
 (function() {
 	
-	var _SLIDER_CLASS_NAME			= "movi-zoomslider",
-		_SLIDER_THUMB_CLASS_NAME	= "movi-zoomslider-thumb",
-		_SLIDER_WIDTH				= 100,
-		_SLIDER_STEP				= 1;
+	var _SLIDER_CLASS_NAME					= "movi-zoomslider",
+		_SLIDER_THUMB_CLASS_NAME			= "movi-zoomslider-thumb",
+		_SLIDER_WIDTH						= 100,
+		_SLIDER_STEP						= 1,
+		_FULLSCREEN_LIGHTBOX_CLASS_NAME		= "movi-fullscreen-lightbox",
+		_FULLSCREEN_CONTAINER_CLASS_NAME	= "movi-fullscreen-modelcontainer";
 	
 	/**
      * Add image to the host element and create the clipping rectangle element.
 	 * Ensure that host element's position is not static to allow absolute
 	 * positioning of the clipping rect relative to the host element
-     * @method _setUpHostElement
+     * @method _setUpHostElementZoomSlider
      * @private
      */
-	var _setUpHostElement = function() {
+	var _setUpHostElementZoomSlider = function() {
 		this.set("innerHTML",
 				"<div id=\"" + _SLIDER_CLASS_NAME + this.modelviewer.getIndex() + "\" class=\"" + _SLIDER_CLASS_NAME + "\" title=\"Zoom Slider\">" +
 					"<div id=\"" + _SLIDER_THUMB_CLASS_NAME + this.modelviewer.getIndex() + "\" class=\"" + _SLIDER_THUMB_CLASS_NAME + "\"></div>" +
 				"</div>");
+	};
+	
+	/**
+	 * Calculate the minimal zoom level in percent (stop zooming out when model fits the model viewer in height and width)
+	 * @method _getMinZoomLevel
+	 * @private
+	 */
+	var _getMinZoomLevel = function(modelviewer) {
+		var scaleHorizontal = (parseInt(modelviewer.getScrollboxEl().getStyle("width"), 10)) / modelviewer.getImgWidth();
+		var scaleVertical = (parseInt(modelviewer.getScrollboxEl().getStyle("height"), 10)) / modelviewer.getImgHeight();
+		var scale = (scaleHorizontal < scaleVertical) ? scaleHorizontal : scaleVertical;
+		if(scale>1)	scale = 1;
+		return scale*100;
 	};
 	
 	/**
@@ -54,7 +69,7 @@ MOVI.namespace("widget");
 	 * @param {HTMLElement | String } el The id of the container DIV element that will 
 	 * wrap the ZoomSlider, or a reference to a DIV element. The DIV element must
 	 * exist in the document.
-	 * @param {ModelViewer} modelviewer The ModelViewer for that shape selection is enabled
+	 * @param {ModelViewer} modelviewer The ModelViewer for that zooming is enabled
      */
     MOVI.widget.ZoomSlider = function(el, modelviewer) {
 	
@@ -67,7 +82,7 @@ MOVI.namespace("widget");
 		
     	MOVI.widget.ZoomSlider.superclass.constructor.call(this, el);
 	
-		_setUpHostElement.call(this);
+		_setUpHostElementZoomSlider.call(this);
 		
 		// instantiate the slider
 		this.slider = YAHOO.widget.Slider.getHorizSlider(
@@ -76,8 +91,7 @@ MOVI.namespace("widget");
 			0, _SLIDER_WIDTH, _SLIDER_STEP
 		); 
 		 
-		// set the initial value of the slider instance
-		this.slider.setValue(100, true);
+		this.update();
 		
 		this.slider.subscribe('change', this.onChange, this, true);
 		this.slider.subscribe('slideStart', this._onSlideStart, this, true);
@@ -117,16 +131,11 @@ MOVI.namespace("widget");
 		 * @method onChange
 		 */
 		onChange: function() {
-			// calculate minimal zoom factor (stop zooming out when model fits model viewer)
-			var scaleHorizontal = (parseInt(this.modelviewer.getScrollboxEl().getStyle("width"), 10)-5) / this.modelviewer.getImgWidth();
-			var scaleVertical = (parseInt(this.modelviewer.getScrollboxEl().getStyle("height"), 10)-5) / this.modelviewer.getImgHeight();
-			var scale = (scaleHorizontal < scaleVertical) ? scaleHorizontal : scaleVertical;
-			if(scale>1)	scale = 1;
-			var minZoomFactor = scale*100;
-			var maxZoomFactor = 100;
+			var minZoomLevel = _getMinZoomLevel(this.modelviewer);
+			var maxZoomLevel = 100;
 			
-			var zoomStep = (maxZoomFactor-minZoomFactor) / _SLIDER_WIDTH;
-			this.modelviewer.setZoomLevel(minZoomFactor + this.slider.getValue() * zoomStep);
+			var zoomStep = (maxZoomLevel-minZoomLevel) / _SLIDER_WIDTH;
+			this.modelviewer.setZoomLevel(minZoomLevel + this.slider.getValue() * zoomStep, false);
 		},
 		
 		/**
@@ -135,9 +144,146 @@ MOVI.namespace("widget");
 		 * @method update
 		 */
 		update: function() {
-			// TODO: implement me
+			var minZoomLevel = _getMinZoomLevel(this.modelviewer);
+			var maxZoomLevel = 100;
+			
+			var zoomStep = (maxZoomLevel-minZoomLevel) / _SLIDER_WIDTH;
+			this.slider.setValue((this.modelviewer.getZoomLevel() - minZoomLevel) * zoomStep);
 		}
 		
+	});
+	
+	
+	
+	/**
+	 * Swap two nodes. In IE, we use the native method, for others we
+	 * emulate the IE behavior
+	 * @method _swapNode
+	 * @param n1 the first node to swap
+	 * @param n2 the other node to swap
+	 * @private
+	 */
+	var _swapNode = function(n1, n2) {
+	    if (n1.swapNode) {
+	        n1.swapNode(n2);
+	    } else {
+	        var p = n2.parentNode;
+	        var s = n2.nextSibling;
+
+	        if (s == n1) {
+	            p.insertBefore(n1, n2);
+	        } else if (n2 == n1.nextSibling) {
+	            p.insertBefore(n2, n1);
+	        } else {
+	            n1.parentNode.replaceChild(n2, n1);
+	            p.insertBefore(n1, s);
+	        }
+	    }
+	};
+	
+	/**
+     * 
+     * @method _setUpHostElementFullscreenViewer
+     * @private
+     */
+	var _setUpHostElementFullscreenViewer = function() {
+		var el = new YAHOO.util.Element(document.createElement('div'));
+		el.set("innerHTML", 
+			"<div class=\"hd\"></div>" +
+		    "<div class=\"bd\"><div class=\"" + _FULLSCREEN_CONTAINER_CLASS_NAME + "\"></div></div>" +
+		    "<div class=\"ft\"></div>");
+		(new YAHOO.util.Element(document.body)).appendChild(el);
+		return el;
+	};
+	
+	/**
+     * The FullscreenViewer widget is a UI widget that displays the complete model in a
+	 * lightbox fullscreen view.
+     * @namespace MOVI.widget
+     * @class MOVI.widget.FullscreenViewer
+     * @constructor
+	 * @param {ModelViewer} modelviewer The ModelViewer for that is viewed in fullscreen mode
+     */
+    MOVI.widget.FullscreenViewer = function(modelviewer) {
+	
+		this.modelviewer = modelviewer;
+		
+		var el = _setUpHostElementFullscreenViewer();
+		el.addClass(_FULLSCREEN_LIGHTBOX_CLASS_NAME);
+		var elId = _FULLSCREEN_LIGHTBOX_CLASS_NAME+this.modelviewer.getIndex();
+		el.set("id", elId);
+		
+		MOVI.widget.FullscreenViewer.superclass.constructor.call(this, el);
+		
+		this.dialog = new YAHOO.widget.Dialog(elId, {
+			fixedcenter: true,
+			visible: false,
+			draggable: true,
+			modal: true,
+			close: true,
+			constraintoviewport: true
+		});
+		
+		this.dialog.render();
+		
+		// add listener to close button
+		YAHOO.util.Event.on(
+			YAHOO.util.Dom.getElementsByClassName("container-close", "a", elId), 
+			"click",
+			this.close, this, true
+		);
+		
+		this._fullscreenContainer = new YAHOO.util.Element(el.getElementsByClassName(_FULLSCREEN_CONTAINER_CLASS_NAME)[0]);
+		this._modelViewerPlaceholder = new YAHOO.util.Element(document.createElement("div"));
+		this._fullscreenContainer.appendChild(this._modelViewerPlaceholder);
+	};
+	
+	MOVI.extend(MOVI.widget.FullscreenViewer, YAHOO.util.Element, {
+		
+		/**
+		 * The fullscreen model viewer conatainer element
+		 * @property _fullscreenContainer
+		 * @type YAHOO.util.Element
+		 * @private
+		 */
+		_fullscreenContainer: null,
+		
+		/**
+		 * A placeholder element that is swapped with the original model viewer element
+		 * @property _modelViewerPlaceholder
+		 * @type YAHOO.util.Element
+		 * @private
+		 */
+		_modelViewerPlaceholder: null,
+		
+		/**
+		 * The Dialog widget that represents the lightbox
+		 * @property dialog
+		 * @type YAHOO.widget.Dialog
+		 */
+		dialog: null,
+		
+		open: function() {
+			this.dialog.cfg.setProperty("width", (YAHOO.util.Dom.getViewportWidth()-20)+"px");
+			this.dialog.cfg.setProperty("height", (YAHOO.util.Dom.getViewportHeight()-20)+"px");
+			_swapNode(this.modelviewer.getScrollboxEl().get("element"), this._modelViewerPlaceholder.get("element"));
+			
+			// zoom to fit to fullscreen
+			var minZoomLevel = _getMinZoomLevel(this.modelviewer);
+		
+			// store original zoom factor
+			this._originalZoomLevel = this.modelviewer.getZoomLevel();
+			console.log(minZoomLevel)
+			this.modelviewer.setZoomLevel(minZoomLevel);
+			
+			this.dialog.show();
+		},
+		
+		close: function() {
+			_swapNode(this.modelviewer.getScrollboxEl().get("element"), this._modelViewerPlaceholder.get("element"));
+			this.modelviewer.setZoomLevel(this._originalZoomLevel);
+			this.dialog.hide();
+		}
 		
 	});
 	

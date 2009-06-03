@@ -34,7 +34,9 @@ public class Test {
 //		File file = new File(path + "bpel_trivial2.xml");
 //		File file = new File(path + "bpel_sequence_test.xml");
 //		File file = new File(path + "bpel_dataobject.xml");
-		File file = new File(path + "bpel_calculator_test.xml");
+//		File file = new File(path + "bpel_calculator_test.xml");
+//		File file = new File(path + "bpel_calculator2_test.xml");
+		File file = new File(path + "bpel_calculator_with_dataobject_test.xml");
 		
 		
 		try {

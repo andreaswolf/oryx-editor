@@ -362,6 +362,7 @@ if(!ORYX.I18N.ShapeMenuPlugin) ORYX.I18N.ShapeMenuPlugin = {};
 
 ORYX.I18N.ShapeMenuPlugin.drag = "Ziehen";
 ORYX.I18N.ShapeMenuPlugin.clickDrag = "Klicken oder ziehen";
+ORYX.I18N.ShapeMenuPlugin.morphMsg = "Shape morphen";
 
 if(!ORYX.I18N.SimplePnmlexport) ORYX.I18N.SimplePnmlexport = {};
 
@@ -612,3 +613,8 @@ ORYX.I18N.SyntaxChecker.PetriNet_NO_LABEL = "Bezeichnung für einen bezeichnete 
 ORYX.I18N.SyntaxChecker.PetriNet_NO_ID = "Ein Knoten besitzt keine ID.";
 ORYX.I18N.SyntaxChecker.PetriNet_SAME_SOURCE_AND_TARGET = "Zwei Flussbeziehungen besitzen den gleichen Ursprung und das gleiche Ziel.";
 ORYX.I18N.SyntaxChecker.PetriNet_NODE_NOT_SET = "Ein Knoten ist nicht definiert für einen Flussbeziehung.";
+
+
+/** New Language Properties: 02.06.2009*/
+ORYX.I18N.Edge = "Kante";
+ORYX.I18N.Node = "Knoten";

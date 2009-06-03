@@ -364,6 +364,7 @@ if(!ORYX.I18N.ShapeMenuPlugin) ORYX.I18N.ShapeMenuPlugin = {};
 
 ORYX.I18N.ShapeMenuPlugin.drag = "Drag";
 ORYX.I18N.ShapeMenuPlugin.clickDrag = "Click or drag";
+ORYX.I18N.ShapeMenuPlugin.morphMsg = "Morph shape";
 
 if(!ORYX.I18N.SimplePnmlexport) ORYX.I18N.SimplePnmlexport = {};
 
@@ -624,3 +625,7 @@ ORYX.I18N.SyntaxChecker.PetriNet_NO_ID = "There is a node without id";
 ORYX.I18N.SyntaxChecker.PetriNet_SAME_SOURCE_AND_TARGET = "Two flow relationships have the same source and target";
 ORYX.I18N.SyntaxChecker.PetriNet_NODE_NOT_SET = "A node is not set for a flowrelationship";
 
+
+/** New Language Properties: 02.06.2009*/
+ORYX.I18N.Edge = "Edge";
+ORYX.I18N.Node = "Node";

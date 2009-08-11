@@ -27,7 +27,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.configuration.DatabaseConfiguration;
-import org.apache.log4j.Logger;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
@@ -52,9 +51,6 @@ import de.hpi.bpmn2bpel.factories.apacheode.deploymentservice.stub.DeployUnit;
  * @author Sven Wagner-Boysen
  */
 public class DeployProcessFactory {
-
-	/** logger variable */
-	private static Logger logger = Logger.getLogger(DeployProcessFactory.class);
 	
 	private final static String partnerLinkNamespaceTag = "plnk";
 	private String ODE_URL = "http://localhost:8080/ode/";
@@ -98,7 +94,7 @@ public class DeployProcessFactory {
 			documentBuilderFactory.setNamespaceAware(true);
 			builder = documentBuilderFactory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
-			logger.error(e.getMessage(), e);
+			
 		}
 		processWsdlDocument = builder.newDocument();
 		Element processWsdl = createBpelProcessWsdl();
@@ -609,7 +605,7 @@ public class DeployProcessFactory {
 			this.wsdls.put(serviceName, responseText);
 			return wsdlDocument;
 		} catch (Exception e) {
-			logger.error("Cannnot create document from uri", e);
+			
 		} 	
 		return null;
 	}
@@ -636,7 +632,7 @@ public class DeployProcessFactory {
 		try {
 			docDocument = documentBuilderFactory.newDocumentBuilder().parse(stringSource);
 		} catch (Exception e) {
-			logger.error("Cannnot create document from string", e);
+			
 		} 	
 		return docDocument;
 	}

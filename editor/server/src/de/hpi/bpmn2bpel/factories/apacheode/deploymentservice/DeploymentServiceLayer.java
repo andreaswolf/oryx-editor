@@ -25,11 +25,9 @@ import de.hpi.bpmn2bpel.factories.apacheode.deploymentservice.stub.DeploymentSer
 import de.hpi.bpmn2bpel.factories.apacheode.deploymentservice.stub.Package;
 
 import org.apache.commons.configuration.DatabaseConfiguration;
-import org.apache.log4j.Logger;
 
 public class DeploymentServiceLayer {
 	
-	private static Logger logger = Logger.getLogger(DeploymentServiceLayer.class);
 	
 	private DeploymentServicePortType deploymentService = null;
 	private String serviceUrl = null;
@@ -79,7 +77,7 @@ public class DeploymentServiceLayer {
 		try {
 			return deploymentService.deploy(token, p);
 		} catch (Exception e) {
-			logger.error("Unable to deploy zip-file", e);
+			
 		}
 		return null;
 	}	
@@ -143,11 +141,11 @@ public class DeploymentServiceLayer {
 
 			zos.flush();
 		} catch (ZipException ze) {
-			logger.error("ZIP format error has occurred", ze);
+			
 		} catch (IOException ioe) {
-			logger.error("An I/O error occurs", ioe);
+			
 		} catch (Exception e){
-			logger.error(e.getMessage(), e);
+			
 		}
 
 		return baos.toByteArray();
@@ -174,10 +172,10 @@ public class DeploymentServiceLayer {
 		 */
 		QName odePackageName = new QName(packageName.getLocalPart());
 
-		logger.info("The package " + packageName + " will be undeployed.");
+		
 		try {
 			boolean response = deploymentService.undeploy(odePackageName);
-			logger.info("Successfully undeployed " + packageName);
+			
 			return response;
 			
 		} catch (Exception e) {
@@ -210,7 +208,7 @@ public class DeploymentServiceLayer {
 				this.serviceUrl = url;
 				
 			} catch (MalformedURLException e) {
-				logger.error("Invalid url", e);
+				
 //				throw new InvalidConfigurationException("Invalid url",
 //						SystemConfiguration.ODE_DEPLOYMENTSERVICE_WSDL_URL_PROPERTY, e);
 			}

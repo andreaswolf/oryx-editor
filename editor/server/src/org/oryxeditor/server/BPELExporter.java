@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,8 +53,6 @@ public class BPELExporter extends HttpServlet {
 
 	private static final long serialVersionUID = 316274845723034029L;
 	
-	private BPELExportPostprocessor postprocessor = new BPELExportPostprocessor();
-
 	private static String escapeJSON(String json) {
 		// escape (some) JSON special characters
 		String res = json.replace("\"", "\\\"");
@@ -80,12 +79,15 @@ public class BPELExporter extends HttpServlet {
     	
     	String rdfString = req.getParameter("data");
     	
-    	transformProcesses (rdfString, out);
+		final ServletContext context = getServletContext();
+		final String contextPath = context.getRealPath("");
+    	
+    	transformProcesses (rdfString, out, contextPath);
     	
     	out.print("]}");
     }
    
-   public void transformProcesses (String rdfString, PrintWriter out){
+   public static void transformProcesses (String rdfString, PrintWriter out, String contextPath){
 	   
 	   // Get the rdf source
 	   final Source rdfSource;
@@ -93,8 +95,8 @@ public class BPELExporter extends HttpServlet {
 	   rdfSource = new StreamSource(rdf);
 
 	   	// RDF2BPEL XSLT source
-	    final String xsltFilename = getServletContext().getRealPath("/xslt/RDF2BPEL.xslt");
-//   		final String xsltFilename = System.getProperty("catalina.home") + "/webapps/oryx/xslt/RDF2BPEL.xslt";
+		String xsltFilename = contextPath + "/xslt/RDF2BPEL.xslt";
+	   
    		final File xsltFile = new File(xsltFilename);
    		final Source xsltSource = new StreamSource(xsltFile);	
    	
@@ -148,7 +150,7 @@ public class BPELExporter extends HttpServlet {
     	}
    }
    
-   private String postprocessResult (PrintWriter out, String oldString){
+   private static String postprocessResult (PrintWriter out, String oldString){
 	   
 	   StringWriter stringOut = new StringWriter();
 	   try {
@@ -157,6 +159,9 @@ public class BPELExporter extends HttpServlet {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			InputStream oldResultInputStream = new ByteArrayInputStream(oldString.getBytes());
 			Document oldDocument = builder.parse(oldResultInputStream);
+			
+			
+			BPELExportPostprocessor postprocessor = new BPELExportPostprocessor();
 			
 			// rearrange document
 			Document newDocument = postprocessor.postProcessDocument(oldDocument);
@@ -177,7 +182,7 @@ public class BPELExporter extends HttpServlet {
 
    }
    
-   private ArrayList<String> separateProcesses (String resultString){
+   private static ArrayList<String> separateProcesses (String resultString){
 	   ArrayList<String> resultList = new ArrayList<String>();
 	   int indexOfProcess = resultString.indexOf("<process");
 	   int indexOfEndProcess = 0;
@@ -199,7 +204,7 @@ public class BPELExporter extends HttpServlet {
    }
    
    
-   private void printResponse(PrintWriter out, String text){
+   private static void printResponse(PrintWriter out, String text){
 		out.print("{\"type\":\"process\",");
 		out.print("\"success\":true,");
 		out.print("\"content\":\"");
@@ -209,7 +214,7 @@ public class BPELExporter extends HttpServlet {
     }
     
     
-    private void printError(PrintWriter out, String err){
+    private static void printError(PrintWriter out, String err){
 		out.print("{\"type\":\"process\",");
 		out.print("\"success\":false,");
 		out.print("\"content\":\"");
@@ -217,7 +222,7 @@ public class BPELExporter extends HttpServlet {
 		out.print("\"}");
     }
     
-	private void handleException(PrintWriter out, Exception e) {
+	private static void handleException(PrintWriter out, Exception e) {
 		e.printStackTrace();
 		printError(out, e.getLocalizedMessage());
 	}

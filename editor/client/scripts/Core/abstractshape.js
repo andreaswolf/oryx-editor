@@ -356,7 +356,7 @@ ORYX.Core.AbstractShape = ORYX.Core.UIObject.extend(
 		var initializedDocker = 0;
 		
 		// Sort properties so that the hidden properties are first in the list
-		serialize = serialize.sort(function(a,b){ return Number(this.properties.keys().member(a.prefix+"-"+a.name)) > Number(this.properties.keys().member(b.prefix+"-"+b.name))}.bind(this));
+		serialize = serialize.sort(function(a,b){ return Number(this.properties.keys().member(a.prefix+"-"+a.name)) > Number(this.properties.keys().member(b.prefix+"-"+b.name)) ? -1 : 0 }.bind(this));
 		
 		serialize.each((function(obj){
 			
@@ -400,7 +400,7 @@ ORYX.Core.AbstractShape = ORYX.Core.UIObject.extend(
     toJSON: function(){
         var json = {
             resourceId: this.resourceId,
-            properties: Ext.apply({}, this.hiddenProperties, this.properties).inject({}, function(props, prop){
+            properties: Ext.apply({}, this.properties, this.hiddenProperties).inject({}, function(props, prop){
               var key = prop[0];
               var value = prop[1];
                 

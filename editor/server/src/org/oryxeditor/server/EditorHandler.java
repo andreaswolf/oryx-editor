@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.util.FileCopyUtils;
+//import org.springframework.util.FileCopyUtils;
 
 public class EditorHandler extends HttpServlet {
 
@@ -208,15 +208,15 @@ public class EditorHandler extends HttpServlet {
 		return profilNames;
 	}
 	public String getNamedConf(String name, String profilename) throws FileNotFoundException, IOException {
-		String conf=FileCopyUtils.copyToString(new FileReader(this.getServletContext().
-				getRealPath("/profiles") + File.separator + profilename
-				+ ".conf"));
-		String[] confs=conf.split("##");
-		for(String attr:confs){
-			String[] pair=attr.split("::");
-			if(pair[0].equals(name))
-				return pair[1];
-		}
+//		String conf=FileCopyUtils.copyToString(new FileReader(this.getServletContext().
+//				getRealPath("/profiles") + File.separator + profilename
+//				+ ".conf"));
+//		String[] confs=conf.split("##");
+//		for(String attr:confs){
+//			String[] pair=attr.split("::");
+//			if(pair[0].equals(name))
+//				return pair[1];
+//		}
 		return null;
 	}
 }

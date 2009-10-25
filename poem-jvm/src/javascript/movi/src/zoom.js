@@ -52,9 +52,10 @@ MOVI.namespace("widget");
 	 * @method _getMinZoomLevel
 	 * @private
 	 */
-	var _getMinZoomLevel = function(modelviewer) {
-		var scaleHorizontal = (parseInt(modelviewer.getScrollboxEl().getStyle("width"), 10)) / modelviewer.getImgWidth();
-		var scaleVertical = (parseInt(modelviewer.getScrollboxEl().getStyle("height"), 10)) / modelviewer.getImgHeight();
+
+	var _getMinZoomLevel = function(modelviewer) {		
+		var scaleHorizontal = (modelviewer.getScrollboxEl().get("offsetWidth")-5) / modelviewer.getImgWidth();
+		var scaleVertical = (modelviewer.getScrollboxEl().get("offsetHeight")-5) / modelviewer.getImgHeight();
 		var scale = (scaleHorizontal < scaleVertical) ? scaleHorizontal : scaleVertical;
 		if(scale>1)	scale = 1;
 		return scale*100;
@@ -131,6 +132,8 @@ MOVI.namespace("widget");
 		this.slider.subscribe('change', this.onChange, this, true);
 		this.slider.subscribe('slideStart', this._onSlideStart, this, true);
 		this.slider.subscribe('slideEnd', this._onSlideEnd, this, true);
+		
+		this.modelviewer.onModelLoadEnd.subscribe(this.update, this, true);
 	};
 	
 	MOVI.extend(MOVI.widget.ZoomSlider, YAHOO.util.Element, {
@@ -168,7 +171,6 @@ MOVI.namespace("widget");
 		onChange: function() {
 			var minZoomLevel = _getMinZoomLevel(this.modelviewer);
 			var maxZoomLevel = 100;
-			
 			var zoomStep = (maxZoomLevel-minZoomLevel) / this.trackLength;
 			if(this.reverse)
 			    this.modelviewer.setZoomLevel(minZoomLevel + (this.trackLength - this.slider.getValue()) * zoomStep, false);

@@ -111,7 +111,8 @@
 			"icon":"new_transition.png",
 			"roles": [
 				"transition",
-				"fromtoall"
+				"fromtoall",
+				"TransitionMorph"
 			],
 			"properties": [
 				{
@@ -222,7 +223,8 @@
 			"icon":"new_transition_emptyV.png",
 			"roles": [
 				"transition",
-				"fromtoall"
+				"fromtoall",
+				"TransitionMorph"
 			],
 			"properties": [
 				{
@@ -321,7 +323,8 @@
 			"fixedAspectRatio":true,		
 			"roles": [
 				"place",
-				"fromtoall"
+				"fromtoall",
+				"PlaceMorph"
 			],
 			"properties": [
 				{
@@ -470,7 +473,8 @@
 			"view":"connection.flow.svg",
 			"icon":"new_flow_normal.png",
 			"roles": [
-				"fromtoall"
+				"fromtoall",
+				"FlowMorph"
 			],
 			"properties": [
 				{
@@ -531,6 +535,20 @@
 				"contains": [
 					"fromtoall"
 				]
+			},
+		],
+		"morphingRules": [
+			{
+				"role": "TransitionMorph",
+				"baseMorphs": ["Transition"]
+			},
+			{
+				"role": "FlowMorph",
+				"baseMorphs": ["Arc"]
+			},
+			{
+				"role": "PlaceMorph",
+				"baseMorphs": ["Place"]
 			},
 		]
 	}

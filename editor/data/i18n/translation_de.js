@@ -93,14 +93,14 @@ ORYX.I18N.Arrangement.bbDesc = "Eine Ebene nach Hinten";
 ORYX.I18N.Arrangement.groupA = "Alignment";
 ORYX.I18N.Arrangement.ab = "Unten ausrichten";
 ORYX.I18N.Arrangement.abDesc = "Unten ausrichten";
-ORYX.I18N.Arrangement.am = "Horizontal mittig ausrichten";
-ORYX.I18N.Arrangement.amDesc = "Horizontal mittig ausrichten";
+ORYX.I18N.Arrangement.am = "Horizontal ausrichten";
+ORYX.I18N.Arrangement.amDesc = "Horizontal ausrichten";
 ORYX.I18N.Arrangement.at = "Oben ausrichten";
 ORYX.I18N.Arrangement.atDesc = "Oben ausrichten";
 ORYX.I18N.Arrangement.al = "Links ausrichten";
 ORYX.I18N.Arrangement.alDesc = "Links ausrichten";
-ORYX.I18N.Arrangement.ac = "Vertikal mittig ausrichten";
-ORYX.I18N.Arrangement.acDesc = "Vertikal mittig ausrichten";
+ORYX.I18N.Arrangement.ac = "Vertikal ausrichten";
+ORYX.I18N.Arrangement.acDesc = "Vertikal ausrichten";
 ORYX.I18N.Arrangement.ar = "Rechts ausrichten";
 ORYX.I18N.Arrangement.arDesc = "Rechts ausrichten";
 ORYX.I18N.Arrangement.as = "Größenangleichung";
@@ -154,7 +154,7 @@ ORYX.I18N.BPEL4ChorSupport.impFailed = "Während des Importierens ist ein Fehler
 
 if(!ORYX.I18N.Bpel4ChorTransformation) ORYX.I18N.Bpel4ChorTransformation = {};
 
-ORYX.I18N.Bpel4ChorTransformation.group = "BPEL4Chor";
+ORYX.I18N.Bpel4ChorTransformation.group = "Export";
 ORYX.I18N.Bpel4ChorTransformation.exportBPEL = "BPEL4Chor Export";
 ORYX.I18N.Bpel4ChorTransformation.exportBPELDesc = "Exportieren nach BPEL4Chor";
 ORYX.I18N.Bpel4ChorTransformation.exportXPDL = "XPDL4Chor Export";

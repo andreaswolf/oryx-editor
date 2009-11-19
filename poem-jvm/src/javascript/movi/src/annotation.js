@@ -87,6 +87,14 @@ MOVI.namespace("util");
 		this.addListener("mouseover", function(ev) { Event.stopPropagation(ev) });
 		this.addListener("mouseout", function(ev) { Event.stopPropagation(ev) });
 		this.addListener("click", function(ev) { Event.stopPropagation(ev) });
+		this.addListener("mousedown", function(ev) { Event.stopPropagation(ev) });
+		
+		// allow user to select text 
+		this.setStyle("-moz-user-select", "text");    // Gecko-based, Mozilla
+		this.setStyle("-webkit-user-select", "text"); // Safari 3.0
+		this.setStyle("-khtml-user-select", "text");  // Safari 2.0
+		if (YAHOO.env.ua.ie > 0)
+			this.set("unselectable", "off");           // IE
 		
 		this._update();
 	}
@@ -285,21 +293,35 @@ MOVI.namespace("util");
 	 * @private
      */
 	var _createBubble = function(content) {
+		
+		var isIE6 = YAHOO.env.ua.ie === 6;
+		
 		this.set("className", _BUBBLE_HIDDEN_CLASS_NAME);
 		this.set("innerHTML", 	
-						"<div class=\"" + _BUBBLE_UL_CLASS_NAME + "\"><div class=\"" + _BUBBLE_UR_CLASS_NAME + "\">" +
-					   	"<div class=\"" + _BUBBLE_LL_CLASS_NAME + "\"><div class=\"" + _BUBBLE_LR_CLASS_NAME + "\">" + 
-					    	"<div class=\"" + _BUBBLE_BORDERTOP_CLASS_NAME + "\"></div>" +
-					    	"<div class=\"" + _BUBBLE_BORDERLEFT_CLASS_NAME + "\">" +
-					    	"<div class=\"" + _BUBBLE_BORDERRIGHT_CLASS_NAME + "\">" +
-					   		    "<div class=\"" + _BUBBLE_CONTENT_CLASS_NAME + "\">" +
-							    	"<div class=\"" + _BUBBLE_CLOSEBUTTON_CLASS_NAME + "\"></div>" +
-					            	content +
-					            "</div>" +
-					        "</div></div>" +
-					        "<div class=\"" + _BUBBLE_BORDERBOTTOM_CLASS_NAME + "\"></div>" +
-					   	"</div></div>" +
-					   	"</div></div>" +
+						"<div class=\"" + _BUBBLE_UL_CLASS_NAME + "\">"+
+							(isIE6 ? "<img class=\""+ _BUBBLE_UL_CLASS_NAME +"\">":"")+
+							"<div class=\"" + _BUBBLE_UR_CLASS_NAME + "\">" +
+								(isIE6 ? "<img class=\""+ _BUBBLE_UR_CLASS_NAME +"\">":"")+
+					   			"<div class=\"" + _BUBBLE_LL_CLASS_NAME + "\">"+
+									(isIE6 ? "<img class=\""+ _BUBBLE_LL_CLASS_NAME +"\">":"")+
+									"<div class=\"" + _BUBBLE_LR_CLASS_NAME + "\">" + 
+										(isIE6 ? "<img class=\""+ _BUBBLE_LR_CLASS_NAME +"\">":"")+
+								    	"<div class=\"" + _BUBBLE_BORDERTOP_CLASS_NAME + "\"></div>" +
+								    	"<div class=\"" + _BUBBLE_BORDERLEFT_CLASS_NAME + "\">" +
+											(isIE6 ? "<img class=\""+ _BUBBLE_BORDERLEFT_CLASS_NAME +"\">":"")+
+								    		"<div class=\"" + _BUBBLE_BORDERRIGHT_CLASS_NAME + "\">" +
+												(isIE6 ? "<img class=\""+ _BUBBLE_BORDERRIGHT_CLASS_NAME +"\">":"")+
+								   		   		"<div class=\"" + _BUBBLE_CONTENT_CLASS_NAME + "\">" +
+										    		"<div class=\"" + _BUBBLE_CLOSEBUTTON_CLASS_NAME + "\"></div>" +
+								            			content +
+								         			"</div>" +
+								        		"</div>"+
+											"</div>" +
+								        "<div class=\"" + _BUBBLE_BORDERBOTTOM_CLASS_NAME + "\"></div>" +
+					   				"</div>"+
+								"</div>" +
+					   		"</div>"+
+						"</div>" +
 					    "<div class=\"" + _BUBBLE_ARROW_LEFT_CLASS_NAME + "\"/>");
 	}
 	

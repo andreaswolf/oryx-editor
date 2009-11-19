@@ -163,7 +163,7 @@ MOVI.namespace("model");
 				var canvas = this.getCanvas();
 	
 				if (canvas) {
-					var nodes = canvas.getNodes();
+					var nodes = canvas.shapes;
 					for (var i in nodes){
 						if(!YAHOO.lang.hasOwnProperty(nodes, i)) continue;
 				
@@ -220,7 +220,7 @@ MOVI.namespace("model");
 			
 			if (!this.bounds) {
 				
-				// ERROR HANDLING if there is no bounds set
+				// ERROR HANDLING if bounds are not set
 				if (this.dockers) {
 					var min, max;
 					

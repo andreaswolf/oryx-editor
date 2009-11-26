@@ -39,6 +39,7 @@ import de.hpi.bpmn2_0.model.event.TimerEventDefinition;
 import de.hpi.bpmn2_0.model.gateway.EventBasedGateway;
 import de.hpi.bpmn2_0.model.gateway.Gateway;
 import de.hpi.bpmn2_0.model.gateway.GatewayDirection;
+import de.hpi.bpmn2_0.model.participant.Lane;
 import de.hpi.bpmn2_0.model.participant.Participant;
 import de.hpi.diagram.verification.AbstractSyntaxChecker;
 
@@ -81,6 +82,7 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 	protected static final String ENDEVENT_WITH_OUTGOING_CONTROL_FLOW = "BPMN_ENDEVENT_WITH_OUTGOING_CONTROL_FLOW";
 	protected static final String EVENTBASEDGATEWAY_BADCONTINUATION = "BPMN_EVENTBASEDGATEWAY_BADCONTINUATION";
 	protected static final String NODE_NOT_ALLOWED = "BPMN_NODE_NOT_ALLOWED";
+	protected static final String MESSAGE_FLOW_NOT_ALLOWED = "BPMN_MESSAGE_FLOW_NOT_ALLOWED";	
 	
 	// BPMN 2.0 Specific
 	protected static final String DATA_INPUT_WITH_INCOMING_DATA_ASSOCIATION = "BPMN2_DATA_INPUT_WITH_INCOMING_DATA_ASSOCIATION";
@@ -130,6 +132,13 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 	private void checkEdges() {	
 		for(Edge edge : this.defs.getEdges()) {	
 			
+			if(edge.getSourceRef() == null) {
+				this.addError(edge, NO_SOURCE);
+				
+			} else if(edge.getTargetRef() == null) {
+				this.addError(edge, NO_TARGET);
+			}
+			
 			if(edge instanceof MessageFlow) {
 				
 				if(!(edge.getSourceRef() == null || edge.getTargetRef() == null)) 
@@ -138,16 +147,17 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 				if(edge.getSourceRef().getPool() == edge.getTargetRef().getPool())	
 					this.addError(edge, SAME_PROCESS);
 				
+				if(edge.getSourceRef().getPool() == edge.getTargetRef().getPool() &&
+						edge.getSourceRef().getLane() != edge.getTargetRef().getLane()) 
+					this.addError(edge, MESSAGE_FLOW_NOT_ALLOWED);
+				
+				if(edge.getSourceRef() instanceof Lane || edge.getTargetRef() instanceof Lane)
+					this.addError(edge, MESSAGE_FLOW_NOT_ALLOWED);					
+				
 			} else {
 				
-				if(edge.getSourceRef() == null) {
-					this.addError(edge, NO_SOURCE);
-					
-				} else if(edge.getTargetRef() == null) {
-					this.addError(edge, NO_TARGET);
-					
-				} else if(edge instanceof SequenceFlow) {
-					if(edge.getSourceRef().getProcessRef() != edge.getTargetRef().getProcessRef()) 
+				if(edge instanceof SequenceFlow) {
+					if(edge.getSourceRef().getProcess() != edge.getTargetRef().getProcess()) 
 						this.addError(edge, DIFFERENT_PROCESS);						
 				}
 			}
@@ -157,8 +167,6 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 	private void checkNodes() {		
 	
 		for(RootElement rootElement : this.defs.getRootElement()) {
-			
-			System.out.println(rootElement);
 			
 			/*
 			 * Checking of Regular BPMN2.0 Diagrams
@@ -478,7 +486,7 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 	private boolean checkInstatiateCondition(Gateway node) {
 		boolean hasStartEvent = false;
 		
-		for(FlowElement flowElement : node.getProcessRef().getFlowElement()) {
+		for(FlowElement flowElement : node.getProcess().getFlowElement()) {
 			if(flowElement instanceof StartEvent)
 				hasStartEvent = true;
 		}

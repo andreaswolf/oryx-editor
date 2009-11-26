@@ -21,27 +21,30 @@
  * SOFTWARE.
  */
 
-package de.hpi.bpmn2_0.model.gateway;
+package de.hpi.bpmn2_0.model.diagram;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-import de.hpi.bpmn2_0.model.FlowNode;
+import de.hpi.bpmn2_0.model.FlowElement;
+import de.hpi.bpmn2_0.model.data_object.ITSystem;
 
 
 /**
- * <p>Java class for tGateway complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tGateway">
+ * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;extension base="{http://www.omg.org/bpmn20}tFlowNode">
- *       &lt;attribute name="gatewayDirection" type="{http://www.omg.org/bpmn20}tGatewayDirection" default="unspecified" />
+ *     &lt;extension base="{http://bpmndi.org}bpmnNodeType">
+ *       &lt;attribute name="dataStoreRef" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
  *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -49,49 +52,45 @@ import de.hpi.bpmn2_0.model.FlowNode;
  * 
  * 
  */
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "tGateway")
-@XmlSeeAlso({
-//    TComplexGateway.class,
-//    TInclusiveGateway.class,
-//    TEventBasedGateway.class,
-    ParallelGateway.class,
-    ExclusiveGateway.class
-})
-public class Gateway
-    extends FlowNode
+@XmlType(name = "")
+public class ITSystemShape
+    extends BpmnNode
 {
 
     @XmlAttribute
-    protected GatewayDirection gatewayDirection;
-    
-    
+    @XmlIDREF
+    @XmlSchemaType(name = "IDREF")
+    protected ITSystem itSystemRef;
+
     /**
-     * Gets the value of the gatewayDirection property.
+     * Gets the value of the dataStoreRef property.
      * 
      * @return
      *     possible object is
-     *     {@link GatewayDirection }
+     *     {@link Object }
      *     
      */
-    public GatewayDirection getGatewayDirection() {
-    	if (gatewayDirection == null) {
-            return GatewayDirection.UNSPECIFIED;
-        } else {
-            return gatewayDirection;
-        }
+    public ITSystem getITSystemRef() {
+        return itSystemRef;
     }
 
     /**
-     * Sets the value of the gatewayDirection property.
+     * Sets the value of the dataStoreRef property.
      * 
      * @param value
      *     allowed object is
-     *     {@link GatewayDirection }
+     *     {@link Object }
      *     
      */
-    public void setGatewayDirection(GatewayDirection value) {
-        this.gatewayDirection = value;
+    public void setITSystemRef(ITSystem value) {
+        this.itSystemRef = value;
     }
+
+	@Override
+	protected FlowElement getFlowElement() {
+		return this.getITSystemRef();
+	}
 
 }

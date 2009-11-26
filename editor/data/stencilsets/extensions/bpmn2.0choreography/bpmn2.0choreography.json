@@ -34,6 +34,20 @@
 					"refToView":"text_name"	
 				},
 				{
+					"id":"documentation",
+					"type":"Text",
+					"title":"Documentation",
+					"title_de":"Dokumentation",
+					"value":"",
+					"description":"This attribute is used to annotate the BPMN element, such as descriptions and other documentation.",
+					"description_de":"Der Modellierer kann weiteren Text zur Dokumentation des BPMN-Elementes einfügen.",
+					"readonly":false,
+					"optional":true,
+					"length":"",
+					"wrapLines":true,
+					"popular":true
+				},
+				{
 					"id":"loopType",
 					"type":"Choice",
 					"title":"LoopType",
@@ -138,6 +152,20 @@
 					"refToView":"text_name"	
 				},
 				{
+					"id":"documentation",
+					"type":"Text",
+					"title":"Documentation",
+					"title_de":"Dokumentation",
+					"value":"",
+					"description":"This attribute is used to annotate the BPMN element, such as descriptions and other documentation.",
+					"description_de":"Der Modellierer kann weiteren Text zur Dokumentation des BPMN-Elementes einfügen.",
+					"readonly":false,
+					"optional":true,
+					"length":"",
+					"wrapLines":true,
+					"popular":true
+				},
+				{
 					"id":"loopType",
 					"type":"Choice",
 					"title":"LoopType",
@@ -157,6 +185,7 @@
 							"id":"c2",
 							"title":"Standard",
 							"value":"Standard",
+							"icon" : "list/looptype.standard.png",
 							"refToView":"loop"
 						},
 						{
@@ -190,6 +219,16 @@
 					"refToView": "bg_frame",
 					"fill":true,
 					"stroke":false
+				},
+				{
+					"id":"entry",
+					"type":"DiagramLink",
+					"title":"SubProcessRef",
+					"title_de":"SubprozessRef",
+					"value":"",
+					"description":"",
+					"readonly":false,
+					"optional":false,
 				},
 				{
 					"id" : "messageFlow",
@@ -242,6 +281,20 @@
 					"refToView":"text_name"	
 				},
 				{
+					"id":"documentation",
+					"type":"Text",
+					"title":"Documentation",
+					"title_de":"Dokumentation",
+					"value":"",
+					"description":"This attribute is used to annotate the BPMN element, such as descriptions and other documentation.",
+					"description_de":"Der Modellierer kann weiteren Text zur Dokumentation des BPMN-Elementes einfügen.",
+					"readonly":false,
+					"optional":true,
+					"length":"",
+					"wrapLines":true,
+					"popular":true
+				},
+				{
 					"id":"loopType",
 					"type":"Choice",
 					"title":"LoopType",
@@ -261,12 +314,14 @@
 							"id":"c2",
 							"title":"Standard",
 							"value":"Standard",
+							"icon" : "list/looptype.standard.png",
 							"refToView":"loop"
 						},
 						{
 							"id":"c3",
 							"title":"MultiInstance",
 							"value":"MultiInstance",
+							"icon" : "list/mi.parallel.png",
 							"refToView":"mi"
 						}
 					]
@@ -340,6 +395,20 @@
 					"length":"",
 					"wrapLines" : false,
 					"refToView":"text_name"	
+				},
+				{
+					"id":"documentation",
+					"type":"Text",
+					"title":"Documentation",
+					"title_de":"Dokumentation",
+					"value":"",
+					"description":"This attribute is used to annotate the BPMN element, such as descriptions and other documentation.",
+					"description_de":"Der Modellierer kann weiteren Text zur Dokumentation des BPMN-Elementes einfügen.",
+					"readonly":false,
+					"optional":true,
+					"length":"",
+					"wrapLines":true,
+					"popular":true
 				},
 				{
 					"id" : "initiating",

@@ -120,7 +120,7 @@ public class Diagram2BpmnConverter {
 
 	/* Define data related objects ids */
 	private final static String[] dataObjectIdsArray = { "DataObject",
-			"DataStore", "Message" };
+			"DataStore", "Message", "ITSystem" };
 
 	public final static HashSet<String> dataObjectIds = new HashSet<String>(
 			Arrays.asList(dataObjectIdsArray));
@@ -548,6 +548,13 @@ public class Diagram2BpmnConverter {
 		}
 
 		this.addSequenceFlowsToProcess();
+		
+		/* Set processRefs */
+		for(Process p : this.processes) {
+			for(FlowElement el : p.getFlowElement()) {
+				el.setProcess(p);
+			}
+		}
 	}
 
 	/**

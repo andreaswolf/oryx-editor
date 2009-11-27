@@ -19,7 +19,6 @@ import de.hpi.bpmn2_0.model.connector.Edge;
 import de.hpi.bpmn2_0.model.connector.MessageFlow;
 import de.hpi.bpmn2_0.model.connector.SequenceFlow;
 import de.hpi.bpmn2_0.model.conversation.Conversation;
-import de.hpi.bpmn2_0.model.conversation.ConversationLink;
 import de.hpi.bpmn2_0.model.data_object.DataInput;
 import de.hpi.bpmn2_0.model.data_object.DataOutput;
 import de.hpi.bpmn2_0.model.data_object.Message;
@@ -37,6 +36,7 @@ import de.hpi.bpmn2_0.model.gateway.EventBasedGateway;
 import de.hpi.bpmn2_0.model.gateway.Gateway;
 import de.hpi.bpmn2_0.model.gateway.GatewayDirection;
 import de.hpi.bpmn2_0.model.participant.Lane;
+import de.hpi.bpmn2_0.model.participant.Participant;
 import de.hpi.diagram.verification.AbstractSyntaxChecker;
 
 /**
@@ -89,6 +89,7 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 	protected static final String EVENT_BASED_WRONG_TRIGGER = "BPMN2_EVENT_BASED_WRONG_TRIGGER";
 	protected static final String EVENT_BASED_WRONG_CONDITION_EXPRESSION = "BPMN2_EVENT_BASED_WRONG_CONDITION_EXPRESSION";
 	protected static final String EVENT_BASED_NOT_INSTANTIATING = "BPMN2_EVENT_BASED_NOT_INSTANTIATING";
+	protected static final String EVENT_BASED_WITH_TOO_LESS_INCOMING_SEQUENCE_FLOWS = "BPMN2_EVENT_BASED_WITH_TOO_LESS_INCOMING_SEQUENCE_FLOWS";
 	protected static final String RECEIVE_TASK_WITH_ATTACHED_EVENT = "BPMN2_RECEIVE_TASK_WITH_ATTACHED_EVENT";
 	
 	protected static final String GATEWAYDIRECTION_MIXED_FAILURE = "BPMN2_GATEWAYDIRECTION_MIXED_FAILURE";
@@ -100,6 +101,8 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 	
 	// CHOREOGRAPHY
 	protected static final String TOO_MANY_INITIATING_MESSAGES = "BPMN2_TOO_MANY_INITIATING_MESSAGES";
+	protected static final String TOO_MANY_INITIATING_PARTICIPANTS = "BPMN2_TOO_MANY_INITIATING_PARTICIPANTS";
+	protected static final String TOO_FEW_INITIATING_PARTICIPANTS = "BPMN2_TOO_FEW_INITIATING_PARTICIPANTS";
 	
 	private Definitions defs;
 		
@@ -133,10 +136,10 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 				
 			} else if(edge.getTargetRef() == null) {
 				this.addError(edge, NO_TARGET);
+			
 			} else {
 			
-				if(edge instanceof MessageFlow) {
-			
+				if(edge instanceof MessageFlow) {			
 				
 					if(!(edge.getSourceRef() == null || edge.getTargetRef() == null)) 
 						this.addError(edge, MESSAGE_FLOW_NOT_CONNECTED);
@@ -151,13 +154,11 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 					if(edge.getSourceRef() instanceof Lane || edge.getTargetRef() instanceof Lane)
 						this.addError(edge, MESSAGE_FLOW_NOT_ALLOWED);					
 					
-				} else {
-					
-					if(edge instanceof SequenceFlow) {
+				} else if(edge instanceof SequenceFlow) {
 						
-						if(edge.getSourceRef().getProcess() != edge.getTargetRef().getProcess()) 
-							this.addError(edge, DIFFERENT_PROCESS);						
-					}
+					if(edge.getSourceRef().getProcess() != edge.getTargetRef().getProcess()) 
+						this.addError(edge, DIFFERENT_PROCESS);						
+					
 				}
 			}
 		}
@@ -195,22 +196,9 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 				
 			} else if(rootElement instanceof Conversation) {
 				
-				//TODO: If the Fork is somehow accessible then check it!
+				(new BPMN2ConversationChecker(this)).checkConversation((Conversation)rootElement);
 				
-				for(ConversationLink conversationLink : ((Conversation) rootElement).getConversationLink()) {
-					this.checkConversationLink(conversationLink);
-				}
 			}
-		}
-	}
-	
-	private void checkConversationLink(ConversationLink conversationLink) {
-		if(conversationLink.getSourceRef() == null) {
-			this.addError(conversationLink, NO_SOURCE);
-		}
-		
-		if(conversationLink.getTargetRef() == null) {
-			this.addError(conversationLink, NO_TARGET);
 		}
 	}
 
@@ -218,50 +206,45 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 		this.checkNode(flowElement);
 		
 		if(flowElement instanceof ChoreographyActivity) {
-			this.checkForInitiatingMessages(flowElement);
+			Integer instantiationMessageCounter = this.checkForInitiatingMessages((ChoreographyActivity) flowElement);			
+			Integer instantiatingCounter = 0;
+						
+			for(Participant participant : ((ChoreographyActivity) flowElement).getParticipants()) {
+				if(participant.isInitiating()) {
+					instantiatingCounter++;
+					
+					if(instantiatingCounter > 1) 
+						this.addError(participant, TOO_MANY_INITIATING_PARTICIPANTS);
+				}
+				
+				instantiationMessageCounter += this.checkForInitiatingMessages(participant);
+			}
+			
+			if(instantiatingCounter == 0) 
+				this.addError(flowElement, TOO_FEW_INITIATING_PARTICIPANTS);
+			
+			if(instantiationMessageCounter > 1) 
+				this.addError(flowElement, TOO_MANY_INITIATING_MESSAGES);
 		}
 		
 	}
 
-	private void checkForInitiatingMessages(FlowElement flowElement) {
+	private Integer checkForInitiatingMessages(FlowElement flowElement) {
 		Integer initiatingCounter = 0;
 		
 		// Check outgoing edges
-		for(Edge outgoing : ((ChoreographyActivity) flowElement).getOutgoing()) {
-			
-			if(outgoing.getTargetRef() instanceof Message) {
-				
-				if(((Message) outgoing.getTargetRef()).isInitiating()) {
-					initiatingCounter++;
-					
-					if(initiatingCounter > 1) {
-						this.addError(outgoing.getTargetRef(), TOO_MANY_INITIATING_MESSAGES);
-					}
-				}
-				
-			}
-			
-		}
+		for(Edge outgoing : flowElement.getOutgoing())			
+			if(outgoing.getTargetRef() instanceof Message) 				
+				if(((Message) outgoing.getTargetRef()).isInitiating()) 
+					initiatingCounter++;				
 		
 		// Check incoming edges
-		for(Edge incoming : ((ChoreographyActivity) flowElement).getIncoming()) {
-			
-			if(incoming.getSourceRef() instanceof Message) {
-				
-				if(((Message) incoming.getSourceRef()).isInitiating()) {
+		for(Edge incoming : flowElement.getIncoming()) 			
+			if(incoming.getSourceRef() instanceof Message) 				
+				if(((Message) incoming.getSourceRef()).isInitiating())
 					initiatingCounter++;
-					
-					if(initiatingCounter > 1) {
-						this.addError(incoming.getSourceRef(), TOO_MANY_INITIATING_MESSAGES);
-					}
-				}
-				
-			}
-			
-		}
-		
-		// TODO: checkEdges of Participants
-		
+							
+		return initiatingCounter;
 		
 	}
 
@@ -402,6 +385,9 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 			// SPEC: P. 309
 			this.addError(node, EVENT_BASED_NOT_INSTANTIATING);				
 		
+		if(!node.isInstantiate() && node.getIncomingSequenceFlows().size() == 0)
+			this.addError(node, EVENT_BASED_WITH_TOO_LESS_INCOMING_SEQUENCE_FLOWS);
+		
 		for(SequenceFlow edge : outEdges) {
 			
 			/*
@@ -482,9 +468,11 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 //		return containedInClasses == allowed;
 //	}
 	
-	private boolean checkInstatiateCondition(Gateway node) {
-		boolean hasStartEvent = false;
+	private boolean checkInstatiateCondition(EventBasedGateway node) {
 		
+		boolean hasStartEvent = false;
+					
+			
 		for(FlowElement flowElement : node.getProcess().getFlowElement()) {
 			if(flowElement instanceof StartEvent)
 				hasStartEvent = true;
@@ -505,8 +493,9 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 		 */
 		if(node.getIncomingSequenceFlows().size() == 1) {
 			for(SequenceFlow sf : node.getIncomingSequenceFlows()) {
-				if(!(sf.getSourceRef() instanceof StartEvent))
+				if(sf.getSourceRef() instanceof StartEvent) {
 					return true;
+				}
 			}
 		}
 			

@@ -9,8 +9,8 @@ import de.hpi.bpmn2_0.model.FlowNode;
 import de.hpi.bpmn2_0.model.Process;
 import de.hpi.bpmn2_0.model.RootElement;
 import de.hpi.bpmn2_0.model.activity.Activity;
-import de.hpi.bpmn2_0.model.activity.ReceiveTask;
 import de.hpi.bpmn2_0.model.activity.SubProcess;
+import de.hpi.bpmn2_0.model.activity.type.ReceiveTask;
 import de.hpi.bpmn2_0.model.choreography.Choreography;
 import de.hpi.bpmn2_0.model.choreography.ChoreographyActivity;
 import de.hpi.bpmn2_0.model.connector.DataInputAssociation;
@@ -140,13 +140,10 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 			} else {
 			
 				if(edge instanceof MessageFlow) {			
-				
-					if(!(edge.getSourceRef() == null || edge.getTargetRef() == null)) 
-						this.addError(edge, MESSAGE_FLOW_NOT_CONNECTED);
-									
-					if(edge.getSourceRef().getPool() == edge.getTargetRef().getPool())	
+													
+					if(edge.getSourceRef().getProcess() == edge.getTargetRef().getProcess())	
 						this.addError(edge, SAME_PROCESS);
-					
+										
 					if(edge.getSourceRef().getPool() == edge.getTargetRef().getPool() &&
 							edge.getSourceRef().getLane() != edge.getTargetRef().getLane()) 
 						this.addError(edge, MESSAGE_FLOW_NOT_ALLOWED);
@@ -489,7 +486,7 @@ public class BPMN2SyntaxChecker extends AbstractSyntaxChecker {
 		
 		/*
 		 * the gateway has an incoming sequence flow but its
-		 * source is no start event
+		 * source is a none start event
 		 */
 		if(node.getIncomingSequenceFlows().size() == 1) {
 			for(SequenceFlow sf : node.getIncomingSequenceFlows()) {

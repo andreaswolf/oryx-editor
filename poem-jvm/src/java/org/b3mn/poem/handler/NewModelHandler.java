@@ -26,11 +26,14 @@ package org.b3mn.poem.handler;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.b3mn.poem.Identity;
+import org.b3mn.poem.Representation;
 import org.b3mn.poem.util.HandlerWithoutModelContext;
 
 @HandlerWithoutModelContext(uri="/new")
@@ -40,8 +43,18 @@ public class NewModelHandler extends HandlerBase {
 	@Override
     public void doGet(HttpServletRequest request, HttpServletResponse response, Identity subject, Identity object) throws IOException {
 		String stencilset = "/stencilsets/bpmn/bpmn.json";
+		boolean stencilSetSpefified=false;
 		if (request.getParameter("stencilset") != null) {
 			stencilset = request.getParameter("stencilset");
+			stencilSetSpefified=true;
+		}
+		if(request.getParameter("profile")!=null){
+			if(stencilSetSpefified)
+				response.sendRedirect("/oryx/editor;"+request.getParameter("profile")+"#new?stencilset="+stencilset);
+			else
+				response.sendRedirect("/oryx/editor;"+request.getParameter("profile")+"#new");
+			return;
+
 		}
 		if(props==null){
 			try {
@@ -53,16 +66,22 @@ public class NewModelHandler extends HandlerBase {
 				// TODO Auto-generated catch block
 			}
 		}
-		String profile=null;
-		if(props!=null){
-			profile=(String) props.getProperty(configPreFix+stencilset);
+		
+		String profileName=null;
+		try {
+			Pattern p = Pattern.compile("/([^/]+).json");
+			Matcher matcher = p.matcher(stencilset);
+			if(matcher.find()){
+				profileName=props.getProperty("org.b3mn.poem.handler.ModelHandler.profileFor."+matcher.group(1));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 		}
-		if(profile==null){
-		response.sendRedirect("/oryx/editor#new?stencilset="+stencilset);}
-		else{
-			response.sendRedirect("/oryx/editor;"+profile+"#new?stencilset="+stencilset);
+		if(profileName==null)
+			profileName="default";
+		
+		response.sendRedirect("/oryx/editor;"+profileName+"#new?stencilset="+stencilset);
 
-		}
 //		String content = 
 //	        "<script type='text/javascript'>" +
 //              "function onOryxResourcesLoaded(){" +

@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URLDecoder;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -132,9 +133,9 @@ public class Representation {
 //		}
     	String content = getPureContent();
     	if(isJson(content)){
-    		return content;
+    		return checkForWrongUri(content);
     	} else {  			
-    		return erdfToJson(content, serverUrl);
+    		return checkForWrongUri(erdfToJson(content, serverUrl));
     	}
     }
     
@@ -366,7 +367,7 @@ public class Representation {
 		DocumentBuilder builder;
 		try {
 			builder = factory.newDocumentBuilder();
-			Document rdfDoc = builder.parse(new ByteArrayInputStream(erdfToRdf(erdf).getBytes()));
+			Document rdfDoc = builder.parse(new ByteArrayInputStream(erdfToRdf(erdf).getBytes(("UTF-8"))));
 			return RdfJsonTransformation.toJson(rdfDoc, serverUrl).toString();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
@@ -380,6 +381,11 @@ public class Representation {
 		return null;
 	}
 	
+	private static String checkForWrongUri(String json) {
+		//replace old bpmn uris
+		return json.replaceAll("http://[^/^\"]*/oryx/stencilsets/", "/oryx/stencilsets/");
+	}
+
 	protected static String jsonToErdf(String json){
 		return new JsonErdfTransformation(json).toString();
 	}
@@ -394,7 +400,7 @@ public class Representation {
     	    Writer writer=new FileWriter("C:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps/json/"+count+".json");
 
         	if(isJson(content)){
-        		//content;
+        		
         	} else {  		
         		content=erdfToJson(content, serverUrl);
 

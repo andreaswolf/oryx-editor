@@ -6,6 +6,7 @@
 
 package org.b3mn.poem.util;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -145,12 +146,20 @@ public class RdfJsonTransformation {
 							properties.put(child.getNodeName(), jsonObj);
 						} catch (JSONException e) {
 							// non-JSON content
-							properties.put(child.getNodeName(), content);
+							try {
+								properties.put(child.getNodeName(), URLDecoder.decode(content));
+							} catch (Exception z) {
+								properties.put(child.getNodeName(), content);
+							} 
+							
 						}
 					}
 				} else {
 					handleReservedNodeName(child, object);
 				}
+			}
+			if(object.has("target") && !object.getJSONObject("target").has("resourceId") && object.has("outgoing")){
+				object.put("target", object.getJSONArray("outgoing").get(0));
 			}
 		}
 	}

@@ -366,6 +366,14 @@
 	</servlet>
 	
 	<servlet>
+		<display-name>BPMN 2 XPDL Exporter</display-name>
+		<servlet-name>Bpmn2_0ToXpdlServlet</servlet-name>
+		<servlet-class>
+			org.oryxeditor.server.Bpmn2_0ToXpdlServlet
+		</servlet-class>
+	</servlet>
+	
+	<servlet>
 		<display-name>BPMN 2 Importer</display-name>
 		<servlet-name>Bpmn2_0Importer</servlet-name>
 		<servlet-class>
@@ -603,6 +611,11 @@
 	</servlet-mapping>
 	
 	<servlet-mapping>
+		<servlet-name>Bpmn2_0ToXpdlServlet</servlet-name>
+		<url-pattern>/bpmn2xpdlserialization</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
 		<servlet-name>Bpmn2_0Importer</servlet-name>
 		<url-pattern>/bpmn2_0deserialization</url-pattern>
 	</servlet-mapping>
@@ -733,4 +746,13 @@
         <description>Recipient for feedback servlet</description>
         <param-name>FEEDBACK_RECIPIENT_EMAIL</param-name><param-value>mymail@googlemail.com</param-value>
     </context-param>
+   <!--  
+    <context-param>
+    	<description>Analytics Snippet</description>
+    	<param-name>ANALYTICS_SNIPPET</param-name>
+    	<param-value><![CDATA[
+		  ... 	
+    	]]></param-value>
+    </context-param>
+    -->
 </web-app>

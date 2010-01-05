@@ -24,12 +24,12 @@
 package org.oryxeditor.server;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -91,28 +91,28 @@ public class EditorHandler extends HttpServlet {
 		extString=exts.toString();
 		String content = 
 	        "<script type='text/javascript'>" +
-	        "if(!ORYX) var ORYX = {};" +
-	        "if(!ORYX.CONFIG) ORYX.CONFIG = {};" +
-	        "ORYX.CONFIG.PLUGINS_CONFIG  =			ORYX.CONFIG.PROFILE_PATH + '"+profiles.get(0)+".xml';" +
-	        "ORYX.CONFIG.SSEXTS="+
-	        extString+
-	        ";"+
-
-	        "function onOryxResourcesLoaded(){" +
-                "if (location.hash.slice(1).length == 0 || location.hash.slice(1).indexOf('new')!=-1){" +
-                "var stencilset=ORYX.Utils.getParamFromUrl('stencilset')?ORYX.Utils.getParamFromUrl('stencilset'):'"+sset+"';"+
-                "new ORYX.Editor({"+
-                  "id: 'oryx-canvas123',"+
-                  "stencilset: {"+
-                  	"url: '"+oryx_path+"'+stencilset" +
-                  "}" +
-          		"})}"+
-                "else{" +
-                "ORYX.Editor.createByUrl('" + getRelativeServerPath(request) + "'+location.hash.slice(1)+'/json', {"+
-                  "id: 'oryx-canvas123'" +
-          		"});" +
-          	  "};" +
-          	  "}" +
+	        "  if(!ORYX) var ORYX = {};\n" +
+	        "  if(!ORYX.CONFIG) ORYX.CONFIG = {};\n" +
+	        "  ORYX.CONFIG.PLUGINS_CONFIG = ORYX.CONFIG.PROFILE_PATH + '"+profiles.get(0)+".xml';\n" +
+	        "  ORYX.CONFIG.PROFILE_CONFIG = ORYX.CONFIG.PROFILE_PATH + '"+profiles.get(0)+".conf';\n" +
+	        "  ORYX.CONFIG.PROFILE_NAME = '"+profiles.get(0)+"';\n" +
+	        "  ORYX.CONFIG.SSET='"+sset+"';\n"+ // sets the default stencil set depending on profile
+	        "  ORYX.CONFIG.SSEXTS="+extString+";\n"+
+	        "  if ('function' != typeof(onOryxResourcesLoaded)) {\n" +
+	        "		window.onOryxResourcesLoaded = function() {" +
+	        "			if (!(location.hash.slice(1).length == 0 || location.hash.slice(1).indexOf('new')!=-1)) {" +
+	        "				Ext.Msg.alert(ORYX.I18N.Oryx.title, ORYX.I18N.Oryx.noBackendDefined);\n" +
+	        "			}" +
+	        "			var stencilset = ORYX.Utils.getParamFromUrl('stencilset') || ORYX.CONFIG.SSET;" +
+	        "			new ORYX.Editor({" +
+	        "				id: 'oryx-canvas123'," +
+	        "				stencilset: {" +
+	        "					url: \"/oryx/\" + stencilset" +
+	        "				}" +
+	        "			});" +
+	        "  };\n" +
+	        "  ORYX.Log.warn('Not Implemented: onOryxResourcesLoaded OR body-script loaded before plugins');\n" +
+	        "  }" +
           	"</script>";
 		response.setContentType("application/xhtml+xml");
 		
@@ -147,6 +147,14 @@ public class EditorHandler extends HttpServlet {
       	  	profileFiles=profileFiles+ "<script src=\"" + oryx_path+"profiles/" + profile+".js\" type=\"text/javascript\" />\n";
 
     	}
+    	
+    	String analytics = getServletContext().getInitParameter("ANALYTICS_SNIPPET");
+    	if (null == analytics) {
+    		analytics = "";
+    	}
+    	
+    	
+    	
       	return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
       	    + "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
       	  	+ "<html xmlns=\"http://www.w3.org/1999/xhtml\"\n"
@@ -172,7 +180,7 @@ public class EditorHandler extends HttpServlet {
       	  	+ "<!-- language files -->\n"
       	  	+ "<script src=\"" + oryx_path + "i18n/translation_en_us.js\" type=\"text/javascript\" />\n"      	  	
       	  	+ languageFiles
-//TODO Handle different profiles
+      	  	// Handle different profiles
       	  	+ "<script src=\"" + oryx_path + "profiles/oryx.core.js\" type=\"text/javascript\" />\n"
       	  	+ profileFiles
       	  	+ headExtentions
@@ -185,12 +193,18 @@ public class EditorHandler extends HttpServlet {
       	  	+ "<link rel=\"schema.b3mn\" href=\"http://b3mn.org\" />\n"
       	  	+ "<link rel=\"schema.oryx\" href=\"http://oryx-editor.org/\" />\n"
       	  	+ "<link rel=\"schema.raziel\" href=\"http://raziel.org/\" />\n"
+      	  	
+      	    + content
+      	  	
       	  	+ "</head>\n"
       	  	
       	  	+ "<body style=\"overflow:hidden;\"><div class='processdata' style='display:none'>\n"
-      	  	+ content
+      	  	
       	  	+ "\n"
       	  	+ "</div>\n"
+      	  	
+      	  	+ analytics
+
       	  	+ "</body>\n"
       	  	+ "</html>";
     }

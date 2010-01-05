@@ -1030,7 +1030,7 @@
 					"type":"Choice",
 					"title":"Implementation",
 					"title_de":"Implementierung",
-					"value":"Webservice",
+					"value":"webService",
 					"description":"",
 					"readonly":false,
 					"optional":false,
@@ -1038,21 +1038,80 @@
 					"items": [
 						{
 							"id":"c1",
-							"title":"Webservice",
-							"value":"Webservice",
+							"title":"HumanTaskWebService",
+							"value":"humanTaskWebService",
+							"refToView":""
+						},
+						{
+							"id":"c1",
+							"title":"WebService",
+							"value":"webService",
 							"refToView":""
 						},
 						{
 							"id":"c2",
 							"title":"Other",
-							"value":"Other",
+							"value":"other",
 							"refToView":""
 						},
 						{
 							"id":"c2",
 							"title":"Unspecified",
-							"value":"Unspecified",
+							"value":"unspecified",
 							"refToView":""
+						}
+					]
+				},
+				{
+					"id":"resources",
+					"type":"Complex",
+					"title":"Resources",
+					"title_de":"Ressourcen",
+					"value":"",
+					"description":"",
+					"readonly":false,
+					"optional":true,
+					"complexItems": [
+						{
+							"id":"resource_type",
+							"name":"Type",
+							"name_de":"Typ",
+							"type":"Choice",
+							"value":"",
+							"width":100,
+							"optional":false,
+							"items": [
+								{
+									"id":"c1",
+									"title":"Performer",
+									"title_de":"Performer",
+									"value":"performer",
+									"refToView":""
+								},
+								{
+									"id":"c2",
+									"title":"HumanPerformer",
+									"title_de":"HumanPerformer",
+									"value":"humanPerformer",
+									"refToView":""
+								},
+								{
+									"id":"c3",
+									"title":"PotentialOwner",
+									"title_de":"PotentialOwner",
+									"value":"potentialOwner",
+									"refToView":""
+								}
+							]
+						},
+						{
+							"id":"resource",
+							"name":"Resource",
+							"name_de":"Ressource",
+							"type":"String",
+							"value":"",
+							"width":200,
+							"optional":true
 						}
 					]
 				},
@@ -1114,18 +1173,25 @@
 					"optional":false,
 					"refToView":""
 				},
-				
 				{
 					"id":"script",
-					"type":"String",
+					"type":"Text",
 					"title":"Script",
 					"title_de":"Skript",
 					"value":"",
-					"description":"",
+					"description":"Script that can be run when the Task is performed. Related to the Script TaskType, if a script is not included, then the Task will act equivalent to a TaskType of None.",
 					"readonly":false,
-					"optional":true,
-					"refToView":"",
-					"length":"50"
+					"optional":true
+				},
+				{
+					"id":"script_language",
+					"type":"String",
+					"title":"ScriptLanguage",
+					"title_de":"Skript Sprache",
+					"value":"",
+					"description":"Defines the script language. The script language MUST be provided if a script is provided.",
+					"readonly":false,
+					"optional":true
 				},
 				{
 					"id":"bgcolor",
@@ -1753,7 +1819,8 @@
 			"title":			"BPMN-Diagram",
 			"title_de":			"BPMN-Diagramm",
 			"groups":			["Diagram"],
-			"description":		"A BPMN Diagram.",
+			"description":		"A BPMN 2.0 Diagram.",
+			"description_de":	"Ein BPMN 2.0 Diagramm",
 			"view":				"diagram.svg",
 			"icon":				"diagram.png",
 			"mayBeRoot":		true,
@@ -4682,7 +4749,8 @@
 			"icon":"connector/association.unidirectional.png",
 			"roles": [
 				"all",
-				"ConnectingObjectsMorph"
+				"ConnectingObjectsMorph",
+				"Directed_Association"
 			]
 		},
 		{
@@ -4698,7 +4766,8 @@
 			"icon":"connector/association.bidirectional.png",
 			"roles": [
 				"all",
-				"ConnectingObjectsMorph"
+				"ConnectingObjectsMorph",
+				"Directed_Association"
 			]
 		}	
 	],
@@ -4808,7 +4877,7 @@
 				]
 			},
 			{
-				"role" : "Association_Unidirectional",
+				"role" : "Directed_Association",
 				"connects" : [
 					{
 						"from" : "from_task_event",
@@ -4911,7 +4980,8 @@
 					"Lane",
 					"sequence_start",
 					"sequence_end",
-					"DataObjectMorph"
+					"DataObjectMorph",
+					"TextAnnotationMorph"
 				]
 			},
 			{
@@ -4986,6 +5056,10 @@
 			{
 				"role": "ChoreographyMorph",
 				"baseMorphs": ["ChoreographyTask"]
+			},
+			{
+				"role": "AssociationMorph",
+				"baseMorphs": [""]
 			}
 		],
 		"layoutRules" : [

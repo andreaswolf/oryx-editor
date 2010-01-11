@@ -4831,7 +4831,6 @@
 		"cardinalityRules": [
 			{
 				"role":"Startevents_all",
-				"maximumOccurrence": undefined,
 				"incomingEdges": [
 					{
 						"role":"SequenceFlow",
@@ -4842,7 +4841,6 @@
 			},
 			{
 				"role":"Endevents_all",
-				"maximumOccurrence":undefined,
 				"outgoingEdges": [
 					{
 						"role":"SequenceFlow",

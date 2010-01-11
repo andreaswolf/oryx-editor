@@ -38,6 +38,8 @@ new function(){
 		 */
 		layouted : [	"http://b3mn.org/stencilset/bpmn1.1#SequenceFlow", 
 						"http://b3mn.org/stencilset/bpmn1.1#MessageFlow",
+						"http://b3mn.org/stencilset/timjpdl3#SequenceFlow", 
+						"http://b3mn.org/stencilset/jbpm4#SequenceFlow", 
 						"http://b3mn.org/stencilset/bpmn2.0#MessageFlow",
 						"http://b3mn.org/stencilset/bpmn2.0#SequenceFlow", 
 						"http://b3mn.org/stencilset/bpmn2.0conversation#ConversationLink",

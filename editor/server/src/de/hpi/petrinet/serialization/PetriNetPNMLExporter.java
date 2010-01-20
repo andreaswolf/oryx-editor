@@ -97,9 +97,18 @@ public class PetriNetPNMLExporter {
 		pnode.setAttribute("id", place.getId());
 		
 		// If initial marking needed
-		if(net.getInitialMarking().getNumTokens(place) > 0){
+		if (net.getInitialMarking().getNumTokens(place) > 0){
 			Node markingNode = pnode.appendChild(doc.createElement("initialMarking"));
 			addContentElement(doc, markingNode, "text", String.valueOf(net.getInitialMarking().getNumTokens(place)));
+		}
+		
+		String label = place.getLabel();
+		if (null != label && !label.isEmpty()) {
+			Node n1node = pnode.appendChild(doc.createElement("name"));
+//			if(targetTool != Tool.YASPER){
+//				addContentElement(doc, n1node, "value", label);
+//			}
+			addContentElement(doc, n1node, "text", label);
 		}
 		
 		return pnode;
@@ -110,9 +119,9 @@ public class PetriNetPNMLExporter {
 		tnode.setAttribute("id", transition.getId());
 		if (transition instanceof LabeledTransition) {
 			Node n1node = tnode.appendChild(doc.createElement("name"));
-			if(targetTool != Tool.YASPER){
-				addContentElement(doc, n1node, "value", ((LabeledTransition)transition).getLabel());
-			}
+//			if(targetTool != Tool.YASPER){
+//				addContentElement(doc, n1node, "value", ((LabeledTransition)transition).getLabel());
+//			}
 			addContentElement(doc, n1node, "text", ((LabeledTransition)transition).getLabel());
 		}
 		return tnode;
@@ -139,12 +148,25 @@ public class PetriNetPNMLExporter {
 			}
 		}
 		
-		Node insnode = fnode.appendChild(doc.createElement("inscription"));
 		
-		if(targetTool != Tool.YASPER){
-			addContentElement(doc, insnode, "value", "1");
+		
+		String label = rel.getLabel();
+		if (null != label && !label.isEmpty()) {
+			Node insnode = fnode.appendChild(doc.createElement("inscription"));
+//			if (targetTool != Tool.YASPER){
+//				addContentElement(doc, insnode, "value", label);
+//			}
+			addContentElement(doc, insnode, "text", label);
 		}
-		addContentElement(doc, insnode, "text", "1");
+		// TODO this was the default behavior independent of a set label
+		// why is this required
+//		else {
+//			Node insnode = fnode.appendChild(doc.createElement("inscription"));
+//			if (targetTool != Tool.YASPER){
+//				addContentElement(doc, insnode, "value", "1");
+//			}
+//			addContentElement(doc, insnode, "text", "1");
+//		}
 		
 		return fnode;
 	}

@@ -26,23 +26,21 @@ package de.hpi.bpmn2_0.model.data_object;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.namespace.QName;
+import javax.xml.bind.annotation.XmlType;
+
+import de.hpi.bpmn2_0.model.BaseElement;
 
 
 /**
- * <p>Java class for tDataStore complex type.
+ * <p>Java class for tDataState complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tDataStore">
+ * &lt;complexType name="tDataState">
  *   &lt;complexContent>
- *     &lt;extension base="{http://www.omg.org/bpmn20}tFlowElement">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.omg.org/bpmn20}dataState" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="itemSubjectRef" type="{http://www.w3.org/2001/XMLSchema}QName" />
+ *     &lt;extension base="{http://www.omg.org/bpmn20}tBaseElement">
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -50,65 +48,53 @@ import javax.xml.namespace.QName;
  * 
  * 
  */
-@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-//@XmlType(name = "tDataStore", propOrder = {
-//    "dataState"
-//})
-public class DataStore
-    extends AbstractDataObject
+@XmlType(name = "tDataState")
+public class DataState
+    extends BaseElement
 {
-
-//    protected TDataState dataState;
+	/**
+	 * Default constructor
+	 */
+	public DataState() {
+		
+	}
+	
+	/**
+	 * Constructor setting the name attribute.
+	 * 
+	 * @param name
+	 * 		The name of the DataState.
+	 */
+	public DataState(String name) {
+		this.setName(name);
+	}
+	
     @XmlAttribute
-    protected QName itemSubjectRef;
+    protected String name;
 
     /**
-     * Gets the value of the dataState property.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
-     *     {@link TDataState }
+     *     {@link String }
      *     
      */
-//    public TDataState getDataState() {
-//        return dataState;
-//    }
-
-    /**
-     * Sets the value of the dataState property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TDataState }
-     *     
-     */
-//    public void setDataState(TDataState value) {
-//        this.dataState = value;
-//    }
-
-    /**
-     * Gets the value of the itemSubjectRef property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link QName }
-     *     
-     */
-    public QName getItemSubjectRef() {
-        return itemSubjectRef;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets the value of the itemSubjectRef property.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
-     *     {@link QName }
+     *     {@link String }
      *     
      */
-    public void setItemSubjectRef(QName value) {
-        this.itemSubjectRef = value;
+    public void setName(String value) {
+        this.name = value;
     }
 
 }

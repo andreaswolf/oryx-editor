@@ -2636,8 +2636,6 @@
 				"all",
 				"messageflow_start",
 				"messageflow_end",
-				"to_task_event",
-				"from_task_event",
 				"fromtoall",
 				"canContainArtifacts"				
 			],
@@ -2678,11 +2676,34 @@
 				"all",
 				"messageflow_start",
 				"messageflow_end",
-				"to_task_event",
-				"from_task_event",
 				"fromtoall"				
 			]
 		},
+        {
+            "type" :            "node",
+            "id" :              "processparticipant",
+            "title" :           "Additional Participant",
+            "title_de" :        "Zusätzlicher Beteiligter",
+            "groups" :          ["Swimlanes"],
+            "groups_de" :       ["Rollen"],
+            "description" :     "",
+            "description_de" :  "",
+            "view" :            "swimlane/process.participant.svg",
+            "icon" :            "swimlane/process.participant.png",
+            "defaultAlign" :    "northeast",
+            "propertyPackages": [
+                "baseAttributes",
+                "flowElement",
+                "artifact",
+                "bgColor"
+            ],
+            "roles": [
+                "all",
+                "from_participant",
+                "to_participant",
+                "eventSubprocessElement"
+            ]
+        },
 		{
 			"type" : 			"node",
 			"id" :				"Lane",
@@ -2731,8 +2752,9 @@
 					"description":"",
 					"readonly":true,
 					"optional":false,
-					"refToView": ["caption", "captionDisableAntialiasing", "text_v"],
+					"refToView": ["caption", "captionDisableAntialiasing"],
 					"fill":true,
+					"visible":false,
 					"stroke":false,
 					"hidden":true
 				}
@@ -3776,7 +3798,16 @@
 				"IntermediateEventsMorph"
 			],
 			"properties": [
-				
+				{
+                    "id":"entry",
+                    "type":"DiagramLink",
+                    "title":"Diagram Link",
+                    "title_de":"Diagram Link",
+                    "value":"",
+                    "description":"",
+                    "readonly":false,
+                    "optional":false
+                },
 				{
 					"id":"trigger",
 					"type":"String",
@@ -4202,6 +4233,16 @@
 				"IntermediateEventsMorph"
 			],
 			"properties": [
+			     {
+                    "id":"entry",
+                    "type":"DiagramLink",
+                    "title":"Diagram Link",
+                    "title_de":"Diagram Link",
+                    "value":"",
+                    "description":"",
+                    "readonly":false,
+                    "optional":false
+                },
 				{
 					"id":"trigger",
 					"type":"String",
@@ -5021,6 +5062,14 @@
 					{
 						"from" : "TextAnnotation",
 						"to" : "ChoreographyElement"
+					},
+					{
+					   "from" : "from_task_event",
+					   "to" : ["to_participant"]
+					},
+					{
+					   "from" : "from_participant",
+					   "to" : ["to_task_event"]
 					}
 				]
 			}
@@ -5051,7 +5100,8 @@
 					"sequence_start",
 					"sequence_end",
 					"DataObjectMorph",
-					"TextAnnotationMorph"
+					"TextAnnotationMorph",
+					"from_participant"
 				]
 			},
 			{
@@ -5063,7 +5113,8 @@
 					"to_task_event",
 					"EventSubprocess",
 					"CollapsedEventSubprocess",
-					"TextAnnotation"
+					"TextAnnotation",
+					"from_participant"
 				]
 			},
 			{

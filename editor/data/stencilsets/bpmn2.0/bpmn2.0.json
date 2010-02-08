@@ -340,34 +340,6 @@
 					"optional":true,
 					"length":"50"
 				},
-				{	
-					"id":"namespaces",
-					"type":"Complex",
-					"title":"Namespaces",
-					"value":"",
-					"description":"Additional namespaces and theire prefixes used in the diagram., ",
-					"description_de":"Optionale Namespaces, die im Diagramm genutzt werden.",
-					"readonly":false,
-					"optional":true,
-					"complexItems": [
-						{
-							"id":"prefix",
-							"name":"Prefix",
-							"type":"String",
-							"value":"",
-							"width":100,
-							"optional":false 
-						},
-						{
-							"id":"url",
-							"name":"URL",
-							"type":"String",
-							"value":"",
-							"width":200,
-							"optional":false 
-						}
-					]
-				},
 				{
 					"id":"targetnamespace",
 					"type":"String",
@@ -385,7 +357,7 @@
 					"type":"String",
 					"title":"ExpressionLanguage",
 					"title_de":"Ausdruckssprache",
-					"value":"http://www.w3.org/1999/XPath",
+					"value":"",
 					"description":"A Language may be provided so that the syntax of expressions used in the Diagram can be understood.",
 					"description_de":"Sprache, mit welcher im Diagramm verwendete Ausdrücke beschrieben sind.",
 					"readonly":false,
@@ -393,13 +365,13 @@
 					"length":"50"
 				},
 				{
-					"id":"typelanguage",
+					"id":"querylanguage",
 					"type":"String",
-					"title":"TypeLanguage",
-					"title_de":"Typsprache",
-					"value":"http://www.w3.org/2001/XMLSchema",
-					"description":"This attribute identifies the type system used by the elements of this Definition.",
-					"description_de":"Definiert das Typsystem der Elemente dieses Diagramms.",
+					"title":"QueryLanguage",
+					"title_de":"Abfrage-Sprache",
+					"value":"",
+					"description":"A Language may be provided so that the syntax of queries used in the Diagram can be understood.",
+					"description_de":"Sprache, mit welcher im Diagramm verwendete Abfragen beschrieben sind.",
 					"readonly":false,
 					"optional":true,
 					"length":"50"
@@ -427,6 +399,17 @@
 					"readonly":false,
 					"optional":true,
 					"dateFormat":"j/m/y"
+				},
+				{
+					"id":"pools",
+					"type":"String",
+					"title":"Pools",
+					"value":"",
+					"description":"A Business Process Diagram shall contain one or more Pools.",
+					"readonly":false,
+					"optional":false,
+					"length":"50",
+					"wrapLines":true
 				}
 			]
 		},
@@ -1118,21 +1101,21 @@
 									"id":"c1",
 									"title":"Performer",
 									"title_de":"Performer",
-									"value":"Performer",
+									"value":"performer",
 									"refToView":""
 								},
 								{
 									"id":"c2",
 									"title":"HumanPerformer",
 									"title_de":"HumanPerformer",
-									"value":"HumanPerformer",
+									"value":"humanPerformer",
 									"refToView":""
 								},
 								{
 									"id":"c3",
 									"title":"PotentialOwner",
 									"title_de":"PotentialOwner",
-									"value":"PotentialOwner",
+									"value":"potentialOwner",
 									"refToView":""
 								}
 							]
@@ -1141,30 +1124,6 @@
 							"id":"resource",
 							"name":"Resource",
 							"name_de":"Ressource",
-							"type":"String",
-							"value":"",
-							"width":200,
-							"optional":true
-						},
-						{
-							"id":"resourceassignmentexpr",
-							"name":"ResourceAssignmentExpression",
-							"type":"String",
-							"value":"",
-							"width":200,
-							"optional":true
-						},
-						{
-							"id":"language",
-							"name":"Language",
-							"type":"String",
-							"value":"",
-							"width":100,
-							"optional":true
-						},
-						{
-							"id":"evaluatestotype",
-							"name":"EvaluatesToType",
 							"type":"String",
 							"value":"",
 							"width":200,
@@ -2679,31 +2638,6 @@
 				"fromtoall"				
 			]
 		},
-        {
-            "type" :            "node",
-            "id" :              "processparticipant",
-            "title" :           "Additional Participant",
-            "title_de" :        "Zusätzlicher Beteiligter",
-            "groups" :          ["Swimlanes"],
-            "groups_de" :       ["Rollen"],
-            "description" :     "",
-            "description_de" :  "",
-            "view" :            "swimlane/process.participant.svg",
-            "icon" :            "swimlane/process.participant.png",
-            "defaultAlign" :    "northeast",
-            "propertyPackages": [
-                "baseAttributes",
-                "flowElement",
-                "artifact",
-                "bgColor"
-            ],
-            "roles": [
-                "all",
-                "from_participant",
-                "to_participant",
-                "eventSubprocessElement"
-            ]
-        },
 		{
 			"type" : 			"node",
 			"id" :				"Lane",
@@ -2715,8 +2649,7 @@
 			"view" :			"swimlane/lane.svg",
 			"icon" :			"swimlane/lane.png",
 			"propertyPackages": [
-				"baseAttributes",
-				"bgColor"
+				"baseAttributes"
 			],
 			"properties" : 		[
 				{
@@ -2776,6 +2709,32 @@
 						}
 			]
 		},
+        {
+            "type" :            "node",
+            "id" :              "processparticipant",
+            "title" :           "Additional Participant",
+            "title_de" :        "Zusätzlicher Beteiligter",
+            "groups" :          ["Swimlanes"],
+            "groups_de" :       ["Rollen"],
+            "description" :     "The additional participant can be connected to a task or sub process. It is used to visualize additional associations of roles or individuals to the respective activity (e.g. responsibility, informed persons, etc.).",
+            "description_de" :  "Ein zusätzlicher Beteiligter kann an einen Task oder Unterprozess angeheftet werden. Mit ihm können zusätzliche Beziehungen einer Rolle oder Person zu der jeweiligen Aufgabe abgebildet werden (z.B. fachliche Verantwortung, benachrichtigte Personen, etc.).",
+            "view" :            "swimlane/process.participant.svg",
+            "icon" :            "swimlane/process.participant.png",
+            "defaultAlign" :    "northeast",
+            "propertyPackages": [
+                "baseAttributes",
+                "flowElement",
+                "artifact",
+                "bgColor"
+            ],
+            "roles": [
+                "all",
+                "from_participant",
+                "to_participant",
+                "fromtoall",
+                "eventSubprocessElement"
+            ]
+        },
 		
 		// Artifacts
 		
@@ -3324,8 +3283,7 @@
 				"interrupting",
 				"bgColor"
 			],
-			"roles" : [
-			    "all",
+			"roles" : 			[
 				"eventSubprocessElement",
 				"sequence_start",
 				"to_task_event",
@@ -3699,7 +3657,6 @@
 				"bgColor"
 			],
 			"roles":[
-			    "all",
 				"eventSubprocesElement",
 				"sequence_start",
 				"to_task_event",
@@ -4185,7 +4142,6 @@
 				"bgColor"
 			],
 			"roles":[
-			    "all",
 				"eventSubprocessElement",
 				"sequence_start",
 				"sequence_end",
@@ -4470,7 +4426,6 @@
 				"bgColor"
 			],
 			"roles": [
-			    "all",
 				"eventSubprocessElement",
 				"EndEventsMorph",
 				"Endevents_all",
@@ -4791,16 +4746,6 @@
 					"wrapLines":true
 				},
 				{
-					"id":"isimmediate",
-					"type":"Boolean",
-					"title":"isImmediate",
-					"title_de":"Sofortige Ausführung",
-					"value":"",
-					"description":"An optional Boolean value specifying whether Activities or Choreography Activities not in the model containing the Sequence Flow can occur between the elements connected by the Sequence Flow. If the value is true, they MAY NOT occur. If the value is false, they MAY occur. Also see the isClosed attribute on Process, Choreography, and Collaboration.",
-					"readonly":false,
-					"optional":false
-				},
-				{
 					"id":"showdiamondmarker",
 					"type":"Boolean",
 					"title":"is conditional flow",
@@ -4828,6 +4773,21 @@
 			"roles": [
 				"all",
 				"ConnectingObjectsMorph"
+			],
+			"properties" : [
+                {
+                    "id":"text",
+                    "type":"String",
+                    "title":"text",
+                    "title_de":"text",
+                    "value":"",
+                    "description":"",
+                    "readonly":false,
+                    "optional":true,
+                    "length":"",
+                    "refToView":"name",
+                    "wrapLines":true
+                }
 			]
 		},
 		{
@@ -4845,6 +4805,21 @@
 				"all",
 				"ConnectingObjectsMorph",
 				"Directed_Association"
+			],
+			"properties" : [
+                {
+                    "id":"text",
+                    "type":"String",
+                    "title":"text",
+                    "title_de":"text",
+                    "value":"",
+                    "description":"",
+                    "readonly":false,
+                    "optional":true,
+                    "length":"",
+                    "refToView":"name",
+                    "wrapLines":true
+                }
 			]
 		},
 		{
@@ -4862,6 +4837,21 @@
 				"all",
 				"ConnectingObjectsMorph",
 				"Directed_Association"
+			],
+			"properties" : [
+                {
+                    "id":"text",
+                    "type":"String",
+                    "title":"Text",
+                    "title_de":"Text",
+                    "value":"",
+                    "description":"",
+                    "readonly":false,
+                    "optional":true,
+                    "length":"",
+                    "refToView":"name",
+                    "wrapLines":true
+                }
 			]
 		},
 		{
@@ -5064,12 +5054,12 @@
 						"to" : "ChoreographyElement"
 					},
 					{
-					   "from" : "from_task_event",
+					   "from" : "ActivitiesMorph",
 					   "to" : ["to_participant"]
 					},
 					{
-					   "from" : "from_participant",
-					   "to" : ["to_task_event"]
+					   "from" : "to_participant",
+					   "to" : ["ActivitiesMorph"]
 					}
 				]
 			}
@@ -5178,7 +5168,8 @@
 			},
 			{
 				"role": "ChoreographyMorph",
-				"baseMorphs": ["ChoreographyTask"]
+				"baseMorphs": ["ChoreographyTask"],
+				"preserveBounds" : true
 			},
 			{
 				"role": "AssociationMorph",

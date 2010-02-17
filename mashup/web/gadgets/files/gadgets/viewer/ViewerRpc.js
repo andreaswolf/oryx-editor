@@ -88,9 +88,13 @@
 		 * 
 		 */
 		greyModel : function() {
-			var shapes = $$(".movi-node");
-			for (var i = 0; i < shapes.length; i++){
-				shapes[i].addClassName(this.GREY_CLASS);
+			var nodes = this.viewer.modelViewer.canvas.getNodes();
+			var prefix = "movi_0-"
+			for (var key in nodes){
+				if (nodes[key].properties.activitytype){
+					var element = $( prefix + key)
+					element.addClassName(this.GREY_CLASS);
+				}
 			}
 		},
 		
@@ -108,15 +112,14 @@
 			}
 			
 			else {
-				var prefix = "movi_0-"
+				var prefix = "movi_0-";
 				var shapes = args.evalJSON();
 				for (var i = 0; i < shapes.length; i++){
-					var element = $( prefix + shapes[i])
+					var element = $( prefix + shapes[i]);
 					element.removeClassName(this.GREY_CLASS);
 				}
 				
 			}
-			
 		},
 		
 		//TODO

@@ -131,17 +131,7 @@ var dashboard = (function(){
 			
 			Event.addListener(delete_button, "click", function(){gadgetInfo.destroy();});
 			Event.addListener(minimize_button, "click", function(){
-				
-				chrome_el.toggle();
-				// switch between rounded corners at every corner or just at the top
-				if ( ! title_el.className.match(/decollapsed/) ){
-					title_el.removeClassName("collapsed")
-					title_el.addClassName("decollapsed")
-				}
-				else{
-					title_el.removeClassName("decollapsed")
-					title_el.addClassName("collapsed")
-				}
+				dashboard.minimize(chrome_el, title_el);
 			});
 		
 			var gadgetInfo = {
@@ -159,6 +149,38 @@ var dashboard = (function(){
 			
 			gadgets.push(gadgetInfo);			
 			return gadgetInfo;
+		},
+		
+		minimize: function(chrome_el, title_el){
+			
+			var toMove = chrome_el.clientHeight;
+			chrome_el.toggle();
+			
+			// switch between rounded corners at every corner or just at the top
+			// move down
+			if ( ! title_el.className.match(/decollapsed/) ){
+				title_el.removeClassName("collapsed");
+				title_el.addClassName("decollapsed");
+				toMove = chrome_el.clientHeight	// chrome_el was hidden when toMove was initialized and therefore height = 0
+			}
+			// move up
+			else{
+				title_el.removeClassName("decollapsed");
+				title_el.addClassName("collapsed");
+				Dom.setStyle(title_el, "width", dashboard.columnWidth + "px");
+				toMove = -toMove;
+			}
+			
+			var allGadgets = $$(".gadget-el");
+			var x = Dom.getX(title_el);
+			var y = Dom.getY(title_el);
+			for (var i = 0; i < allGadgets.length; i++){
+				if ( Dom.getX(allGadgets[i]) == x ){
+					if ( allGadgets[i] != chrome_el.parentNode && Dom.getY(allGadgets[i]) > y )
+						Dom.setY( allGadgets[i], Dom.getY(allGadgets[i]) + toMove );
+				}
+			}
+			
 		},
 		
 		// set element to smallest column (considering height)

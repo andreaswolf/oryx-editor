@@ -67,7 +67,7 @@ public enum UserTaskImplementation {
 
     public static UserTaskImplementation fromValue(String v) {
         for (UserTaskImplementation c: UserTaskImplementation.values()) {
-            if (c.value.equals(v)) {
+            if (c.value.equalsIgnoreCase(v)) {
                 return c;
             }
         }

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2009 sp1 (http://www.altova.com) by Robert Shapiro (private) -->
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xpdl="http://www.wfmc.org/2008/XPDL2.1" xmlns="http://www.wfmc.org/2008/XPDL2.1" xmlns:b="http://schema.omg.org/spec/BPMN/2.0" xmlns:bpmndi="http://bpmndi.org" xsi:schemaLocation="http://www.wfmc.org/2008/XPDL2.1 C:\Users\shapiror\Documents\mydocs\capevisions\XPDL2~1.1\VERSIO~1\bpmnxpdl_31d.xsd">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:xpdl="http://www.wfmc.org/2008/XPDL2.1" xmlns="http://www.wfmc.org/2008/XPDL2.1" xmlns:b="http://schema.omg.org/spec/BPMN/2.0" xmlns:bpmndi="http://bpmndi.org" xsi:schemaLocation="http://www.wfmc.org/2008/XPDL2.1">
 	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 	<xsl:variable name="processDiagram"/>
 	<xsl:template match="/">
 		<xsl:apply-templates/>
 	</xsl:template>
 	<xsl:template match="b:definitions">
-		<Package Id="{generate-id(.)}" xsi:schemaLocation="http://www.wfmc.org/2008/XPDL2.1 C:\Users\shapiror\Documents\mydocs\capevisions\XPDL2~1.1\VERSIO~1\bpmnxpdl_31d.xsd">
+		<Package Id="{generate-id(.)}" xsi:schemaLocation="http://www.wfmc.org/2008/XPDL2.1">
 			<PackageHeader>
 				<XPDLVersion/>
 				<Vendor/>

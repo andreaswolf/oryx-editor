@@ -33,9 +33,6 @@ DDList = function(id, sGroup, config) {
     var el = this.getDragEl();
     Dom.setStyle(el, "opacity", 0.67); // The proxy is slightly transparent
 
-    this.goingUp = false;
-    this.lastY = 0;
-
 };
 
 YAHOO.extend(DDList, YAHOO.util.DDProxy, {
@@ -45,8 +42,9 @@ YAHOO.extend(DDList, YAHOO.util.DDProxy, {
         var dragEl = this.getDragEl();
         var clickEl = this.getEl();
         this.col = Math.round( (Dom.getX(clickEl) - 4) / dashboard.columnWidth );
-        this.oldColumn = this.col;
         this.oldY = Dom.getY(clickEl);
+		this.destination = [ dashboard.columns[this.col], this.oldY ]
+		
         Dom.setStyle(clickEl, "visibility", "hidden");
 
         dragEl.innerHTML = clickEl.innerHTML;
@@ -63,18 +61,19 @@ YAHOO.extend(DDList, YAHOO.util.DDProxy, {
         
         if (this.destination)
         	dest = this.destination;
-        else {
-        	// gadget will be moved to the bottom of the column
-        	var allGadgets = $$(".gadget-el");
-        	var col = Math.floor( (Event.getPageX(e) - 4) / dashboard.columnWidth ); 
-        	var x = dashboard.columns[col];
-        	var y = Dom.getY("dashboard") + 5;
-        	for (var i = 0; i < allGadgets.length; i++){
-        		if (Dom.getX(allGadgets[i]) == x && allGadgets[i] != srcEl)
-        			y += allGadgets[i].clientHeight + 5;
-        	}
-        	dest = [x, y];
-        }
+        
+		// else {
+        	// // gadget will be moved to the bottom of the column
+        	// var allGadgets = $$(".gadget-el");
+        	// var col = Math.floor( (Event.getPageX(e) - 4) / dashboard.columnWidth ); 
+        	// var x = dashboard.columns[col];
+        	// var y = Dom.getY("dashboard") + 5;
+        	// for (var i = 0; i < allGadgets.length; i++){
+        		// if (Dom.getX(allGadgets[i]) == x && allGadgets[i] != srcEl)
+        			// y += allGadgets[i].clientHeight + 5;
+        	// }
+        	// dest = [x, y];
+        // }
         
         var proxyid = proxy.id;
         var thisid = this.id;
@@ -106,20 +105,21 @@ YAHOO.extend(DDList, YAHOO.util.DDProxy, {
 //        if (this.lastMoved)
 //        	this._reorderLastMoved();
         
-        this._rearrangeLastColumn(e)
+		// called with this.oldY
+        //this._rearrangeColumn(e, this.oldColumn)
         
     },
     
-    _rearrangeLastColumn: function(e){
+    _rearrangeColumn: function(e, col){
     	
     	var newColumn = Math.floor( ( Event.getPageX(e) - 4) / dashboard.columnWidth );
     	
     	// gadget moved to another column
-    	if (this.oldColumn != newColumn){
+    	if (col != newColumn){
 	    	
     		var allGadgets = $$(".gadget-el");
 	    	var gadgetsToMove = [];
-	    	var x = dashboard.columns[this.oldColumn];
+	    	var x = dashboard.columns[col];
 	    	var y = Dom.getY("dashboard") + 5;
 	    	var endOfColumn = y;			// bottom of last gadgets in column
 	    	
@@ -130,7 +130,7 @@ YAHOO.extend(DDList, YAHOO.util.DDProxy, {
 	    			if ( (Dom.getY(allGadgets[i]) + allGadgets[i].clientHeight) > endOfColumn )
 	    				endOfColumn = Dom.getY(allGadgets[i]) + allGadgets[i].clientHeight;
 	    			// in case of free space move only gadgets that where below the dragged one
-	    			if ( Dom.getY(allGadgets[i]) > this.oldY )
+	    			if ( Dom.getY(allGadgets[i]) > Event.getPageY(e) )
 	    				gadgetsToMove.push(allGadgets[i]);
 	    		}
 	    	}
@@ -143,67 +143,42 @@ YAHOO.extend(DDList, YAHOO.util.DDProxy, {
 	    	}	
     	}
     },
-    
-    /* 
-    onDragDrop: function(e, id) {
-
-        // proxy was dropped either on the list
-        // or on the current location of the source element
-        if (DDM.interactionInfo.drop.length === 1) {
-
-            // The position of the cursor at the time of the drop
-            var pt = DDM.interactionInfo.point; 
-
-            // region of the source element at the time of the drop
-            var region = DDM.interactionInfo.sourceRegion; 
-
-            // Check to see if we are over the source element's location
-            // append to the bottom of the list once we are sure it was a drop below the list
-            if (!region.intersect(pt)) {
-                var destEl = Dom.get(id);
-                var destDD = DDM.getDDById(id);
-                destEl.appendChild(this.getEl());
-                destDD.isEmpty = false;
-                DDM.refreshCache();
-            }
-        }   
-    },
-    
-    */
 	
     onDrag: function(e) {
 
-        // Keep track of the direction of the drag for use during onDragOver
-        var y = Event.getPageY(e);
-        
-//        var currentCol = Math.floor( ( Event.getPageX(e) - 4) / dashboard.columnWidth );
-//        if (currentCol != this.col){
-//        	this.destination = null;
-//        	this.col = currentCol;
-//        }
-        if (y < this.lastY) {
-            this.goingUp = true;
-        } else if (y > this.lastY) {
-            this.goingUp = false;
-        }
 
-        this.lastY = y;
     },
 
     onDragOver: function(e, id) {
     
         var srcEl = this.getEl();
         var destEl = Dom.get(id);
+		var currentCol = Math.floor( ( Event.getPageX(e) - 4) / dashboard.columnWidth );
 
-        // We are only concerned with list items, we ignore the dragover
-        // notifications for the empty dashboard
         if (destEl.className == "gadget-el") {
-            
-        	this._reorderLastMoved();
+            this._reorderLastMoved();
         	this._adaptCurrentColumnOrder(e, id)
-        	
-            DDM.refreshCache();
+        	DDM.refreshCache();
         }
+		
+		//gadgets has moved to annother 
+		//below gadgets in in the current column, move to the bottom of the column
+		else if (currentCol != this.col){
+			this._reorderLastMoved();
+			this._rearrangeColumn(e, this.col);
+			this.col = currentCol;
+			var allGadgets = $$(".gadget-el");
+			var x = dashboard.columns[ Math.floor( ( Event.getPageX(e) - 4) / dashboard.columnWidth ) ];
+			var y = 5 +  Dom.getY("dashboard");
+			for (var i = 0; i < allGadgets.length; i++){
+				if ( allGadgets[i] != this.getEl() && Dom.getX(allGadgets[i]) == x ){
+					if ( (Dom.getY(allGadgets[i]) + allGadgets[i].clientHeight) > y )
+						y = Dom.getY(allGadgets[i]) + allGadgets[i].clientHeight + 5;
+				}
+			}
+			this.destination = [x, y];
+			DDM.refreshCache();
+		}
     },
     
     // move elements in the column the cursor entered downwards

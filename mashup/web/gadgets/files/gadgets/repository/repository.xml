@@ -35,7 +35,10 @@
 			
 			div.yui-layout-hd h2{
 				color: #FFFFFF !important;
-			}		
+			}	
+			.yui-radio-button-checked{
+				background-position:0 -110px !important;
+			}	
 		
 			/** 
 			*

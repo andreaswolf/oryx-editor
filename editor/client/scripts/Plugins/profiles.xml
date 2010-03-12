@@ -78,6 +78,7 @@
 		<plugin name="ORYX.Plugins.StepThroughPlugin"/>
 	</profile>
 	<profile name="petrinet" depends="default" stencilset="stencilsets/petrinets/petrinet.json">
+		<plugin name="ORYX.Plugins.PetriNet" />
 		<plugin name="ORYX.Plugins.SyntaxChecker"/>
 		<plugin name="ORYX.Plugins.PetriNetSoundnessChecker"/>
 		<plugin name="ORYX.Plugins.BPMNImport"/>

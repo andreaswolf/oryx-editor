@@ -30,7 +30,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URLDecoder;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -98,8 +97,10 @@ public class Representation {
 		Persistance.commit();
 		return content;
     }
-    
-    static protected boolean isJson(String content){
+    /*
+     * Used to identify json
+     */
+    static public boolean isJson(String content){
     	return !content.startsWith("<");
     }
 
@@ -386,7 +387,7 @@ public class Representation {
 		return json.replaceAll("http://[^/^\"]*/oryx/stencilsets/", "/oryx/stencilsets/");
 	}
 
-	protected static String jsonToErdf(String json){
+	public static String jsonToErdf(String json){
 		return new JsonErdfTransformation(json).toString();
 	}
 	public static void extractJsonFromDatabase(String serverUrl) throws IOException {

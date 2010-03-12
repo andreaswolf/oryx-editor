@@ -62,7 +62,7 @@ import org.xml.sax.SAXException;
  */
 public class BPEL4Chor2BPELPBDConversion extends FunctionsOfBPEL4Chor2BPEL {
 	
-	protected Document currentDocument;
+	public Document currentDocument;
 	protected static String process_nsprefix;
 	protected static Set<String> paSetList = new HashSet<String>();
 	// attention: global name space prefix set here is namespacePrefixSet !!

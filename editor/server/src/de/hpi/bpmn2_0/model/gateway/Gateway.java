@@ -52,9 +52,9 @@ import de.hpi.bpmn2_0.model.FlowNode;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "tGateway")
 @XmlSeeAlso({
-//    TComplexGateway.class,
-//    TInclusiveGateway.class,
-//    TEventBasedGateway.class,
+    ComplexGateway.class,
+    InclusiveGateway.class,
+    EventBasedGateway.class,
     ParallelGateway.class,
     ExclusiveGateway.class
 })

@@ -53,12 +53,12 @@ public class FunctionsOfBPEL4Chor2BPEL {
 
 	/*************************Name space***************************/
 	// 3.1: record all name spaces of QName
-	protected Set<String> namespaceSet = new HashSet<String>();
+	public Set<String> namespaceSet = new HashSet<String>();
 
 	// 3.2: record all name space prefixes of QName
-	protected Set<String> namespacePrefixSet = new HashSet<String>();
-	protected HashMap<String, String> ns2prefixMap = new HashMap<String, String>();
-	protected String topologyNS;					// it will be used in conversion of PBD
+	public Set<String> namespacePrefixSet = new HashSet<String>();
+	public HashMap<String, String> ns2prefixMap = new HashMap<String, String>();
+	public String topologyNS;					// it will be used in conversion of PBD
 
 	/**********************Method of Name Space******************************/
 	
@@ -129,13 +129,13 @@ public class FunctionsOfBPEL4Chor2BPEL {
 
 	/*************************ParticipantType***********************/
 	// 3.4: participant types set
-	protected Set<String> paTypeSet = new HashSet<String>();
+	public Set<String> paTypeSet = new HashSet<String>();
 
 	// 3.5: process set
-	protected Set<String> processSet = new HashSet<String>();
+	public Set<String> processSet = new HashSet<String>();
 
 	// for the function 3.6 fprocessPaType
-	protected HashMap<String, String> paType2processMap = new HashMap<String, String>();
+	public HashMap<String, String> paType2processMap = new HashMap<String, String>();
 
 
 	/***********************Method of ParticipantType*************************/
@@ -258,16 +258,16 @@ public class FunctionsOfBPEL4Chor2BPEL {
 
 	/*************************Participants**************************/
 	// 3.8: participant set
-	protected Set<String> paSet = new HashSet<String>();
+	public Set<String> paSet = new HashSet<String>();
 
 	// 3.10: scopes set
-	protected Set<String> scopeSet = new HashSet<String>();
+	public Set<String> scopeSet = new HashSet<String>();
 
 	// for function 3.9 ftypePa
-	protected HashMap<String, String> pa2paTypeMap = new HashMap<String, String>();
+	public HashMap<String, String> pa2paTypeMap = new HashMap<String, String>();
 
 	// for function 3.11 fscopePa
-	protected HashMap<String, Object> pa2scopeMap = new HashMap<String, Object>();
+	public HashMap<String, Object> pa2scopeMap = new HashMap<String, Object>();
 	protected HashMap<String, String> pa2foreachInScopeMap = new HashMap<String, String>();
 
 	/********************Method of Participant*************************/
@@ -544,18 +544,18 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	}
 
 	/*************************MessageLink***************************/
-	protected Set<String> messageLinkSet = new HashSet<String>();
+	public Set<String> messageLinkSet = new HashSet<String>();
 
-	protected Set<String> messageConstructsSet = new HashSet<String>();
+	public Set<String> messageConstructsSet = new HashSet<String>();
 
 	protected String ns = ""; // to save the name of PBD
 
-	protected HashMap<String, Object> ml2mcMap = new HashMap<String, Object>();
+	public HashMap<String, Object> ml2mcMap = new HashMap<String, Object>();
 
-	protected HashMap<String, Object> ml2paMap = new HashMap<String, Object>();
+	public HashMap<String, Object> ml2paMap = new HashMap<String, Object>();
 
 	//in fbindSenderToML defined and for grounding Analyze
-	protected HashMap<String, String> ml2bindSenderToMap = new HashMap<String, String>(); 
+	public HashMap<String, String> ml2bindSenderToMap = new HashMap<String, String>(); 
 
 	/***********************Method of MessageLink***********************/
 	/**
@@ -697,7 +697,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	 * 
 	 * @param {Element} currentElement      The current element
 	 */
-	protected void getMl2BindSenderToMap(Element currentElement){
+	public void getMl2BindSenderToMap(Element currentElement){
 		if(!(currentElement instanceof Node || currentElement instanceof Document)){
 			return;
 		}
@@ -727,25 +727,25 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	protected Set<String> oSet = new HashSet<String>();
 
 	// 3.20: fportTypeMC()
-	protected HashMap<String, String> ml2ptMap = new HashMap<String, String>();
+	public HashMap<String, String> ml2ptMap = new HashMap<String, String>();
 
 	// 3.21: foperationMC()
-	protected HashMap<String, String> ml2opMap = new HashMap<String, String>();
+	public HashMap<String, String> ml2opMap = new HashMap<String, String>();
 
 	// 3.22: partnerLink Set
-	protected Set<String> plSet = new HashSet<String>();
+	public Set<String> plSet = new HashSet<String>();
 
 	// 3.23: messageConstruct --> partnerLink Mapping
-	protected HashMap<String, PartnerLink> mc2plMap = new HashMap<String, PartnerLink>();
+	public HashMap<String, PartnerLink> mc2plMap = new HashMap<String, PartnerLink>();
 
 	// 3.24: scope --> partnerLinkSet Mapping
-	protected HashMap<String, Set<PartnerLink>> sc2plMap = new HashMap<String, Set<PartnerLink>>();
+	public HashMap<String, Set<PartnerLink>> sc2plMap = new HashMap<String, Set<PartnerLink>>();
 
 	// 3.25: partnerLinkType Set
-	protected Set<String> plTypeSet = new HashSet<String>();
+	public Set<String> plTypeSet = new HashSet<String>();
 
 	// 3.26: partnerLink --> partnerLinkType
-	protected HashMap<String, String> pl2plTypeMap = new HashMap<String, String>();
+	public HashMap<String, String> pl2plTypeMap = new HashMap<String, String>();
 
 	// 3.27: communication Map for partnerLink
 	protected HashMap<Object, Object> commMap = new HashMap<Object, Object>();
@@ -754,13 +754,13 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	protected HashMap<Comm, Object> comm2plsMap = new HashMap<Comm, Object>();
 
 	// 3.29: communication --> partnerLinkType
-	protected HashMap<Comm, String> comm2pltMap = new HashMap<Comm, String>();
+	public HashMap<Comm, String> comm2pltMap = new HashMap<Comm, String>();
 
 	// 3.30: partnerLink --> myRole 
-	protected HashMap<String, String> pl2myRoleMap = new HashMap<String, String>();
+	public HashMap<String, String> pl2myRoleMap = new HashMap<String, String>();
 
 	// 3.31: partnerLink --> partnerRole
-	protected HashMap<String, String> pl2partnerRoleMap = new HashMap<String, String>();
+	public HashMap<String, String> pl2partnerRoleMap = new HashMap<String, String>();
 
 	// relation COMM ((A,c),(b,d))
 	protected Set<Object> commSet = new HashSet<Object>();
@@ -1150,13 +1150,13 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	protected Set<String> propertySet = new HashSet<String>();
 
 	// used by 3.34
-	protected HashMap<String, String> corrPropName2propertyMap = new HashMap<String, String>();
+	public HashMap<String, String> corrPropName2propertyMap = new HashMap<String, String>();
 
 	// used by 3.35
-	protected HashMap<String, String> property2nsprefixOfPropMap = new HashMap<String, String>();
+	public HashMap<String, String> property2nsprefixOfPropMap = new HashMap<String, String>();
 
 	// used by 3.36
-	protected HashMap<String, String> forEach2setMap = new HashMap<String, String>();
+	public HashMap<String, String> forEach2setMap = new HashMap<String, String>();
 
 	/**
 	 * function 3.34: the function assigning a property to each property name. 

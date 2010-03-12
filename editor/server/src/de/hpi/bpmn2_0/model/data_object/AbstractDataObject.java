@@ -26,6 +26,8 @@ package de.hpi.bpmn2_0.model.data_object;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import de.hpi.bpmn2_0.model.FlowElement;
@@ -39,7 +41,76 @@ import de.hpi.bpmn2_0.model.connector.Edge;
  * 
  * @author Sven Wagner-Boysen
  */
+@XmlSeeAlso({
+	DataObject.class,
+	DataInput.class,
+	DataOutput.class,
+	ITSystem.class,
+	DataStoreReference.class
+})
 public abstract class AbstractDataObject extends FlowNode {
+	
+	/* Common attributes of data objects */
+	protected DataState dataState;
+	@XmlAttribute
+    protected Boolean isCollection;
+	
+	/* Getter & Setter */
+	
+	/**
+     * Gets the value of the dataState property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link TDataState }
+     *     
+     */
+    public DataState getDataState() {
+        return dataState;
+    }
+
+    /**
+     * Sets the value of the dataState property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link DataState }
+     *     
+     */
+    public void setDataState(DataState value) {
+        this.dataState = value;
+    }
+    
+    /**
+     * Gets the value of the isCollection property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public boolean isIsCollection() {
+        if (isCollection == null) {
+            return false;
+        } else {
+            return isCollection;
+        }
+    }
+
+    /**
+     * Sets the value of the isCollection property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setIsCollection(Boolean value) {
+        this.isCollection = value;
+    }
+	
+	
+    /* Business logic methodes */
 	
 	/**
 	 * List of elements already traversed in the graph.

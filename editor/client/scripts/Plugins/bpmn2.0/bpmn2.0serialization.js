@@ -86,7 +86,7 @@ ORYX.Plugins.BPMN2_0Serialization = {
 		});
 		
 		this.facade.offer({
-			'name'				: ORYX.I18N.Bpmn2_0Serialization.download,
+			'name'				: ORYX.I18N.Bpmn2_0Serialization.xpdlDownload,
 			'functionality'		: this.downloadXpdl.bind(this),
 			'group'				: 'Export',
             dropDownGroupIcon : ORYX.PATH + "images/export2.png",

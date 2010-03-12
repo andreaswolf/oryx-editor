@@ -96,7 +96,7 @@
 					"type":"String",
 					"title":"name",
 					"title_de":"Name",
-					"value":"process",
+					"value":"process456",
 					"description":"",
 					"description_de":"",
 					"tooltip":"",
@@ -679,6 +679,22 @@
 					"refToView":"mainBody",
 					"fill":true,
 					"stroke":false
+				},
+				{
+					"id":"crosspartnerscopes",
+					"prefix":"oryx",
+					"type": "String",
+					"title": "crossPartnerScopes",
+					"title_de": "crossPartnerScopes",
+					"value": "",
+					"description":"",
+					"tooltip":"",
+					"readonly":false,
+					"optional":false,
+					//"refToView":"text",
+					"refToView":"",
+					"length":undefined,
+					"wrapLines":false
 				}
 			]
 		},
@@ -4624,6 +4640,22 @@
 					"refToView":"mainBody",
 					"fill":true,
 					"stroke":false
+				},
+				{
+					"id":"crosspartnerscopes",
+					"prefix":"oryx",
+					"type": "String",
+					"title": "crossPartnerScopes",
+					"title_de": "crossPartnerScopes",
+					"value": "",
+					"description":"",
+					"tooltip":"",
+					"readonly":false,
+					"optional":false,
+					//"refToView":"text",
+					"refToView":"",
+					"length":undefined,
+					"wrapLines":false
 				}
 			]
 		},

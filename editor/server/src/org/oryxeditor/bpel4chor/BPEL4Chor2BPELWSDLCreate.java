@@ -61,15 +61,15 @@ import org.xml.sax.SAXException;
 
 public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 	
-	protected Document currentDocument;
-	protected Set<String> nsprefixSet;
+	public Document currentDocument;
+	public Set<String> nsprefixSet;
 	/**************************create a matched WSDL file to current PBD***************************/
 	/** 
 	 * Algorithm 3.19 Procedure declarePartnerLinkTypes
 	 * 
 	 * @param {Element} definitions  The Tag <wsdl:definitions>
 	 */
-	private void declarePartnerLinkTypes(Element definitions){
+	public void declarePartnerLinkTypes(Element definitions){
 		// the input definitions points on the <wsdl:definitions> tag of the newly created WSDL file
 		// remove the first Child of currentDocument
 		currentDocument.removeChild(definitions);
@@ -172,7 +172,7 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 			Document docPBD = docBuilder.parse("/home/eysler/work/DiplomArbeit/oryx-editor/editor/server/src/org/oryxeditor/bpel4chor/testFiles/processSA.bpel");
 			
 			BPEL4Chor2BPELTopologyAnalyze topoAnaly = new BPEL4Chor2BPELTopologyAnalyze();
-			BPEL4Chor2BPELGroundingAnalyze grouAnaly = new BPEL4Chor2BPELGroundingAnalyze();
+			BPEL4Chor2BPELGroundingAnalyze groundAnaly = new BPEL4Chor2BPELGroundingAnalyze();
 			BPEL4Chor2BPELPBDConversion pbdCon = new BPEL4Chor2BPELPBDConversion();
 			BPEL4Chor2BPELWSDLCreate wsdlCreate = new BPEL4Chor2BPELWSDLCreate();
 
@@ -183,23 +183,23 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 			topoAnaly.mlAnalyze(docTopo);
 			topoAnaly.getMl2BindSenderToMap(((Element)docTopo.getFirstChild()));
 			
-			grouAnaly.namespacePrefixSet = topoAnaly.namespacePrefixSet;    // will be used in grounding nsAnalyze
-			grouAnaly.namespaceSet = topoAnaly.namespaceSet;				// will be used in grounding nsAnalyze
-			grouAnaly.ns2prefixMap = topoAnaly.ns2prefixMap;				// will be used in grounding nsAnalyze
-			grouAnaly.messageConstructsSet = topoAnaly.messageConstructsSet;
-			grouAnaly.messageLinkSet = topoAnaly.messageLinkSet;
-			grouAnaly.ml2mcMap = topoAnaly.ml2mcMap;
-			grouAnaly.ml2paMap = topoAnaly.ml2paMap; 						// will be used in fparefsML() and in Alg. 3.4
-			grouAnaly.ml2bindSenderToMap = topoAnaly.ml2bindSenderToMap; 	// will be used in mlAnalyze
-			grouAnaly.pa2scopeMap = topoAnaly.pa2scopeMap; 					// will be used in Alg. 3.4 createPartnerLinkDeclarations
-			grouAnaly.paTypeSet = topoAnaly.paTypeSet;                      // will be used in Alg. 3.4 createPartnerLinkDeclarations
-			grouAnaly.pa2paTypeMap = topoAnaly.pa2paTypeMap;              	// will be used in Alg. 3.4 createPartnerLinkDeclarations
-			grouAnaly.paType2processMap = topoAnaly.paType2processMap;      // will be used in Alg. 3.4 createPartnerLinkDeclarations
+			groundAnaly.namespacePrefixSet = topoAnaly.namespacePrefixSet;    // will be used in grounding nsAnalyze
+			groundAnaly.namespaceSet = topoAnaly.namespaceSet;				// will be used in grounding nsAnalyze
+			groundAnaly.ns2prefixMap = topoAnaly.ns2prefixMap;				// will be used in grounding nsAnalyze
+			groundAnaly.messageConstructsSet = topoAnaly.messageConstructsSet;
+			groundAnaly.messageLinkSet = topoAnaly.messageLinkSet;
+			groundAnaly.ml2mcMap = topoAnaly.ml2mcMap;
+			groundAnaly.ml2paMap = topoAnaly.ml2paMap; 						// will be used in fparefsML() and in Alg. 3.4
+			groundAnaly.ml2bindSenderToMap = topoAnaly.ml2bindSenderToMap; 	// will be used in mlAnalyze
+			groundAnaly.pa2scopeMap = topoAnaly.pa2scopeMap; 					// will be used in Alg. 3.4 createPartnerLinkDeclarations
+			groundAnaly.paTypeSet = topoAnaly.paTypeSet;                      // will be used in Alg. 3.4 createPartnerLinkDeclarations
+			groundAnaly.pa2paTypeMap = topoAnaly.pa2paTypeMap;              	// will be used in Alg. 3.4 createPartnerLinkDeclarations
+			groundAnaly.paType2processMap = topoAnaly.paType2processMap;      // will be used in Alg. 3.4 createPartnerLinkDeclarations
 			
 			//grounding analyze
-			grouAnaly.nsAnalyze(docGround);
-			grouAnaly.mlAnalyze(docGround);
-			grouAnaly.propertyAnalyze(docGround);
+			groundAnaly.nsAnalyze(docGround);
+			groundAnaly.mlAnalyze(docGround);
+			groundAnaly.propertyAnalyze(docGround);
 			
 			pbdCon.scopeSet = topoAnaly.scopeSet;							// will be used in Conversion of PBD
 			pbdCon.processSet = topoAnaly.processSet;						// will be used in Conversion of PBD
@@ -207,21 +207,21 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 			pbdCon.forEach2setMap = topoAnaly.forEach2setMap;				// will be used in Conversion of PBD
 			pbdCon.paSet = topoAnaly.paSet;									// will be used in Conversion of PBD
 			pbdCon.pa2scopeMap = topoAnaly.pa2scopeMap; 					// will be used in Conversion of PBD
-			pbdCon.ns2prefixMap = grouAnaly.ns2prefixMap;					// will be used in Conversion of PBD
-			pbdCon.namespacePrefixSet = grouAnaly.namespacePrefixSet;		// will be used in Conversion of PBD
-			pbdCon.plSet = grouAnaly.plSet;									// will be used in Conversion of PBD
-			pbdCon.sc2plMap = grouAnaly.sc2plMap;							// will be used in Conversion of PBD
-			pbdCon.pl2plTypeMap = grouAnaly.pl2plTypeMap;					// will be used in Conversion of PBD
-			pbdCon.pl2myRoleMap = grouAnaly.pl2myRoleMap;					// will be used in Conversion of PBD
-			pbdCon.pl2partnerRoleMap = grouAnaly.pl2partnerRoleMap;			// will be used in Conversion of PBD
-			pbdCon.messageConstructsSet = grouAnaly.messageConstructsSet;	// will be used in Conversion of PBD
-			pbdCon.mc2plMap = grouAnaly.mc2plMap;							// will be used in Conversion of PBD
-			pbdCon.ml2mcMap = grouAnaly.ml2mcMap;							// will be used in Conversion of PBD
-			pbdCon.messageLinkSet = grouAnaly.messageLinkSet;				// will be used in Conversion of PBD
-			pbdCon.ml2ptMap = grouAnaly.ml2ptMap;							// will be used in Conversion of PBD
-			pbdCon.ml2opMap = grouAnaly.ml2opMap;							// will be used in Conversion of PBD
-			pbdCon.corrPropName2propertyMap = grouAnaly.corrPropName2propertyMap;  // will be used in Conversion of PBD
-			pbdCon.property2nsprefixOfPropMap = grouAnaly.property2nsprefixOfPropMap; // will be used in Conversion of PBD
+			pbdCon.ns2prefixMap = groundAnaly.ns2prefixMap;					// will be used in Conversion of PBD
+			pbdCon.namespacePrefixSet = groundAnaly.namespacePrefixSet;		// will be used in Conversion of PBD
+			pbdCon.plSet = groundAnaly.plSet;									// will be used in Conversion of PBD
+			pbdCon.sc2plMap = groundAnaly.sc2plMap;							// will be used in Conversion of PBD
+			pbdCon.pl2plTypeMap = groundAnaly.pl2plTypeMap;					// will be used in Conversion of PBD
+			pbdCon.pl2myRoleMap = groundAnaly.pl2myRoleMap;					// will be used in Conversion of PBD
+			pbdCon.pl2partnerRoleMap = groundAnaly.pl2partnerRoleMap;			// will be used in Conversion of PBD
+			pbdCon.messageConstructsSet = groundAnaly.messageConstructsSet;	// will be used in Conversion of PBD
+			pbdCon.mc2plMap = groundAnaly.mc2plMap;							// will be used in Conversion of PBD
+			pbdCon.ml2mcMap = groundAnaly.ml2mcMap;							// will be used in Conversion of PBD
+			pbdCon.messageLinkSet = groundAnaly.messageLinkSet;				// will be used in Conversion of PBD
+			pbdCon.ml2ptMap = groundAnaly.ml2ptMap;							// will be used in Conversion of PBD
+			pbdCon.ml2opMap = groundAnaly.ml2opMap;							// will be used in Conversion of PBD
+			pbdCon.corrPropName2propertyMap = groundAnaly.corrPropName2propertyMap;  // will be used in Conversion of PBD
+			pbdCon.property2nsprefixOfPropMap = groundAnaly.property2nsprefixOfPropMap; // will be used in Conversion of PBD
 			
 			//PBD conversion
 			pbdCon.currentDocument = docPBD;
@@ -230,8 +230,8 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 			//WSDL creation
 			wsdlCreate.currentDocument = docPBD;
 			wsdlCreate.topologyNS = topoAnaly.topologyNS;
-			wsdlCreate.plTypeSet = grouAnaly.plTypeSet;
-			wsdlCreate.comm2pltMap = grouAnaly.comm2pltMap;
+			wsdlCreate.plTypeSet = groundAnaly.plTypeSet;
+			wsdlCreate.comm2pltMap = groundAnaly.comm2pltMap;
 			wsdlCreate.nsprefixSet = pbdCon.namespacePrefixSet;
 			wsdlCreate.declarePartnerLinkTypes((Element)docPBD.getFirstChild());
 

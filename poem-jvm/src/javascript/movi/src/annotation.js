@@ -186,10 +186,39 @@ MOVI.namespace("util");
 			}
 			
 			var bounds = this._marker.getAbsBounds();
-			var left = Math.round(bounds.lowerRight.x * zoomFactor);
+			var left = Math.round(bounds.upperLeft.x * zoomFactor);
+			var right = Math.round(bounds.lowerRight.x * zoomFactor);
 			var top = Math.round((bounds.upperLeft.y + (bounds.lowerRight.y-bounds.upperLeft.y)*0.7) * zoomFactor);
-			this.setStyle("left", left + "px");
-			this.setStyle("top", top + "px");
+			var w = parseInt(this._canvas.getStyle("width"), 10);
+
+			if(left>(w/2))
+				this.setPosition(left, top);
+			else 
+				this.setPosition(right, top);
+			
+			//this.setStyle("top", top + "px");
+		},
+		
+		/**
+	     * Set the absolute position of the annotation bubble 
+	     * @method setPosition
+		 * @param {Integer} x The x coordinate of the position the bubble points to
+		 * @param {Integer} y The y coordinate of the position the bubble points to
+	     */
+		setPosition: function(x, y) {
+			var w = parseInt(this._canvas.getStyle("width"), 10);
+			if( w && w>300 && (x>(w/2)) ) {
+				// align the annotation to the left (only if the canvas is wider than 300px)
+				this.setStyle("right", (w-x) + "px");
+				this.setStyle("left", "");
+				this.addClass("movi-bubble-right");
+			} else {
+				// align the annotation to the right
+				this.setStyle("left", x + "px");
+				this.setStyle("right", "");
+				this.removeClass("movi-bubble-right");
+			}
+			this.setStyle("top", y + "px");
 		},
 		
 		/**
@@ -198,7 +227,8 @@ MOVI.namespace("util");
 	     */
 		show: function() {
 			this._marker.show();
-			this.set("className", _BUBBLE_VISIBLE_CLASS_NAME);
+			this.addClass(_BUBBLE_VISIBLE_CLASS_NAME);
+			this.removeClass(_BUBBLE_HIDDEN_CLASS_NAME)
 			this.bringToFront();
 		},
 		
@@ -207,7 +237,8 @@ MOVI.namespace("util");
 	     * @method hide
 	     */
 		hide: function() {
-			this.set("className", _BUBBLE_HIDDEN_CLASS_NAME);
+			this.addClass(_BUBBLE_HIDDEN_CLASS_NAME);
+			this.removeClass(_BUBBLE_VISIBLE_CLASS_NAME);
 		},
 		
 		/**

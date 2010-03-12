@@ -77,7 +77,8 @@ import de.hpi.bpmn2_0.model.data_object.DataStore;
     "artifact"
 })
 @XmlSeeAlso({
-//    AdHocSubProcess.class
+    AdHocSubProcess.class,
+    Transaction.class
 })
 public class SubProcess
     extends Activity

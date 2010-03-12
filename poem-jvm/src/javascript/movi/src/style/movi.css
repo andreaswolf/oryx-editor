@@ -59,6 +59,7 @@
 	position:absolute;
 	min-width: 100px;
 	margin-top: -46px; margin-left: 13px;
+	margin-right: 11px;
 	KHTMLOpacity: 0.95;
 	MozOpacity: 0.95;
 	opacity: 0.95;
@@ -107,6 +108,12 @@
 	left: -16px; top: 20px;
 	width: 26px; height: 46px;
 	background: url('../img/bubble-al.png') no-repeat 0 0;
+}
+
+.movi-bubble-right .movi-bubble-al {
+	left: auto;
+	right: -16px;
+	background: url('../img/bubble-ar.png') no-repeat 0 0;
 }
 
 .movi-bubble-bc {

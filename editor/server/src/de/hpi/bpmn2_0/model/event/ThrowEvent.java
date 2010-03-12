@@ -61,7 +61,7 @@ import javax.xml.bind.annotation.XmlType;
 //    "eventDefinitionRef"
 })
 @XmlSeeAlso({
-//    IntermediateThrowEvent.class,
+    IntermediateThrowEvent.class,
 //    TImplicitThrowEvent.class,
     EndEvent.class
 })

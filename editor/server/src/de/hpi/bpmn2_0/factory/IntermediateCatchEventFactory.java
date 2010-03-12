@@ -250,8 +250,18 @@ public class IntermediateCatchEventFactory extends AbstractBpmnFactory {
 //			process.getFlowElement().remove(index);
 //			process.getFlowElement().add(index, bEvent);
 //		}
+		IntermediateCatchEvent ice = (IntermediateCatchEvent) event.getNode();
 		event.setNode(bEvent);
 		((EventShape) event.getShape()).setEventRef(bEvent);
 		((Activity)activity.getNode()).getBoundaryEventRefs().add(bEvent);
+		
+		/* Handle boundary events as child elements of a lane */
+		if(ice.getLane() != null) {
+			/* Exchange intermediate event with boundary event */
+			bEvent.setLane(ice.getLane());
+			int index = bEvent.getLane().getFlowElementRef().indexOf(ice);
+			bEvent.getLane().getFlowElementRef().remove(ice);
+			bEvent.getLane().getFlowElementRef().add(index, bEvent);
+		}
 	}
 }

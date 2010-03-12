@@ -88,9 +88,9 @@ import de.hpi.bpmn2_0.model.event.BoundaryEvent;
 })
 @XmlSeeAlso({
     SubProcess.class,
-//    Transaction.class,
-    Task.class//,
-//    CallActivity.class
+    Transaction.class,
+    Task.class,
+    CallActivity.class
 })
 public abstract class Activity
     extends FlowNode

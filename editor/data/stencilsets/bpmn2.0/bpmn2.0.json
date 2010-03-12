@@ -2024,6 +2024,7 @@
 				"messageflow_start",
 				"messageflow_end",
 				"to_task_event",
+				"from_task_event",
 				"fromtoall",
 				"ActivitiesMorph"
 			]
@@ -3859,6 +3860,7 @@
                     "value":"",
                     "description":"",
                     "readonly":false,
+					"refToView" : "diagramLink",
                     "optional":false
                 },
 				{
@@ -4293,6 +4295,7 @@
                     "title_de":"Diagram Link",
                     "value":"",
                     "description":"",
+					"refToView": "diagramLink",
                     "readonly":false,
                     "optional":false
                 },
@@ -4881,6 +4884,9 @@
 			"roles": [
 				"all",
 				"ConnectingObjectsMorph"
+			],			
+			"propertyPackages" : [
+			    "dataAssociation"
 			],
 			"properties" : [
                 {
@@ -4893,10 +4899,11 @@
                     "readonly":false,
                     "optional":true,
                     "length":"",
-                    "refToView":"text",
-                    "wrapLines":true
+                    "refToView":"name",
+                    "wrapLines":true,
+					"popular":true
                 }
-			]
+           ]
 		},
 		{
 			"type": "edge",
@@ -4921,15 +4928,16 @@
                 {
                     "id":"text",
                     "type":"String",
-                    "title":"text",
-                    "title_de":"text",
+                    "title":"Name",
+                    "title_de":"Name",
                     "value":"",
                     "description":"",
                     "readonly":false,
                     "optional":true,
                     "length":"",
                     "refToView":"name",
-                    "wrapLines":true
+                    "wrapLines":true,
+					"popular":true
                 }
            ]
 		},
@@ -4948,7 +4956,26 @@
 				"all",
 				"ConnectingObjectsMorph",
 				"Directed_Association"
-			]
+			],			
+			"propertyPackages" : [
+			    "dataAssociation"
+			],
+			"properties" : [
+                {
+                    "id":"text",
+                    "type":"String",
+                    "title":"Name",
+                    "title_de":"Name",
+                    "value":"",
+                    "description":"",
+                    "readonly":false,
+                    "optional":true,
+                    "length":"",
+                    "refToView":"name",
+                    "wrapLines":true,
+					"popular":true
+                }
+           ]
 		},
 		{
 			"type": "edge",

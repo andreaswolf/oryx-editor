@@ -4889,20 +4889,50 @@
 			    "dataAssociation"
 			],
 			"properties" : [
-                {
-                    "id":"name",
-                    "type":"String",
-                    "title":"Name",
-                    "title_de":"Name",
-                    "value":"",
-                    "description":"",
-                    "readonly":false,
-                    "optional":true,
-                    "length":"",
-                    "refToView":"name",
-                    "wrapLines":true,
-					"popular":true
-                }
+				{
+					"id":"type",
+					"type":"Choice",
+					"title":"Responsibilities",
+					"title_de":"Verantwortlichkeiten",
+					"value":"none",
+					"description":"Describes the type of the responsibility according to RACI.",
+					"description_de":"Beschreibt die Verantwortlichkeiten nach dem RACI-Modell.",
+					"readonly":false,
+					"optional":true,
+					"refToView":"name",
+					"items": [
+						{
+							"id":"c1",
+							"title":"",
+							"title_de":"",
+							"value":"none"
+						},
+						{
+							"id":"c2",
+							"title":"responsible",
+							"title_de":"führt durch",
+							"value":"performs"
+						},
+						{
+							"id":"c3",
+							"title":"accountable",
+							"title_de":"erteilt Freigabe",
+							"value":"approves"
+						},
+						{
+							"id":"c4",
+							"title":"consulted",
+							"title_de":"wird konsultiert",
+							"value":"consulted"
+						},
+						{
+							"id":"c5",
+							"title":"informed",
+							"title_de":"wird informiert",
+							"value":"isNotified"
+						}
+					]
+				}
            ]
 		},
 		{

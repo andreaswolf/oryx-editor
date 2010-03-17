@@ -60,65 +60,65 @@ public class BPMNSerializationTest {
 
 	public static void toBpmn2_0(File json) throws Exception {
 		
-		BufferedReader br = new BufferedReader(new FileReader(json));
-		String bpmnJson = "";
-		String line;
-		while ((line = br.readLine()) != null) {
-			bpmnJson += line;
-		}
-		Diagram diagram = DiagramBuilder.parseJson(bpmnJson);
-
-		Diagram2BpmnConverter converter = new Diagram2BpmnConverter(diagram);
-		Definitions def = converter.getDefinitionsFromDiagram();
-
-		// def.getOtherAttributes().put(new QName("xmlns:local"), "nurlokal");
-
-		// final XMLStreamWriter xmlStreamWriter = XMLOutputFactory
-		// .newInstance().createXMLStreamWriter(System.out);
-		//		
-		// xmlStreamWriter.setPrefix("bpmndi","http://bpmndi.org");
-
-		JAXBContext context = JAXBContext.newInstance(Definitions.class);
-		Marshaller m = context.createMarshaller();
-
-		/* Schema validation */
-		SchemaFactory sf = SchemaFactory
-				.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = sf.newSchema(new File(schemaFilePath));
-		m.setSchema(schema);
-		
-		ExportValidationEventCollector vec = new ExportValidationEventCollector();
-		m.setEventHandler(vec);
-		
-
-		// m.setListener(new ListenerTest());
-		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		NamespacePrefixMapper nsp = new BPMNPrefixMapper();
-		m.setProperty("com.sun.xml.bind.namespacePrefixMapper", nsp);
-		m.marshal(def, System.out);
-		ValidationEvent[] events = vec.getEvents();
-		
-		StringBuilder builder = new StringBuilder();
-		builder.append("Validation Errors: \n\n");
-		
-		for(ValidationEvent event : Arrays.asList(events)) {
-			
-//			builder.append("Line: ");
-//			builder.append(event.getLocator().getLineNumber());
-//			builder.append(" Column: ");
-//			builder.append(event.getLocator().getColumnNumber());
-			
-			builder.append("\nError: ");
-			builder.append(event.getMessage());
-			builder.append("\n\n\n");
-		}
-		
-		System.out.println(builder.toString());
-
-		// SyntaxChecker checker = def.getSyntaxChecker();
-		// checker.checkSyntax();
-		//		
-		// System.out.println(checker.getErrorsAsJson().toString());
+//		BufferedReader br = new BufferedReader(new FileReader(json));
+//		String bpmnJson = "";
+//		String line;
+//		while ((line = br.readLine()) != null) {
+//			bpmnJson += line;
+//		}
+//		Diagram diagram = DiagramBuilder.parseJson(bpmnJson);
+//
+//		Diagram2BpmnConverter converter = new Diagram2BpmnConverter(diagram);
+//		Definitions def = converter.getDefinitionsFromDiagram();
+//
+//		// def.getOtherAttributes().put(new QName("xmlns:local"), "nurlokal");
+//
+//		// final XMLStreamWriter xmlStreamWriter = XMLOutputFactory
+//		// .newInstance().createXMLStreamWriter(System.out);
+//		//		
+//		// xmlStreamWriter.setPrefix("bpmndi","http://bpmndi.org");
+//
+//		JAXBContext context = JAXBContext.newInstance(Definitions.class);
+//		Marshaller m = context.createMarshaller();
+//
+//		/* Schema validation */
+//		SchemaFactory sf = SchemaFactory
+//				.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+//		Schema schema = sf.newSchema(new File(schemaFilePath));
+//		m.setSchema(schema);
+//		
+//		ExportValidationEventCollector vec = new ExportValidationEventCollector();
+//		m.setEventHandler(vec);
+//		
+//
+//		// m.setListener(new ListenerTest());
+//		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+//		NamespacePrefixMapper nsp = new BPMNPrefixMapper();
+//		m.setProperty("com.sun.xml.bind.namespacePrefixMapper", nsp);
+//		m.marshal(def, System.out);
+//		ValidationEvent[] events = vec.getEvents();
+//		
+//		StringBuilder builder = new StringBuilder();
+//		builder.append("Validation Errors: \n\n");
+//		
+//		for(ValidationEvent event : Arrays.asList(events)) {
+//			
+////			builder.append("Line: ");
+////			builder.append(event.getLocator().getLineNumber());
+////			builder.append(" Column: ");
+////			builder.append(event.getLocator().getColumnNumber());
+//			
+//			builder.append("\nError: ");
+//			builder.append(event.getMessage());
+//			builder.append("\n\n\n");
+//		}
+//		
+//		System.out.println(builder.toString());
+//
+//		// SyntaxChecker checker = def.getSyntaxChecker();
+//		// checker.checkSyntax();
+//		//		
+//		// System.out.println(checker.getErrorsAsJson().toString());
 	}
 	
 

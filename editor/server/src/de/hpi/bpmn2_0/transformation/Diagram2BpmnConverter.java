@@ -114,6 +114,8 @@ public class Diagram2BpmnConverter {
 
 	private List<Choreography> choreography;
 	private ChoreographyDiagram choreographyDiagram;
+	
+	private List<Class<? extends AbstractBpmnFactory>> factoryClasses;
 
 	/* Define edge ids */
 	private final static String[] edgeIdsArray = { "SequenceFlow",
@@ -130,12 +132,13 @@ public class Diagram2BpmnConverter {
 	public final static HashSet<String> dataObjectIds = new HashSet<String>(
 			Arrays.asList(dataObjectIdsArray));
 
-	public Diagram2BpmnConverter(Diagram diagram) {
+	public Diagram2BpmnConverter(Diagram diagram, List<Class<? extends AbstractBpmnFactory>> factoryClasses) {
 		this.factories = new HashMap<String, AbstractBpmnFactory>();
 		this.bpmnElements = new HashMap<String, BPMNElement>();
 		this.definitions = new Definitions();
 		this.definitions.setId(OryxUUID.generate());
 		this.diagram = diagram;
+		this.factoryClasses = factoryClasses;
 	}
 
 	/**
@@ -173,9 +176,6 @@ public class Diagram2BpmnConverter {
 	private AbstractBpmnFactory createFactoryForStencilId(String stencilId)
 			throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException {
-		List<Class<? extends AbstractBpmnFactory>> factoryClasses = ClassFinder
-				.getClassesByPackageName(AbstractBpmnFactory.class,
-						"de.hpi.bpmn2_0.factory");
 
 		/* Find factory for stencil id */
 		for (Class<? extends AbstractBpmnFactory> factoryClass : factoryClasses) {

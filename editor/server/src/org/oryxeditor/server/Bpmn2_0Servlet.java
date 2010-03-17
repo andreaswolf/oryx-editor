@@ -27,6 +27,7 @@ package org.oryxeditor.server;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -45,9 +46,11 @@ import org.oryxeditor.server.diagram.DiagramBuilder;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 import de.hpi.bpmn2_0.ExportValidationEventCollector;
+import de.hpi.bpmn2_0.factory.AbstractBpmnFactory;
 import de.hpi.bpmn2_0.model.Definitions;
 import de.hpi.bpmn2_0.transformation.BPMNPrefixMapper;
 import de.hpi.bpmn2_0.transformation.Diagram2BpmnConverter;
+import de.hpi.util.reflection.ClassFinder;
 
 /**
  * This servlet provides the access point to the interchange format of BPMN 2.0
@@ -65,10 +68,14 @@ public class Bpmn2_0Servlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException {
 		String json = req.getParameter("data");
 		boolean asXML = req.getParameter("xml") != null;
-		
+
 		/* Transform and return from DI */
 		try {
-			StringWriter output = this.performTransformationToDi(json, asXML);
+			List<Class<? extends AbstractBpmnFactory>> factoryClasses = ClassFinder
+			.getClassesByPackageName(AbstractBpmnFactory.class,
+					"de.hpi.bpmn2_0.factory", this.getServletContext());
+			
+			StringWriter output = this.performTransformationToDi(json, asXML, factoryClasses);
 			res.setContentType("application/xml");
 			res.setStatus(200);
 			res.getWriter().print(output.toString());
@@ -99,7 +106,7 @@ public class Bpmn2_0Servlet extends HttpServlet {
 	 * @throws Exception
 	 * 		Exception occurred while processing
 	 */
-	protected StringWriter performTransformationToDi(String json, boolean asXML) throws Exception {
+	protected StringWriter performTransformationToDi(String json, boolean asXML, List<Class<? extends AbstractBpmnFactory>> factoryClasses) throws Exception {
 		StringWriter writer = new StringWriter();
 		JSONObject result = new JSONObject();
 		
@@ -108,7 +115,7 @@ public class Bpmn2_0Servlet extends HttpServlet {
 		Diagram diagram = DiagramBuilder.parseJson(json);
 			
 		/* Build up BPMN 2.0 model */
-		Diagram2BpmnConverter converter = new Diagram2BpmnConverter(diagram);
+		Diagram2BpmnConverter converter = new Diagram2BpmnConverter(diagram, factoryClasses);
 		Definitions bpmnDefinitions = converter.getDefinitionsFromDiagram();
 		
 		/* Perform XML creation */

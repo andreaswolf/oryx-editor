@@ -1,15 +1,18 @@
 <topology name="topologySA" targetNamespace="example" xmlns:buyer="example:buyer" xmlns:seller="example:seller">
   <participantTypes>
-    <participantType name="Buyer" participantBehaviorDescription="buyer:buyer" />
-    <participantType name="Seller" participantBehaviorDescription="seller:seller" />
+    <participantType name="Buyer" participantBehaviorDescription="buyer:buyerref" />
+    <participantType name="Seller" participantBehaviorDescription="seller:sellerref" />
   </participantTypes>
   <participants>
     <participant name="buyerref" type="Buyer" selects="sellerref" />
     <participant name="sellerref" type="Seller" scope="seller:innerscope" />
-    <participantSet name="sellers" type="Seller" forEach="buyer:forEach1 buyer:RequestPriceFE" scope="buyer:scope1" />
+    <participantSet name="sellers" type="Seller" forEach="buyer:forEach1 buyer:RequestPriceFE" >
+    	<participant name="seller-a" type="Seller" forEach="buyer:forEach1" />
+    </participantSet>
   </participants>
   <messageLinks>
     <messageLink name="ProductInformation" senders="sellers" sendActivity="SendPI" receiver="buyerref" receiveActivity="ReceivePI" bindSenderTo="sellerref" messageName="ProductInformation" />
+    <messageLink name="P" sender="buyerref" sendActivity="SendPO" receiver="seller-a" receiveActivity="ReceivePI"  messageName="PM" />
     <messageLink name="PurchaseOrder" sender="buyerref" sendActivity="SendPO" receiver="sellerref" receiveActivity="ReceivePO" messageName="PurchaseOrder" />
     <messageLink name="POConfirmation" sender="sellerref" sendActivity="SendConf" receiver="buyerref" receiveActivity="ReceiveConf" messageName="POConfirmation" />
   </messageLinks>

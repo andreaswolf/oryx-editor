@@ -130,6 +130,18 @@ public class LaneFactory extends AbstractBpmnFactory {
 		if (shape.getStencilId().equals("Pool")) {
 			LaneSet poolLaneSet = new LaneSet();
 			poolLaneSet.setId(shape.getResourceId());
+			
+			/* Process type */
+			String processType = shape.getProperty("processtype");
+			if(processType != null && !processType.isEmpty()) {
+				poolLaneSet._processType = processType;
+			}
+			
+			/* Process isClosed */
+			String isClosed = shape.getProperty("isclosed");
+			if(isClosed != null && !isClosed.isEmpty())
+				poolLaneSet._isClosed = isClosed;
+	
 			return poolLaneSet;
 		}
 

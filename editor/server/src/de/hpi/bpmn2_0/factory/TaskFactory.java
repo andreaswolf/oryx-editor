@@ -58,7 +58,7 @@ import de.hpi.bpmn2_0.model.diagram.activity.ActivityShape;
  * 
  */
 @StencilId("Task")
-public class TaskFactory extends AbstractBpmnFactory {
+public class TaskFactory extends AbstractActivityFactory {
 
 	/*
 	 * (non-Javadoc)
@@ -85,6 +85,7 @@ public class TaskFactory extends AbstractBpmnFactory {
 			throws BpmnConverterException {
 		try {
 			Task task = (Task) this.invokeCreatorMethodAfterProperty(shape);
+			this.setStandardAttributes(task, shape);
 			return task;
 		} catch (Exception e) {
 			throw new BpmnConverterException(

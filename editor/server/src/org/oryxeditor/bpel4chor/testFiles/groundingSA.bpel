@@ -4,6 +4,7 @@
     <messageLink name="ProductInformation" portType="buyerPTs:buyerPT" operation="getPI" />
     <messageLink name="PurchaseOrder" portType="sellerPTs:sellerPT" operation="getPO" />
     <messageLink name="POConfirmation" portType="buyerPTs:buyerPT" operation="getConf" />
+    <messageLink name="P" portType="buyerPTs:buyerPT" operation="getConf" />
   </messageLinks>
   <properties>
     <property name="buyerref" WSDLproperty="prop:travelerProp" />

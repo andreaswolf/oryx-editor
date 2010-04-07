@@ -1,21 +1,13 @@
 package org.oryxeditor.bpel4chor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Copyright (c) 2009-2010 
@@ -61,22 +53,11 @@ public class BPEL4Chor2BPELTopologyAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 * @param {Document} currentDocument      The document of topology.xml 
 	 */
 	public void nsAnalyze (Document currentDocument){
-		//namespaceSet = new HashSet<String>();
-		//namespacePrefixSet = new HashSet<String>();
-		//ns2prefixMap = new HashMap<String, String>();
 		
 		getNamespaceSet(currentDocument, "topology");
 		//System.out.println("ns2prefixMap of topology is: " + ns2prefixMap);
 		//System.out.println("namespaces prefix Set of topology is: " + namespacePrefixSet);
 		//System.out.println("namespaces Set of topology is: " + namespaceSet);			
-		
-		/*if(!namespacePrefixSet.isEmpty()){
-			Iterator<String> it = namespacePrefixSet.iterator();
-			while(it.hasNext()){
-				String namespace = (String)it.next();
-				System.out.println("prefixNS=" + fprefixNS(namespace));
-			}
-		}*/
 	}
 	
 	/**
@@ -124,7 +105,6 @@ public class BPEL4Chor2BPELTopologyAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 * @param {Document} currentDocument     The document of topology.xml
 	 */
 	public void paAnalyze (Document currentDocument){
-		
 		paSet = new HashSet<String>();
 		scopeSet = new HashSet<String>();
 		pa2paTypeMap = new HashMap<String, String>();
@@ -149,7 +129,8 @@ public class BPEL4Chor2BPELTopologyAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		//System.out.println(ftypePa("buyerref"));
 		//System.out.println(ftypePa("sellerref"));
 		//System.out.println(ftypePa("sellers"));
-		
+		//System.out.println(pa2scopeMap);
+		//System.out.println(pa2foreachInScopeMap);
 		//System.out.println("scopePa: buyerref--> " + fscopePa("buyerref"));
 		//System.out.println("scopePa: sellerref--> " + fscopePa("sellerref"));
 		//System.out.println("scopePa: sellers--> " + fscopePa("sellers"));
@@ -165,7 +146,7 @@ public class BPEL4Chor2BPELTopologyAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		messageLinkSet = new HashSet<String>();		  // ML Set
 		messageConstructsSet = new HashSet<String>(); // MC Set
 		String ml;                                    // ml is an Element of messageLinkSet
-		String receiver, sender1; 					  // they are the Element of PaSet
+		String receiver, sender1 = ""; 				  // they are the Element of PaSet
 		ArrayList<String> sendersList = new ArrayList<String>();  // to store Elements of Attribute "senders"
 		String receiveActivity, sendActivity;         // NCName
 		String receiverns, senderns;                  // name space prefixes receiver-ns and sender-ns
@@ -181,28 +162,38 @@ public class BPEL4Chor2BPELTopologyAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 				ml = ((Element)child).getAttribute("name");
 				messageLinkSet.add(ml);
 				receiver = ((Element)child).getAttribute("receiver");
-				sender1 = "none";
 				if (((Element) child).hasAttribute("sender")){
 					sender1 = ((Element)child).getAttribute("sender");
 				}
 				else {
 					sendersList.clear();
-					String senders = ((Element)child).getAttribute("senders");
-					String[] sendersSplit = senders.split(" ");
-					for(int j=0; j<sendersSplit.length; j++){
-						sendersList.add(sendersSplit[j]);
-						sender1 = (String)sendersList.get(0);
+					if (((Element) child).hasAttribute("senders")){
+						String senders = ((Element)child).getAttribute("senders");
+						String[] sendersSplit = senders.split(" ");
+						for(int j=0; j<sendersSplit.length; j++){
+							sendersList.add(sendersSplit[j]);
+							sender1 = (String)sendersList.get(0);
+						}
 					}
 				}
 				receiveActivity = ((Element)child).getAttribute("receiveActivity");
 				sendActivity = ((Element)child).getAttribute("sendActivity");
 				receiverns = fnsprefixProcess(fprocessPaType(ftypePa(receiver)));
-				//TODO: sendersList[], just sender1 is done.
 				senderns = fnsprefixProcess(fprocessPaType(ftypePa(sender1)));
 				mc2 = buildQName(receiverns, receiveActivity);
 				mc1 = buildQName(senderns, sendActivity);
 				messageConstructsSet.add(mc2);
 				messageConstructsSet.add(mc1);
+				// deal with the senders attribute
+				if(sendersList.size() >= 2){
+					for(int k=1; k<sendersList.size(); k++){
+						senderns = fnsprefixProcess(fprocessPaType(ftypePa(sendersList.get(k))));
+						mc2 = buildQName(receiverns, receiveActivity);
+						mc1 = buildQName(senderns, sendActivity);
+						messageConstructsSet.add(mc2);
+						messageConstructsSet.add(mc1);
+					}
+				}
 				// create ml2mcMap for function fconstructsML
 				ArrayList<String> mcSenderReceiverList = new ArrayList<String>();
 				if (!sendActivity.isEmpty() && !receiveActivity.isEmpty()){
@@ -219,60 +210,40 @@ public class BPEL4Chor2BPELTopologyAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 					senderReceiverList.add(receiver);
 				}
 				else {
-					senderReceiverList.add(sender1);
+					ArrayList<String> senderList = new ArrayList<String>();
+					senderList.add(sender1);
+					senderReceiverList.add(senderList);
 					senderReceiverList.add(receiver);
 				}
 				ml2paMap.put(ml, senderReceiverList);
 			}
 		}
 
-		//System.out.println("MessageLinkSet is: " + messageLinkSet);
-		//System.out.println("MessageConstructsSet is: " + messageConstructsSet);
+/*		System.out.println("MessageLinkSet is: " + messageLinkSet);
+		System.out.println("MessageConstructsSet is: " + messageConstructsSet);
 		//System.out.println(ml2mcMap);
 		//System.out.println("!!!!!" + ml2paMap);
 
-		//System.out.println("3.14 function for ProductInformation is: " + 
-		//		fconstructsML("ProductInformation"));
-		//System.out.println("3.14 function for PurchaseOrder is: " + 
-		//		fconstructsML("PurchaseOrder"));
-		//System.out.println("3.14 function for POConfirmation is: " + 
-		//		fconstructsML("POConfirmation"));
+		System.out.println("3.14 function for ProductInformation is: " + 
+				fconstructsML("ProductInformation"));
+		System.out.println("3.14 function for PurchaseOrder is: " + 
+				fconstructsML("PurchaseOrder"));
+		System.out.println("3.14 function for POConfirmation is: " + 
+				fconstructsML("POConfirmation"));
 
-		//System.out.println("3.15 function for ProductInformation is: " + 
-		//		fparefsML("ProductInformation"));
+		System.out.println("3.15 function for ProductInformation is: " + 
+				fparefsML("ProductInformation"));
+		System.out.println("3.15 function for PurchaseOrder is: " + 
+				fparefsML("PurchaseOrder"));
+		System.out.println("3.15 function for POConfirmation is: " + 
+				fparefsML("POConfirmation"));
 		
-		//System.out.println("3.16 function for ProductInformation is: " + 
-		//		fbindSenderToML((Element)document.getFirstChild(), "ProductInformation"));
-		//System.out.println("3.16 function for PurchaseOrder is: " + 
-		//		fbindSenderToML((Element)document.getFirstChild(), "PurchaseOrder"));
-		//System.out.println("3.16 function for POConfirmation is: " + 
-		//		fbindSenderToML((Element)document.getFirstChild(), "POConfirmation"));
-		
+		System.out.println("3.16 function for ProductInformation is: " + 
+				fbindSenderToML((Element)currentDocument.getFirstChild(), "ProductInformation"));
+		System.out.println("3.16 function for PurchaseOrder is: " + 
+				fbindSenderToML((Element)currentDocument.getFirstChild(), "PurchaseOrder"));
+		System.out.println("3.16 function for POConfirmation is: " + 
+				fbindSenderToML((Element)currentDocument.getFirstChild(), "POConfirmation"));
+*/		
 	}
-	
-	/*************************Main**********************************/
-	/*public static void main (String[] args) throws ParserConfigurationException, SAXException, IOException{
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		factory.setIgnoringComments(true);
-		factory.setIgnoringElementContentWhitespace(true);
-		DocumentBuilder docBuilder = factory.newDocumentBuilder();
-		if(docBuilder.isNamespaceAware()){
-			Document docTopo = docBuilder.parse("/home/eysler/work/DiplomArbeit/oryx-editor/editor/server/src/org/oryxeditor/bpel4chor/testFiles/topologySA.xml");
-
-			BPEL4ChorTopologyAnalyze topoAnaly = new BPEL4ChorTopologyAnalyze();
-
-			//for Name space
-			topoAnaly.nsAnalyze(docTopo);
-
-			//for Participant Type
-			topoAnaly.paTypeAnalyze(docTopo);
-
-			//for Participant
-			topoAnaly.paAnalyze(docTopo);
-
-			//for MessageLink
-			topoAnaly.mlAnalyze(docTopo);
-		}
-	}*/
 }

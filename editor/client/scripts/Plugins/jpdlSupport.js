@@ -28,7 +28,7 @@ ORYX.Plugins.JPDLSupport = ORYX.Plugins.AbstractPlugin.extend({
 
 	facade: undefined,
 	
-	jPDLImporterUrl: '/backend/poem/new_jpdl',
+	jPDLImporterUrl: 'backend/poem/new_jpdl',
 	jPDLExporterUrlSuffix: '/jpdl',
 	
 	stencilSetExtensionNamespace: 'http://oryx-editor.org/stencilsets/extensions/jbpm#',

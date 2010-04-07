@@ -49,6 +49,7 @@ import de.hpi.bpmn2_0.model.FlowNode;
 import de.hpi.bpmn2_0.model.Process;
 import de.hpi.bpmn2_0.model.activity.Activity;
 import de.hpi.bpmn2_0.model.activity.SubProcess;
+import de.hpi.bpmn2_0.model.activity.Task;
 import de.hpi.bpmn2_0.model.choreography.Choreography;
 import de.hpi.bpmn2_0.model.choreography.ChoreographyActivity;
 import de.hpi.bpmn2_0.model.connector.Association;
@@ -83,11 +84,11 @@ import de.hpi.bpmn2_0.model.event.CompensateEventDefinition;
 import de.hpi.bpmn2_0.model.event.Event;
 import de.hpi.bpmn2_0.model.gateway.Gateway;
 import de.hpi.bpmn2_0.model.gateway.GatewayWithDefaultFlow;
+import de.hpi.bpmn2_0.model.misc.ProcessType;
 import de.hpi.bpmn2_0.model.participant.Lane;
 import de.hpi.bpmn2_0.model.participant.LaneSet;
 import de.hpi.bpmn2_0.model.participant.Participant;
 import de.hpi.diagram.OryxUUID;
-import de.hpi.util.reflection.ClassFinder;
 
 /**
  * Converter class for Diagram to BPMN 2.0 transformation.
@@ -596,6 +597,32 @@ public class Diagram2BpmnConverter {
 			}
 		}
 	}
+	
+	/**
+	 * @return All {@link Activity} contained in the diagram.
+	 */
+	private List<Activity> getAllActivities() {
+		ArrayList<Activity> activities = new ArrayList<Activity>();
+		for(BPMNElement element : this.bpmnElements.values()) {
+			if(element.getNode() instanceof Activity)
+				activities.add((Activity) element.getNode());
+		}
+		
+		return activities;
+	}
+	
+	/**
+	 * @return All {@link Task} contained in the diagram.
+	 */
+	private List<Task> getAllTasks() {
+		ArrayList<Task> activities = new ArrayList<Task>();
+		for(BPMNElement element : this.bpmnElements.values()) {
+			if(element.getNode() instanceof Task)
+				activities.add((Task) element.getNode());
+		}
+		
+		return activities;
+	}
 
 	/**
 	 * Identifies sets of nodes, connected through SequenceFlows.
@@ -615,10 +642,24 @@ public class Diagram2BpmnConverter {
 		/* Handle pools, current solution: only one process per pool */
 		for (BPMNElement element : this.diagramChilds) {
 			if (element.getNode() instanceof LaneSet) {
+				LaneSet laneSet = (LaneSet) element.getNode();
+				
 				Process process = new Process();
 				process.setId(OryxUUID.generate());
-				process.getLaneSet().add((LaneSet) element.getNode());
-				((LaneSet) element.getNode()).setProcess(process);
+				
+				/* Process attributes derived from lane set */
+				if(laneSet._isClosed != null && laneSet._isClosed.equalsIgnoreCase("true"))
+					process.setIsClosed(true);
+				else 
+					process.setIsClosed(false);
+				
+				if(laneSet._processType != null) {
+					process.setProcessType(ProcessType.fromValue(laneSet._processType));
+				}
+				
+				
+				process.getLaneSet().add(laneSet);
+				laneSet.setProcess(process);
 
 				process.getFlowElement().addAll(
 						((LaneSet) element.getNode()).getChildFlowElements());
@@ -1126,6 +1167,14 @@ public class Diagram2BpmnConverter {
 		if (typeLanguage != null && !typeLanguage.isEmpty())
 			this.definitions.setTypeLanguage(typeLanguage);
 	}
+	
+	/**
+	 * Method to create input output specification based on data inputs and outputs. 
+	 */
+	private void setIOSpecification() {
+		for(Task t : this.getAllTasks()) 
+			t.determineIoSpecification();
+	}
 
 	/**
 	 * Retrieves a BPMN 2.0 diagram and transforms it into the BPMN 2.0 model.
@@ -1154,7 +1203,11 @@ public class Diagram2BpmnConverter {
 		this.detectBoundaryEvents();
 		this.detectConnectors();
 		this.setInitiatingParticipant();
+		
+		/* Section to handle data concerning aspects */
 		this.updateDataAssociationsRefs();
+		this.setIOSpecification();
+		
 		this.setDefaultSequenceFlowOfExclusiveGateway();
 		this.setCompensationEventActivityRef();
 		this.setConversationParticipants();

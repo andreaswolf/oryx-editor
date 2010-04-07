@@ -47,6 +47,10 @@
 			<requires namespace="http://b3mn.org/stencilset/bpmnexec#"/>	
 		</plugin>
 		
+		<!-- Colored Petri Nets -->		
+		<plugin source="cpntoolsSupport.js" name="ORYX.Plugins.CPNToolsSupport" >
+			<requires namespace="http://b3mn.org/stencilset/coloredpetrinet#" />
+		</plugin> 
 		
 		<!-- following plugins don't require Ext -->
 		<plugin source="arrangement.js" name="ORYX.Plugins.Arrangement">
@@ -78,7 +82,7 @@
 		<plugin source="overlay.js" name="ORYX.Plugins.Overlay" />		
 		<plugin source="edit.js" name="ORYX.Plugins.Edit" />
 		<plugin source="keysMove.js" name="ORYX.Plugins.KeysMove" />
-		<plugin source="Layouter/containerLayouter.js" name="ORYX.Plugins.ContainerLayouter" />
+		<!--plugin source="Layouter/containerLayouter.js" name="ORYX.Plugins.ContainerLayouter" /-->
 
 		<!-- plugin for PNML export and deployment -->
 		<plugin source="pnmlexport.js" name="ORYX.Plugins.Pnmlexport">
@@ -306,6 +310,10 @@
 			<requires namespace="http://b3mn.org/stencilset/bpmn#"/>	
 		</plugin>
 		
+		<plugin source="uml.js" name="ORYX.Plugins.UML">
+			<requires namespace="http://b3mn.org/stencilset/UML2.2Class#"/>	
+		</plugin>
+		
 		<!-- only enable autolayouter if ruby is active -->
 		<!--<plugin source="autoLayout.js" name="ORYX.Plugins.AutoLayout" />-->
 		
@@ -322,6 +330,8 @@
 		</plugin>
 		
 		<!-- <plugin source="stencilsetmanipulator.js" name="ORYX.Plugins.StencilSetManipulator" /> -->
+		
+		<plugin source="fileRepository.js" name="ORYX.Plugins.FileRepositorySave" />
 
 	</plugins>
 	

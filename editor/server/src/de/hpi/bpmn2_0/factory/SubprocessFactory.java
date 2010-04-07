@@ -30,7 +30,7 @@ import de.hpi.bpmn2_0.annotations.StencilId;
 import de.hpi.bpmn2_0.exceptions.BpmnConverterException;
 import de.hpi.bpmn2_0.model.AdHocOrdering;
 import de.hpi.bpmn2_0.model.BaseElement;
-import de.hpi.bpmn2_0.model.Expression;
+import de.hpi.bpmn2_0.model.FormalExpression;
 import de.hpi.bpmn2_0.model.activity.Activity;
 import de.hpi.bpmn2_0.model.activity.AdHocSubProcess;
 import de.hpi.bpmn2_0.model.activity.CallActivity;
@@ -104,7 +104,7 @@ public class SubprocessFactory extends AbstractActivityFactory {
 		/* Mapping of properties */
 		String condition = shape.getProperty("adhoccompletioncondition");
 		if(condition != null) 
-			adhocSub.setCompletionCondition(new Expression(condition));
+			adhocSub.setCompletionCondition(new FormalExpression(condition));
 		
 		adhocSub.setOrdering(AdHocOrdering.fromValue(shape.getProperty("adhocordering")));
 		adhocSub.setCancelRemainingInstances(!shape.getProperty("adhoccancelremaininginstances").equalsIgnoreCase("false"));
@@ -116,6 +116,7 @@ public class SubprocessFactory extends AbstractActivityFactory {
 		Activity subprocess = null;
 		try {
 			subprocess = (Activity) this.invokeCreatorMethodAfterProperty(shape);
+			this.createLoopCharacteristics(subprocess, shape);
 		} catch (Exception e) {
 //			throw new BpmnConverterException("Error creating subprocess elements.", e);
 		} 

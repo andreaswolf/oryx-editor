@@ -91,28 +91,28 @@ public class EditorHandler extends HttpServlet {
 		extString=exts.toString();
 		String content = 
 	        "<script type='text/javascript'>" +
-	        "  if(!ORYX) var ORYX = {};\n" +
-	        "  if(!ORYX.CONFIG) ORYX.CONFIG = {};\n" +
-	        "  ORYX.CONFIG.PLUGINS_CONFIG = ORYX.CONFIG.PROFILE_PATH + '"+profiles.get(0)+".xml';\n" +
-	        "  ORYX.CONFIG.PROFILE_CONFIG = ORYX.CONFIG.PROFILE_PATH + '"+profiles.get(0)+".conf';\n" +
-	        "  ORYX.CONFIG.PROFILE_NAME = '"+profiles.get(0)+"';\n" +
-	        "  ORYX.CONFIG.SSET='"+sset+"';\n"+ // sets the default stencil set depending on profile
-	        "  ORYX.CONFIG.SSEXTS="+extString+";\n"+
-	        "  if ('function' != typeof(onOryxResourcesLoaded)) {\n" +
-	        "		window.onOryxResourcesLoaded = function() {" +
-	        "			if (!(location.hash.slice(1).length == 0 || location.hash.slice(1).indexOf('new')!=-1)) {" +
-	        "				Ext.Msg.alert(ORYX.I18N.Oryx.title, ORYX.I18N.Oryx.noBackendDefined);\n" +
-	        "			}" +
-	        "			var stencilset = ORYX.Utils.getParamFromUrl('stencilset') || ORYX.CONFIG.SSET;" +
-	        "			new ORYX.Editor({" +
-	        "				id: 'oryx-canvas123'," +
-	        "				stencilset: {" +
-	        "					url: \"/oryx/\" + stencilset" +
-	        "				}" +
-	        "			});" +
-	        "  };\n" +
-	        "  ORYX.Log.warn('Not Implemented: onOryxResourcesLoaded OR body-script loaded before plugins');\n" +
-	        "  }" +
+	        "if(!ORYX) var ORYX = {};" +
+	        "if(!ORYX.CONFIG) ORYX.CONFIG = {};" +
+	        "ORYX.CONFIG.PLUGINS_CONFIG  =			ORYX.CONFIG.PROFILE_PATH + '"+profiles.get(0)+".xml';" +
+	        "ORYX.CONFIG.SSEXTS="+
+	        extString+
+	        ";"+
+
+	        "if (!onOryxResourcesLoaded) function onOryxResourcesLoaded(){" +
+                "if (location.hash.slice(1).length == 0 || location.hash.slice(1).indexOf('new')!=-1){" +
+                "var stencilset=ORYX.Utils.getParamFromUrl('stencilset')?ORYX.Utils.getParamFromUrl('stencilset'):'"+sset+"';"+
+                "new ORYX.Editor({"+
+                  "id: 'oryx-canvas123',"+
+                  "stencilset: {"+
+                  	"url: '"+oryx_path+"'+stencilset" +
+                  "}" +
+          		"})}"+
+                "else{" +
+                "ORYX.Editor.createByUrl('" + getRelativeServerPath(request) + "'+location.hash.slice(1)+'/json', {"+
+                  "id: 'oryx-canvas123'" +
+          		"});" +
+          	  "};" +
+          	  "}" +
           	"</script>";
 		response.setContentType("application/xhtml+xml");
 		

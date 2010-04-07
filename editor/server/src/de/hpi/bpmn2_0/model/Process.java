@@ -69,6 +69,7 @@ import de.hpi.bpmn2_0.model.gateway.EventBasedGateway;
 import de.hpi.bpmn2_0.model.gateway.ExclusiveGateway;
 import de.hpi.bpmn2_0.model.gateway.InclusiveGateway;
 import de.hpi.bpmn2_0.model.gateway.ParallelGateway;
+import de.hpi.bpmn2_0.model.misc.ProcessType;
 import de.hpi.bpmn2_0.model.participant.LaneSet;
 
 
@@ -159,8 +160,8 @@ public class Process
 //    @XmlElementRef(name = "artifact", namespace = "http://www.omg.org/bpmn20", type = JAXBElement.class)
 //    protected List<JAXBElement<? extends Artifact>> artifact;
     protected List<QName> supports;
-//    @XmlAttribute
-//    protected TProcessType processType;
+    @XmlAttribute
+    protected ProcessType processType;
     @XmlAttribute
     protected Boolean isClosed;
     @XmlAttribute
@@ -569,6 +570,24 @@ public class Process
 	 */
 	public SubProcess getSubprocessRef() {
 		return subprocessRef;
+	}
+
+	/**
+	 * @return the processType
+	 */
+	public ProcessType getProcessType() {
+		/* None as default value */
+		if(this.processType == null)
+			this.processType = ProcessType.NONE;
+		
+		return processType;
+	}
+
+	/**
+	 * @param processType the processType to set
+	 */
+	public void setProcessType(ProcessType processType) {
+		this.processType = processType;
 	}
 
 }

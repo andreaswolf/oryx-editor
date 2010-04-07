@@ -71,7 +71,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	protected void getNamespaceSet(Node currentNode, String nodeName){
 		if(!(currentNode instanceof Element || currentNode instanceof Document)){
 			return;
-		};
+		}
 
 		String str;
 		String[] strSplit, prefixSplit;
@@ -80,7 +80,8 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			for(int i=0; i<currentNode.getAttributes().getLength(); i++){
 				str = currentNode.getAttributes().item(i).toString();
 				strSplit = str.split("=");
-				if(strSplit[0].contains("xmlns") || (strSplit[0].equals("targetNamespace"))){
+				if(strSplit[0].contains("xmlns") || (strSplit[0].equals("targetNamespace")) 
+						|| (strSplit[0].equals("topology"))){
 					if(strSplit[0].equals("targetNamespace")){
 						ns2prefixMap.put(strSplit[0], strSplit[1].replaceAll("\"", ""));
 						String valueOfTopologyNS = strSplit[1].replaceAll("\"", "");
@@ -99,6 +100,12 @@ public class FunctionsOfBPEL4Chor2BPEL {
 					if(strSplit[0].equals("xmlns")){
 						namespaceSet.add(strSplit[1].replaceAll("\"", ""));
 						ns2prefixMap.put(strSplit[0],strSplit[1].replaceAll("\"", ""));
+					}
+					if(strSplit[0].equals("topology")){
+						ns2prefixMap.put(strSplit[0], strSplit[1].replaceAll("\"", ""));
+						String valueOfTopologyInGrounding = strSplit[1].replaceAll("\"", "");
+						namespacePrefixSet.add(strSplit[0]);
+						namespaceSet.add(valueOfTopologyInGrounding);
 					}
 				}
 			}
@@ -148,15 +155,14 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	protected Set<String> getPaTypeSet(Element currentElement){
 		if(!(currentElement instanceof Node || currentElement instanceof Document)){
 			return null;
-		};
+		}
 
 		if(currentElement.getNodeName().equals("participantType")){
 			// analyze name space of participantType node
-			String paTypeNameAttribute = currentElement.getAttribute("name");
-			paTypeSet.add(paTypeNameAttribute);
+			String paType = currentElement.getAttribute("name");
+			paTypeSet.add(paType);
 		}
 
-		// recursive to search name space 
 		NodeList childNodes = currentElement.getChildNodes();
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
@@ -177,7 +183,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	protected Set<String> getProcessSet(Element currentElement){
 		if(!(currentElement instanceof Node || currentElement instanceof Document)){
 			return null;
-		};
+		}
 
 		if(currentElement.getNodeName().equals("participantType")){
 			// analyze namespace of participantType node
@@ -185,7 +191,6 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			processSet.add(pbd);
 		}
 
-		// recursive to search name space 
 		NodeList childNodes = currentElement.getChildNodes();
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
@@ -206,7 +211,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	protected HashMap<String, String> getPaType2ProcessMap(Element currentElement){
 		if(!(currentElement instanceof Node || currentElement instanceof Document)) {
 			return null;
-		};
+		}
 
 		if(currentElement.getNodeName().equals("participantType")){
 
@@ -216,7 +221,6 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			paType2processMap.put(paName, pbd);
 		}
 
-		// recursive to search name space 
 		NodeList childNodes = currentElement.getChildNodes();
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
@@ -272,7 +276,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 
 	/********************Method of Participant*************************/
 	/**
-	 * function 3.8: To create the participant set
+	 * function 3.8: To create a set of participants
 	 * 
 	 * @param {Element} currentElement     The current element
 	 * @return {Set}    paSet              The participant set
@@ -284,8 +288,8 @@ public class FunctionsOfBPEL4Chor2BPEL {
 
 		if(currentElement.getNodeName().equals("participant") || 
 			currentElement.getNodeName().equals("participantSet")){
-				String paNameAttribute = currentElement.getAttribute("name");
-				paSet.add(paNameAttribute);
+				String pa = currentElement.getAttribute("name");
+				paSet.add(pa);
 		}
 
 		// make forEach2setMap for PBDConvertion (base for function 3.36)
@@ -311,10 +315,9 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			}
 		}
 
-		// recursive to search name space 
 		NodeList childNodes = currentElement.getChildNodes();
 		Node child;
-		for (int i=0; i<childNodes.getLength(); i++){
+		for(int i=0; i<childNodes.getLength(); i++){
 			child = childNodes.item(i);
 			if(child instanceof Element){
 				getPaSet((Element)child);
@@ -328,7 +331,6 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	 * 
 	 * @param {Element} currentElement     The current element
 	 */
-	// get pa2paTypeMap for 3.9 
 	protected void getPa2PaTypeMap(Element currentElement){
 		if(!(currentElement instanceof Node || currentElement instanceof Document)){
 			return;
@@ -338,9 +340,9 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			try{
 				if(!(currentElement.getAttribute("name") == "") &&
 						!(currentElement.getAttribute("type") == "")){
-					String paNameAttribute = currentElement.getAttribute("name");
-					String paTypeAttribute = currentElement.getAttribute("type");
-					pa2paTypeMap.put(paNameAttribute, paTypeAttribute);
+					String pa = currentElement.getAttribute("name");
+					String paType = currentElement.getAttribute("type");
+					pa2paTypeMap.put(pa, paType);
 				}
 			}
 			catch(Exception e){
@@ -349,18 +351,18 @@ public class FunctionsOfBPEL4Chor2BPEL {
 		}
 		if(currentElement.getNodeName().equals("participantSet")){
 			try{
-				String paNameAttribute = currentElement.getAttribute("name");
-				String paTypeAttribute = currentElement.getAttribute("type");
-				pa2paTypeMap.put(paNameAttribute, paTypeAttribute);
+				String pa = currentElement.getAttribute("name");
+				String paType = currentElement.getAttribute("type");
+				pa2paTypeMap.put(pa, paType);
 				if(currentElement.hasChildNodes()){
 					NodeList childNodes = currentElement.getChildNodes();
 					Node child;
 					for(int i = 0; i < childNodes.getLength(); i++){
 						child = childNodes.item(i);
 						if(child instanceof Element){
-							String childPaNameAttribute = child.getAttributes().getNamedItem("name").getNodeValue();
-							String childPaTypeAttribute = paTypeAttribute;
-							pa2paTypeMap.put(childPaNameAttribute, childPaTypeAttribute);
+							String childPa = child.getAttributes().getNamedItem("name").getNodeValue();
+							String childPaType = paType;
+							pa2paTypeMap.put(childPa, childPaType);
 						}
 					}
 				}
@@ -391,8 +393,13 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			Iterator<String> it = paTypeSet.iterator();
 			while (it.hasNext()){
 				String participantType = (String)it.next();
-				if(pa2paTypeMap.get(participant).equals(participantType)){
-					return participantType;
+				try{
+					if(pa2paTypeMap.get(participant).equals(participantType)){
+						return participantType;
+					}
+				}
+				catch (Exception e){
+					e.printStackTrace();
 				}
 			}
 		}
@@ -412,7 +419,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 
 		if(currentElement.getNodeName().equals("participant") || currentElement.getNodeName().equals("participantSet")){
 			try{
-				// it is perhaps there are many forEachs in forEach attribute
+				// it is might be many elements in forEach attribute
 				if(!(currentElement.getAttribute("forEach") == "")){
 					String forEachAttribute = currentElement.getAttribute("forEach");
 					if(forEachAttribute.contains(" ")){
@@ -426,7 +433,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 					}
 				}
 
-				// it will be just one designed scope in scope attribute 
+				// it could be just one element in scope attribute 
 				if(!(currentElement.getAttribute("scope") == "")){
 					String scopeAttribute = currentElement.getAttribute("scope");
 					scopeSet.add(scopeAttribute);
@@ -463,33 +470,33 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			try{
 				if((currentElement.getAttribute("name") != "") &&
 						(currentElement.getAttribute("scope") != "")){
-					String paNameAttribute = currentElement.getAttribute("name");
-					String paScopeAttribute = currentElement.getAttribute("scope");
-					pa2scopeMap.put(paNameAttribute, paScopeAttribute);
+					String pa = currentElement.getAttribute("name");
+					String paScope = currentElement.getAttribute("scope");
+					pa2scopeMap.put(pa, paScope);
 				}
 				else if((currentElement.getAttribute("name") != "") &&
 						(currentElement.getAttribute("forEach") != "")){
-					String paNameAttribute = currentElement.getAttribute("name");
-					String paForEachAttribute = currentElement.getAttribute("forEach");
-					if(paForEachAttribute.contains(" ")){
-						String[] paForEachArray = paForEachAttribute.split(" ");
+					String pa = currentElement.getAttribute("name");
+					String paForEach = currentElement.getAttribute("forEach");
+					if(paForEach.contains(" ")){
+						String[] paForEachArray = paForEach.split(" ");
 						for(int i=0;i<paForEachArray.length;i++){
 							//TODO:: to be refined with many forEachs in forEach attribute of a single participant of
 							//       participantSet
 							pa2foreachInScopeMap.put(paForEachArray[i], "<ForEach>");
-							pa2scopeMap.put(paNameAttribute, pa2foreachInScopeMap);
+							pa2scopeMap.put(pa, pa2foreachInScopeMap);
 							//pa2scopeMap.put(paNameAttribute, paForEachArray[i]);
 							scopeSet.add(paForEachArray[i]);
 						}
 					}
 					else{
-						scopeSet.add(paForEachAttribute);
-						pa2scopeMap.put(paNameAttribute, paForEachAttribute);
+						scopeSet.add(paForEach);
+						pa2scopeMap.put(pa, paForEach);
 					}
 				}
 				else{
-					String paNameAttribute = currentElement.getAttribute("name");
-					pa2scopeMap.put(paNameAttribute, EMPTY);
+					String pa = currentElement.getAttribute("name");
+					pa2scopeMap.put(pa, EMPTY);
 				}
 			}
 			catch(Exception e)
@@ -499,10 +506,9 @@ public class FunctionsOfBPEL4Chor2BPEL {
 		}
 		else if(currentElement.getNodeName().equals("participantSet")){
 			try{
-				if((currentElement.getAttribute("name") != "") &&
-						(currentElement.getAttribute("scope") != "")){
-					String paNameAttribute = currentElement.getAttribute("name");
-					pa2scopeMap.put(paNameAttribute, EMPTY);
+				if(currentElement.getAttribute("name") != ""){
+					String pa = currentElement.getAttribute("name");
+					pa2scopeMap.put(pa, EMPTY);
 				}
 			}
 			catch(Exception e)
@@ -567,16 +573,17 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	protected Set<String> getMessageConstructsSet (Node currentNode){
 		NodeList childNodes = ((Element)currentNode).getElementsByTagName("messageLink");
 		Node child;
+		
 		for (int i=0; i<childNodes.getLength(); i++){
 			child = childNodes.item(i);
 			if(child instanceof Element){
 				String receiver = ((Element)child).getAttribute("receiver");
 				String sender1 = "";
-				if(((Element) child).hasAttribute("sender")){
+				ArrayList<String> sendersList = new ArrayList<String>();
+				if(((Element)child).hasAttribute("sender")){
 					sender1 = ((Element)child).getAttribute("sender");
 				}
-				else {
-					ArrayList<String> sendersList = null;
+				else if(((Element)child).hasAttribute("senders")){
 					String senders = ((Element)child).getAttribute("senders");
 					String[] sendersSplit = senders.split(" ");
 					for(int j=0; j<sendersSplit.length; j++){
@@ -587,12 +594,20 @@ public class FunctionsOfBPEL4Chor2BPEL {
 				String receiveActivity = ((Element)child).getAttribute("receiveActivity");
 				String sendActivity = ((Element)child).getAttribute("sendActivity");
 				String receiverns = fnsprefixProcess(fprocessPaType(ftypePa(receiver)));
-				//TODO: sendersList[], just sender1 is done.
 				String senderns = fnsprefixProcess(fprocessPaType(ftypePa(sender1)));
 				String mc2 = buildQName(receiverns, receiveActivity);
 				String mc1 = buildQName(senderns, sendActivity);
 				messageConstructsSet.add(mc2);
 				messageConstructsSet.add(mc1);
+				if(sendersList.size() >= 2){
+					for(int k=1; k<sendersList.size(); k++){
+						senderns = fnsprefixProcess(fprocessPaType(ftypePa(sendersList.get(k))));
+						mc2 = buildQName(receiverns, receiveActivity);
+						mc1 = buildQName(senderns, sendActivity);
+						messageConstructsSet.add(mc2);
+						messageConstructsSet.add(mc1);
+					}
+				}
 			}
 		}
 		return messageConstructsSet;
@@ -631,7 +646,6 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			}
 		}
 
-		// recursive to search name space 
 		NodeList childNodes = currentElement.getChildNodes();
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
@@ -666,7 +680,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	 */
 	protected ArrayList<Object> fparefsML(String ml){
 		ArrayList<Object> outputSenderReceiverPaList = new ArrayList<Object>();
-		if(!ml2paMap.isEmpty()){
+		if(!(ml2paMap.isEmpty())){
 			outputSenderReceiverPaList = (ArrayList<Object>)ml2paMap.get(ml);
 		}
 		return outputSenderReceiverPaList;
@@ -682,10 +696,10 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	protected String fbindSenderToML(Element currentElement, String messageLink){
 		getMl2BindSenderToMap(currentElement);
 		String participant = EMPTY;
-		if(ml2bindSenderToMap.containsValue(messageLink)){
+		if(ml2bindSenderToMap.containsKey(messageLink)){
 			String paValue = ml2bindSenderToMap.get(messageLink);
 			if(paSet.contains(paValue)){
-				return participant = paValue;
+				return paValue;
 			}
 		}		
 		return participant;
@@ -791,7 +805,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	 * @param {String} portType     The port type
 	 * @return {String} nsprefix    The name space prefix
 	 */
-	protected String fnsprefixPT (String portType){
+	protected String fnsprefixPT(String portType){
 		String[] nsprefixSplit;
 		if(portType.contains(":")){
 			nsprefixSplit = portType.split(":");
@@ -853,10 +867,8 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	 * 
 	 * @param {Element} currentElement     The current element
 	 * @param {String}  mc                 The message construct
-	 * @return {String} portType           The port type
 	 */
-	protected String fportTypeMC(Element currentElement, String mc){
-		String portType = EMPTY;
+	protected void fportTypeMC(Element currentElement, String mc){
 		NodeList childNodes = currentElement.getElementsByTagName("messageLink");
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
@@ -870,11 +882,6 @@ public class FunctionsOfBPEL4Chor2BPEL {
 				ml2ptMap.put(ml, pt);
 			}
 		}
-		HashMap<String, String> mc2mlMap = getMc2mlMap();
-		if(ml2ptMap.containsKey(mc2mlMap.get((mc.split(":"))[1]))){
-			return ml2ptMap.get(mc2mlMap.get((mc.split(":"))[1]));
-		}
-		return portType;
 	}
 
 	/**
@@ -896,10 +903,8 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	 * 
 	 * @param {Element} currentElement     The current Element
 	 * @param {String}  mc                 The message construct
-	 * @return {String} operation          The operation
 	 */
-	protected String foperationMC (Element currentElement, String mc){
-		String operation = EMPTY;
+	protected void foperationMC (Element currentElement, String mc){
 		NodeList childNodes = currentElement.getElementsByTagName("messageLink");
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
@@ -916,11 +921,6 @@ public class FunctionsOfBPEL4Chor2BPEL {
 				ml2opMap.put(ml, op);
 			}
 		}
-		HashMap<String, String> mc2mlMap = getMc2mlMap();
-		if(ml2opMap.containsKey(mc2mlMap.get((mc.split(":"))[1]))){
-			return ml2opMap.get(mc2mlMap.get((mc.split(":"))[1]));
-		}
-		return operation;
 	}
 
 	/**
@@ -960,7 +960,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * function 3.24: partnerLinksScope: (Scope U Process) -> 2^PL
 	 * create a mapping sc2plMap [sc, partnerLinkSet]
@@ -1018,7 +1018,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	 */
 	protected HashMap<Object, Object> getCommMap(){
 		HashMap<Object, Object> coMap = new HashMap<Object, Object>();
-		// TODO: 3.27
+		// not be used.
 		return coMap;
 	}
 
@@ -1219,7 +1219,12 @@ public class FunctionsOfBPEL4Chor2BPEL {
 	 * @param {String} paSetName  The name of <participantSet>
 	 */
 	protected void fsetForEach(String sc, String paSetName){
-			forEach2setMap.put(sc, paSetName);
+			if(pa2scopeMap.containsValue(sc)){
+				forEach2setMap.put(sc, EMPTY);
+			}
+			else{
+				forEach2setMap.put(sc, paSetName);
+			}
 	}
 
 	/**

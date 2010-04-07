@@ -81,6 +81,11 @@ public class LaneSet
 	@XmlTransient
 	protected Process process;
 	
+	@XmlTransient
+	public String _processType;
+	@XmlTransient
+	public String _isClosed;
+	
 	public void addChild(BaseElement child) {
 		if(child instanceof Lane) {
 			Lane lane = (Lane) child;

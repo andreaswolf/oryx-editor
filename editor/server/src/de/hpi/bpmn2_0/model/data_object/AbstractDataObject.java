@@ -55,6 +55,11 @@ public abstract class AbstractDataObject extends FlowNode {
 	@XmlAttribute
     protected Boolean isCollection;
 	
+//	@XmlTransient
+//	private Boolean isRequiredForStart;
+//	@XmlTransient
+//	private Boolean isRequiredForCompletion;
+	
 	/* Getter & Setter */
 	
 	/**
@@ -109,9 +114,42 @@ public abstract class AbstractDataObject extends FlowNode {
         this.isCollection = value;
     }
 	
+//    /**
+//     * @return the isRequiredForStart
+//     */
+//    public Boolean getIsRequiredForStart() {
+//    	if(this.isRequiredForStart == null)
+//    		return false;
+//    	return isRequiredForStart;
+//    }
+//    
+//    /**
+//     * @param isRequiredForStart the isRequiredForStart to set
+//     */
+//    public void setIsRequiredForStart(Boolean isRequiredForStart) {
+//    	this.isRequiredForStart = isRequiredForStart;
+//    }
+//    
+//    /**
+//     * @return the isRequiredForCompletion
+//     */
+//    public Boolean getIsRequiredForCompletion() {
+//    	if(this.isRequiredForCompletion == null)
+//    		return false;
+//    	return isRequiredForCompletion;
+//    }
+//    
+//    /**
+//     * @param isRequiredForCompletion the isRequiredForCompletion to set
+//     */
+//    public void setIsRequiredForCompletion(Boolean isRequiredForCompletion) {
+//    	this.isRequiredForCompletion = isRequiredForCompletion;
+//    }
+    
 	
     /* Business logic methodes */
 	
+
 	/**
 	 * List of elements already traversed in the graph.
 	 */

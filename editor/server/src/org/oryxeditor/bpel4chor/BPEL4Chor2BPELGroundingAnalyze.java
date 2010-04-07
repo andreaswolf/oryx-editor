@@ -1,21 +1,15 @@
 package org.oryxeditor.bpel4chor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Copyright (c) 2009-2010 
@@ -188,6 +182,7 @@ class PartnerLink {
 }
 
 public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
+	
 	/************************Name space of Grounding********************/
 	/**
 	 * To analyze the name spaces of <grounding> of grounding.bpel 
@@ -195,10 +190,6 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 * @param {Document} currentDocument      The document of grounding.bpel 
 	 */
 	public void nsAnalyze(Document currentDocument){
-		//namespaceSet = new HashSet<String>();
-		//namespacePrefixSet = new HashSet<String>();
-		//ns2prefixMap = new HashMap<String, String>();
-		
 		//System.out.println(messageConstructsSet);
 		//System.out.println(ml2mcMap);
 		//System.out.println(messageLinkSet);
@@ -223,7 +214,6 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		oSet  = new HashSet<String>();
 		ml2opMap = new HashMap<String, String>();
 		ml2ptMap = new HashMap<String, String>();
-		commMap = new HashMap<Object, Object>();
 		mc2plMap = new HashMap<String, PartnerLink>();		// used by 3.23
 		sc2plMap = new HashMap<String, Set<PartnerLink>>();	// used by 3.24
 		pl2plTypeMap = new HashMap<String, String>();		// used by 3.26
@@ -232,28 +222,6 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		pl2myRoleMap = new HashMap<String, String>();		// used by 3.30
 		pl2partnerRoleMap = new HashMap<String, String>();	// used by 3.31
 		commSet = new HashSet<Object>();					// commSet to store the comms
-		
-		// 3.17 ptSet output
-		//ptSet = getPtSet((Element)currentDocument.getFirstChild());
-		//System.out.println("3.17: " + ptSet);
-		
-		// 3.18 fnsprefixPT() output
-		//System.out.println("3.18: " + fnsprefixPT(ptSet.iterator().next().toString()));
-		
-		// 3.19 oSet output
-		//oSet = getOSet((Element)currentDocument.getFirstChild());
-		//System.out.println("3.19: " + oSet);
-		
-		// 3.20 fportTypeMC output
-		//System.out.println("3.20: " + fportTypeMC((Element)currentDocument.getFirstChild(), "seller:SendPI"));
-		//System.out.println("3.20: " + fportTypeMC((Element)currentDocument.getFirstChild(), "buyer:ReceivePI"));
-		//System.out.println("3.20: " + fportTypeMC((Element)currentDocument.getFirstChild(), "buyer:SendPO"));
-		//System.out.println("3.20: " + fportTypeMC((Element)currentDocument.getFirstChild(), "buyer:ReceivePO"));
-		
-		// 3.21 foperationMC output
-		//System.out.println("3.21: " + foperationMC((Element)currentDocument.getFirstChild(), "seller:SendPI"));
-		//System.out.println("3.21: " + foperationMC((Element)currentDocument.getFirstChild(), "buyer:ReceivePI"));
-		//System.out.println("3.21: " + foperationMC((Element)currentDocument.getFirstChild(), "buyer:SendPO"));
 		
 		/*
 		 * ml :             member of messageLinkSet and inherits of NCName
@@ -283,33 +251,40 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 				messageLinkSet.add(ml);
 				pt = ((Element)child).getAttribute("portType");
 				ptSet.add(pt);
-				ml2ptMap.put(ml, pt);									// make a mapping of ml and portType for PBDConvertion
+				ml2ptMap.put(ml, pt);					// make a mapping of ml and portType for PBDConvertion
 				
 				// get name space prefix of pt
 				pt_nsprefix = fnsprefixPT(((Element)child).getAttribute("portType"));
 				o = buildQName(pt_nsprefix, ((Element)child).getAttribute("operation"));
 				oSet.add(o);
-				ml2opMap.put(ml, o);									// make a mapping of ml and operatiosn for PBDConvertion
+				ml2opMap.put(ml, o);					// make a mapping of ml and operation for PBDConvertion
 				
 				// assign message constructs of ml to port type pt and operation o
 				ArrayList<String> mcList = fconstructsML(ml);
 				//System.out.println("mcList is: " + mcList);
 				mc1 = mcList.get(0);
 				mc2 = mcList.get(1);
+				fportTypeMC((Element)child, mc1);
+				fportTypeMC((Element)child, mc2);
+				foperationMC((Element)child, mc1);
+				foperationMC((Element)child, mc2);
 				//System.out.println("pt is: " + pt);
-				//System.out.println("portTypeMC(mc1) is: " + fportTypeMC((Element)child, mc1));
-				//System.out.println("portTypeMC(mc2) is: " + fportTypeMC((Element)child, mc2));
+				//System.out.println("portTypeMC(mc1) is: " + fportTypeMC(mc1));
+				//System.out.println("portTypeMC(mc2) is: " + fportTypeMC(mc2));
 				//System.out.println("o is: " + o);
-				//System.out.println("operationMC(mc1) is: " + foperationMC((Element)child, mc1));
-				//System.out.println("operationMC(mc2) is: " + foperationMC((Element)child, mc2));
+				//System.out.println("operationMC(mc1) is: " + foperationMC(mc1));
+				//System.out.println("operationMC(mc2) is: " + foperationMC(mc2));
 				 
 				ArrayList<Object> parefsML = fparefsML(ml);
 				//System.out.println("parefsML is: " + parefsML);
 				Set<Object> A = new HashSet<Object>();
 				A.clear();
 				if (parefsML.get(0).getClass().getSimpleName().equals("ArrayList")){
-					String str = parefsML.get(0).toString();
-					A.add(str);
+					ArrayList<String> strList = (ArrayList<String>)parefsML.get(0);
+					for(int j = 0; j<strList.size(); j++){
+						String str = strList.get(j);
+						A.add(str);
+					}
 				}
 				else 
 				{
@@ -320,7 +295,7 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 				//System.out.println("b is: " + b);
 				//System.out.println("ml2bindSenderToMap is: " + ml2bindSenderToMap);
 				
-				if(ml2bindSenderToMap.containsKey(ml) && (!ml2bindSenderToMap.get(ml).equals(EMPTY))){
+				if(ml2bindSenderToMap.containsKey(ml) && (!(ml2bindSenderToMap.get(ml).equals(EMPTY)))){
 					A.clear();
 					A.add((String)ml2bindSenderToMap.get(ml));
 				}
@@ -336,12 +311,6 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 			//System.out.println("*****ml is: " + ml);
 			traverseComm(ASet, b, pt, mc1, mc2, ml);
 		}
-		//System.out.println("messageLinkSet of grounding: " + messageLinkSet);
-		//System.out.println("portTypeSet of grounding: " + ptSet);
-		//System.out.println("operationSet of grounding: " + oSet);
-		
-		//TRAVERSEComm procedure
-		//traverseComm(A, b, pt, mc1, mc2, ml);
 	}
 	
 	/**
@@ -356,10 +325,9 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 * @param {String} ml    The message link
 	 */
 	private void traverseComm(Set<Object> A, String b, String pt, String mc1, String mc2, String ml){
-		Comm comm = new Comm(null, null, null, null);
-		Comm commNew = new Comm(null, null, null, null);
-		PartnerLink pl1 = null, pl2 = null;                       	//DT(PL)inherits of NCName
-		String plt;                            						//DT(PLType)inherits of NCName
+		Comm comm, commNew;
+		PartnerLink pl1, pl2;                       	//DT(PL)inherits of NCName
+		String plt;                         			//DT(PLType)inherits of NCName
 		String a = A.iterator().next().toString();
 		Set<String> bSet = new HashSet<String>();
 		bSet.add(b);
@@ -391,6 +359,8 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 					fpartnerLinkMC(mc1, pl1); 
 					fpartnerLinkMC(mc2, pl2);
 					//System.out.println("mc2plMap is changed to: " + mc2plMap);
+					//System.out.println(mc1 + ": " + fpartnerLinkMC(mc1).getName());
+					//System.out.println(mc2 + ": " + fpartnerLinkMC(mc2).getName());
 				}
 				else if(CONDITION2){
 					//System.out.println("!!!!!!!!!!!!!!!CONDITION2!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -433,7 +403,7 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 						comm2pltMap.remove(comm);
 						fpltComm(commChanged, plt);
 					}
-
+					//System.out.println("commSet is: " + ((Comm)commSet.iterator().next()).getElement());
 					fmyRolePL(pl1, b);
 					//System.out.println("pl2myRoleMap is changed to: " + pl2myRoleMap);
 					fpartnerRolePL(pl2, b);
@@ -477,13 +447,13 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 */
 	private void createPartnerLinkDeclarations(Comm commNewInput, Set<Object> AInput, String bInput, String ptInput, 
 												String mc1Input, String mc2Input, String ml){
-		PartnerLink pl1 = null, pl2 = null;                     //inherits of NCName
+		PartnerLink pl1, pl2;                     				//inherits of NCName
 		String plt;                                             //PartnerLinkType, inherits of NCName
 		String senders_ids = (String)AInput.iterator().next();  //initially the identifier of the first participant reference of A
 		String firstSender = senders_ids;
 		//String a;												//element of Participant, inherits of NCName
 		String sc;                                              //QName, sc will be used for elements of (Scope U Process)
-		if (AInput.remove(senders_ids) && !AInput.isEmpty()){
+		if (AInput.remove(senders_ids) && !(AInput.isEmpty())){
 			Iterator<Object> it = AInput.iterator();
 			while(it.hasNext()){
 				//adds an underline and the identifier of the participant reference 'next' at the end of the string senders_ids,
@@ -518,8 +488,8 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		String scopeResult = (String)fscopePa(bInput);
 		//System.out.println("##################scopeResult is: " + scopeResult);		
 		if (scopeResult.equals(EMPTY)){
-			//sc = fprocessPaType(ftypePa(firstSender));			//?????
-			sc = fprocessPaType(ftypePa(bInput));
+			//sc = fprocessPaType(ftypePa(firstSender));			
+			sc = fprocessPaType(ftypePa(bInput));				//??????
 		}
 		else
 		{
@@ -529,8 +499,9 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		//System.out.println("####sc is: " + sc);
 		Set<PartnerLink> partnerLinkSet1 = new HashSet<PartnerLink>();
 		partnerLinkSet1.add(pl1);
-		fpartnerLinksScope(sc, partnerLinkSet1);
+		fpartnerLinksScope(sc, partnerLinkSet1);						//?????? why use set here?
 		//System.out.println("####sc2plMap is: " + sc2plMap);
+		//System.out.println("pl1 is: " + pl1.getName());
 		//System.out.println("#############################" + ml2bindSenderToMap);
 		if (ml2bindSenderToMap.get(ml).equals(EMPTY) || fscopePa(ml2bindSenderToMap.get(ml)).equals(EMPTY)){
 			sc = fprocessPaType(ftypePa(bInput));
@@ -543,9 +514,9 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		//System.out.println("####sc is: " + sc);
 		Set<PartnerLink> partnerLinkSet2 = new HashSet<PartnerLink>();
 		partnerLinkSet2.add(pl2);
-		//System.out.println(pl2.getName());
-		fpartnerLinksScope(sc, partnerLinkSet2);
+		fpartnerLinksScope(sc, partnerLinkSet2);						//?????? why use set here?
 		//System.out.println("####sc2plMap is: " + sc2plMap);
+		//System.out.println("s2 is: " + pl2.getName());
 		// modify the remaining functions
 		ftypePL(pl1, plt);
 		ftypePL(pl2, plt);
@@ -598,8 +569,6 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 			}
 		}
 		
-		//System.out.println("propName is: " + propName);
-		//System.out.println("property is: " + property);
 		//System.out.println("corrPropNameSet is: " + corrPropNameSet);
 		//System.out.println("propertySet is: " + propertySet);
 		//System.out.println("corrPropName2propertyMap is: " + corrPropName2propertyMap);
@@ -613,8 +582,8 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 */
 	private void analyzePropertyGrounding(Element construct){
 		// the input construct points on the current <property> tag
-		String propName = EMPTY;											// element of corrPropNameSet, inherits of NCName
-		String property = EMPTY;											// element of propertySet, inherits of QName
+		String propName;											// element of corrPropNameSet, inherits of NCName
+		String property;											// element of propertySet, inherits of QName
 		
 		// get property name and WSDL property
 		propName = construct.getAttribute("name");
@@ -648,10 +617,10 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 * @param {Object} inputObj     The input object
 	 * @return {String}             The output of the class for the input object
 	 */
-	private String dt(Object inputObj){
+/*	private String dt(Object inputObj){
 		return inputObj.getClass().getSimpleName();
 	}
-
+*/
 	/**
 	 * return the name space prefix of the attribute which having the "name", it
 	 * will return the first NCName of its value if this is a QName, otherwise it
@@ -672,49 +641,4 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		}
 		return EMPTY;
 	}
-		
-	/**************************main*******************************/
-	/*public static void main(String argv[]) throws ParserConfigurationException, SAXException, IOException{
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		factory.setIgnoringComments(true);
-		factory.setIgnoringElementContentWhitespace(true);
-		DocumentBuilder docBuilder = factory.newDocumentBuilder();
-		if(docBuilder.isNamespaceAware()){
-			Document docGround = docBuilder.parse("/home/eysler/work/DiplomArbeit/oryx-editor/editor/server/src/org/oryxeditor/bpel4chor/testFiles/groundingSA.bpel");
-			Document docTopo = docBuilder.parse("/home/eysler/work/DiplomArbeit/oryx-editor/editor/server/src/org/oryxeditor/bpel4chor/testFiles/topologySA.xml");
-
-			BPEL4ChorTopologyAnalyze topoAnaly = new BPEL4ChorTopologyAnalyze();
-			BPEL4ChorGroundingAnalyze grouAnaly = new BPEL4ChorGroundingAnalyze();
-
-			//prepare the MC and ML Set of topology for the grounding analyze
-			topoAnaly.nsAnalyze(docTopo);
-			topoAnaly.paTypeAnalyze(docTopo);
-			topoAnaly.paAnalyze(docTopo);
-			topoAnaly.mlAnalyze(docTopo);
-			topoAnaly.getMl2BindSenderToMap(((Element)docTopo.getFirstChild()));
-			
-			grouAnaly.namespacePrefixSet = topoAnaly.namespacePrefixSet;    // will be used in grounding nsAnalyze
-			grouAnaly.namespaceSet = topoAnaly.namespaceSet;				// will be used in grounding nsAnalyze
-			grouAnaly.ns2prefixMap = topoAnaly.ns2prefixMap;				// will be used in grounding nsAnalyze
-			grouAnaly.messageConstructsSet = topoAnaly.messageConstructsSet;
-			grouAnaly.messageLinkSet = topoAnaly.messageLinkSet;
-			grouAnaly.ml2mcMap = topoAnaly.ml2mcMap;
-			grouAnaly.ml2paMap = topoAnaly.ml2paMap; 						// will be used in fparefsML() and in Alg. 3.4
-			grouAnaly.ml2bindSenderToMap = topoAnaly.ml2bindSenderToMap; 	// will be used in mlAnalyze
-			grouAnaly.pa2scopeMap = topoAnaly.pa2scopeMap; 					// will be used in Alg. 3.4 createPartnerLinkDeclarations
-			grouAnaly.paTypeSet = topoAnaly.paTypeSet;                      // will be used in Alg. 3.4 createPartnerLinkDeclarations
-			grouAnaly.pa2paTypeMap = topoAnaly.pa2paTypeMap;              	// will be used in Alg. 3.4 createPartnerLinkDeclarations
-			grouAnaly.paType2processMap = topoAnaly.paType2processMap;      // will be used in Alg. 3.4 createPartnerLinkDeclarations
-			
-			// Name space analysis
-			grouAnaly.nsAnalyze(docGround);
-			
-			// MessageLink analysis
-			grouAnaly.mlAnalyze(docGround);
-			
-			// Properties analysis
-			grouAnaly.propertyAnalyze(docGround);
-		}
-	}*/
 }

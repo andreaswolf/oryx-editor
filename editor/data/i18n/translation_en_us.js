@@ -803,3 +803,19 @@ ORYX.I18N.Bpmn2_0Serialization.xpdlShowDesc = "Shows the XPDL 2.2 based on BPMN 
 ORYX.I18N.Bpmn2_0Serialization.xpdlDownload = "Download as XPDL 2.2";
 ORYX.I18N.Bpmn2_0Serialization.xpdlDownloadDesc = "Download the XPDL 2.2 based on BPMN 2.0 XML (by XSLT)";
 
+
+if(!ORYX.I18N.cpntoolsSupport) ORYX.I18N.cpntoolsSupport = {};
+
+ORYX.I18N.cpntoolsSupport.serverConnectionFailed = "Connection to server failed.";
+ORYX.I18N.cpntoolsSupport.importTask = "Select an CPN file (.cpn) or type in the CPN XML structure in order to import it!";
+ORYX.I18N.cpntoolsSupport.File = "File:";
+ORYX.I18N.cpntoolsSupport.cpn = "CPN";
+ORYX.I18N.cpntoolsSupport.title = "CPN Oryx";
+ORYX.I18N.cpntoolsSupport.importLable = "Import";
+ORYX.I18N.cpntoolsSupport.close = "Close";
+ORYX.I18N.cpntoolsSupport.wrongCPNFile = "Not chosen correct CPN - File.";
+ORYX.I18N.cpntoolsSupport.noPageSelection = "No page has been selected.";
+ORYX.I18N.cpntoolsSupport.importProgress = "Importing ...";
+ORYX.I18N.cpntoolsSupport.exportProgress = "Exporting ...";
+ORYX.I18N.cpntoolsSupport.exportDescription = "Export to CPN Tools";
+ORYX.I18N.cpntoolsSupport.importDescription = "Import from CPN Tools";

@@ -221,6 +221,22 @@ ORYX.I18N.Save.failed = "Falló guardar.";
 ORYX.I18N.Save.noRights = "No tiene derecho suficiente para guardar modificaciones.";
 ORYX.I18N.Save.saving = "Guardar";
 
+if(!ORYX.I18N.cpntoolsSupport) ORYX.I18N.cpntoolsSupport = {};
+
+ORYX.I18N.cpntoolsSupport.serverConnectionFailed = "El contacto al server no se pudo abrir.";
+ORYX.I18N.cpntoolsSupport.importTask = "Escoje un CPN archivo (.cpn) o escribe la estructura del CPN XML para importarlo.";
+ORYX.I18N.cpntoolsSupport.File = "Archivo:";
+ORYX.I18N.cpntoolsSupport.cpn = "CPN";
+ORYX.I18N.cpntoolsSupport.title = "CPN Oryx";
+ORYX.I18N.cpntoolsSupport.importLable = "Importar";
+ORYX.I18N.cpntoolsSupport.close = "Cerrar";
+ORYX.I18N.cpntoolsSupport.wrongCPNFile = "No escojiste un CPN - archivo correcto.";
+ORYX.I18N.cpntoolsSupport.noPageSelection = "No page has been selected.";
+ORYX.I18N.cpntoolsSupport.importProgress = "Importando ...";
+ORYX.I18N.cpntoolsSupport.exportProgress = "Exportando ...";
+ORYX.I18N.cpntoolsSupport.exportDescription = "Exportar a CPN Tools";
+ORYX.I18N.cpntoolsSupport.importDescription = "Importar de CPN Tools";
+
 if(!ORYX.I18N.File) ORYX.I18N.File = {};
 
 ORYX.I18N.File.group = "Archivo";

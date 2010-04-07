@@ -87,6 +87,14 @@
             "uri":"/xforms/xforms.json",
             "icon_url":"/xforms/xforms.png",
             "visible":true
+        },
+        {
+        	"title":"Colored Petri Nets",
+            "namespace":"http://b3mn.org/stencilset/coloredpetrinets#",
+            "description":"Colored Petri Nets specification.",
+            "uri":"/coloredpetrinets/coloredpetrinet.json",
+            "icon_url":"/coloredpetrinets/coloredpetrinet.png",
+            "visible":true
         }
 		
 ]

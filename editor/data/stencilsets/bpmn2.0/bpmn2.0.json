@@ -589,7 +589,7 @@
 							"type":"Boolean",
 							"value":false,
 							"width":80,
-							"optional":true,
+							"optional":true
 						}
 					]
 				},            
@@ -627,7 +627,7 @@
 							"type":"Boolean",
 							"value":false,
 							"width":80,
-							"optional":true,
+							"optional":true
 						}
 					]
 				}
@@ -737,6 +737,206 @@
 					"readonly":false,
 					"optional":"true",
 					"refToView":"callActivity"
+				}
+			]
+		},
+		{
+			"name":"operation",
+			"properties": [
+				{
+					"id":"operationname",
+					"type":"String",
+					"title":"OperationName",
+					"title_de":"Operationsname",
+					"value":"",
+					"description":"The descriptive name for the operation element.",
+					"description_de":"Bezeichnung der Operation", 
+					"readonly":false,
+					"optional":"true"
+				},
+				{
+					"id":"inmessagename",
+					"type":"String",
+					"title":"InMessageName",
+					"title_de":"Eingangs-Nachricht-Name",
+					"value":"",
+					"description":"The descriptive name for the InMessage element",
+					"description_de":"Bezeichnung der Eingangs-Nachricht", 
+					"readonly":false,
+					"optional":"true"
+				},
+				{
+					"id":"inmsgitemkind",
+					"type":"Choice",
+					"title":"InMessageItemKind",
+					"title_de":"Eingangs-Nachricht-Typ",
+					"value":"Information",
+					"description":"This defines the nature of the Item. Possible values are Physical or Information. The default value is Information.",
+					"description_de":"Beim Typ der Nachricht kann zwischen Physisch und Information unterschieden werden.",
+					"readonly":false,
+					"optional":true,
+					"items": [
+						{
+							"id":"c1",
+							"title":"Physical",
+							"value":"Physical"
+						},
+						{
+							"id":"c2",
+							"title":"Information",
+							"value":"Information"
+						}
+					]
+				},
+				{
+					"id":"inmsgstructure",
+					"type":"String",
+					"title":"InMessageStructure",
+					"title_de":"Eingangs-Nachricht-Struktur",
+					"value":"",
+					"description":"This defines the nature of the Item. Possible values are Physical or Information. The default value is Information.",
+					"description_de":"Beim Typ der Nachricht kann zwischen Physisch und Information unterschieden werden.",
+					"readonly":false,
+					"optional":true
+				},
+				{
+					"id":"inmsgimport",
+					"type":"Complex",
+					"title":"InMessageImport",
+					"title_de":"Eingangs-Nachricht-Import",
+					"value":"",
+					"description":"Identifies the location of the data structure and its format. If the importType attribute is left unspecified, the typeLanguage specified in the Definitions is assumed.",
+					"description_de":"Definiert den Ort der Datenstruktur und ihr Format.",
+					"readonly":false,
+					"optional":true,
+					"complexItems": [
+						{
+				        	"id":"c1",
+				        	"type":"String",
+				        	"width":200,
+				        	"value":"",
+				        	"name":"ImportType",
+				        	"name_de":"Importtyp"
+				        },
+						{
+				        	"id":"c2",
+				        	"type":"String",
+				        	"width":100,
+				        	"value":"",
+				        	"name":"Location"
+				        },
+						{
+				        	"id":"c3",
+				        	"type":"String",
+				        	"width":200,
+				        	"value":"",
+				        	"name":"Namespace",
+				        	"name_de":"Namensraum"
+				        }
+					]
+				},
+				{
+					"id":"inmsgiscollection",
+					"type":"Boolean",
+					"title":"InMessageIsCollection",
+					"title_de":"Eingangs-Nachricht-Ist-Liste",
+					"value":false,
+					"description":"Setting this flag to true indicates that the actual data type is a collection.",
+					"description_de":"Ture signalisiert, dass der Datentyp eine Liste ist.",
+					"readonly":false,
+					"optional":true
+				},
+				{
+					"id":"outmessagename",
+					"type":"String",
+					"title":"OutMessageName",
+					"title_de":"Ausgangs-Nachricht-Name",
+					"value":"",
+					"description":"The descriptive name for the OutMessage element",
+					"description_de":"Bezeichnung der Ausgangs-Nachricht", 
+					"readonly":false,
+					"optional":"true"
+				},
+				{
+					"id":"outmsgitemkind",
+					"type":"Choice",
+					"title":"OutMessageItemKind",
+					"title_de":"Ausgangs-Nachricht-Typ",
+					"value":"Information",
+					"description":"This defines the nature of the Item. Possible values are Physical or Information. The default value is Information.",
+					"description_de":"Beim Typ der Nachricht kann zwischen Physisch und Information unterschieden werden.",
+					"readonly":false,
+					"optional":true,
+					"items": [
+						{
+							"id":"c1",
+							"title":"Physical",
+							"value":"Physical"
+						},
+						{
+							"id":"c2",
+							"title":"Information",
+							"value":"Information"
+						}
+					]
+				},
+				{
+					"id":"outmsgstructure",
+					"type":"String",
+					"title":"OutMessageStructure",
+					"title_de":"Ausgangs-Nachricht-Struktur",
+					"value":"",
+					"description":"This defines the nature of the Item. Possible values are Physical or Information. The default value is Information.",
+					"description_de":"Beim Typ der Nachricht kann zwischen Physisch und Information unterschieden werden.",
+					"readonly":false,
+					"optional":true
+				},
+				{
+					"id":"outmsgimport",
+					"type":"Complex",
+					"title":"OutMessageImport",
+					"title_de":"Ausgangs-Nachricht-Import",
+					"value":"",
+					"description":"Identifies the location of the data structure and its format. If the importType attribute is left unspecified, the typeLanguage specified in the Definitions is assumed.",
+					"description_de":"Definiert den Ort der Datenstruktur und ihr Format.",
+					"readonly":false,
+					"optional":true,
+					"complexItems": [
+						{
+				        	"id":"c1",
+				        	"type":"String",
+				        	"width":200,
+				        	"value":"",
+				        	"name":"ImportType",
+				        	"name_de":"Importtyp"
+				        },
+						{
+				        	"id":"c2",
+				        	"type":"String",
+				        	"width":100,
+				        	"value":"",
+				        	"name":"Location"
+				        },
+						{
+				        	"id":"c3",
+				        	"type":"String",
+				        	"width":200,
+				        	"value":"",
+				        	"name":"Namespace",
+				        	"name_de":"Namensraum"
+				        }
+					]
+				},
+				{
+					"id":"outmsgiscollection",
+					"type":"Boolean",
+					"title":"OutMessageIsCollection",
+					"title_de":"Ausgangs-Nachricht-Ist-Liste",
+					"value":false,
+					"description":"Setting this flag to true indicates that the actual data type is a collection.",
+					"description_de":"Ture signalisiert, dass der Datentyp eine Liste ist.",
+					"readonly":false,
+					"optional":true
 				}
 			]
 		},
@@ -1197,6 +1397,12 @@
 							"id":"c1",
 							"title":"HumanTaskWebService",
 							"value":"humanTaskWebService",
+							"refToView":""
+						},
+						{
+							"id":"c2",
+							"title":"BuisnessRuleWebService",
+							"value":"BuisnessRuleWebService",
 							"refToView":""
 						},
 						{
@@ -1750,7 +1956,7 @@
 					"description":"A Boolean value specifying whether interactions, such as sending and receiving Messages and Events, not modeled in the Process can occur when the Process is executed or performed. If the value is true, they MAY NOT occur. If the value is false, they MAY occur.",
 					"readonly":false,
 					"optional":false
-				},
+				}
 			]
 		},
 		{
@@ -2027,7 +2233,8 @@
 				"task",
 				"loopcharacteristics",
 				"properties",
-				"iospecification"
+				"iospecification",
+				"operation"
 			],
 			"roles" : 			[
 				"all",

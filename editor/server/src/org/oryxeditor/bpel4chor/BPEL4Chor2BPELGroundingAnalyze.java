@@ -1,7 +1,6 @@
 package org.oryxeditor.bpel4chor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -210,19 +209,6 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 * @param {Document} currentDocument      The document of grounding.bpel 
 	 */
 	public void mlAnalyze(Document currentDocument){
-		ptSet = new HashSet<String>();
-		oSet  = new HashSet<String>();
-		ml2opMap = new HashMap<String, String>();
-		ml2ptMap = new HashMap<String, String>();
-		mc2plMap = new HashMap<String, PartnerLink>();		// used by 3.23
-		sc2plMap = new HashMap<String, Set<PartnerLink>>();	// used by 3.24
-		pl2plTypeMap = new HashMap<String, String>();		// used by 3.26
-		comm2plsMap = new HashMap<Comm, Object>();			// used by 3.28
-		comm2pltMap = new HashMap<Comm, String>();      	// used by 3.29
-		pl2myRoleMap = new HashMap<String, String>();		// used by 3.30
-		pl2partnerRoleMap = new HashMap<String, String>();	// used by 3.31
-		commSet = new HashSet<Object>();					// commSet to store the comms
-		
 		/*
 		 * ml :             member of messageLinkSet and inherits of NCName
 		 * mc1, mc2 :       member of messageConstructsSet and inherits of QName
@@ -416,7 +402,7 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 					//need to be created
 					commNew = new Comm(A, b, EMPTY, pt);
 					//System.out.println("???????comm_new is: " + comm_new.getElement());
-					//commSet.add(comm_new.getElement());			
+					it.remove();
 					commSet.add(commNew);													
 					//System.out.println("???????commSet is: " + commSet);
 					createPartnerLinkDeclarations(commNew, A, b, pt, mc1, mc2, ml);
@@ -427,7 +413,7 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 			//one of the CONDITION 4,5,6 holds
 			commNew = new Comm(A, b, EMPTY, pt);
 			//System.out.println("???????comm_new is: " + comm_new.getElement());
-			//commSet.add(comm_new.getElement());			
+			//commSet.add(comm_new.getElement());
 			commSet.add(commNew);												
 			//System.out.println("???????commSet is: " + commSet);
 			createPartnerLinkDeclarations(commNew, A, b, pt, mc1, mc2, ml);
@@ -483,13 +469,11 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		fpartnerLinkMC(mc2Input, pl2);
 		
 		//assign partner link declarations to their scopes
-		//TODO: which one is right? buyer:buyer as in SA or seller:seller as in fact.
 		//System.out.println("##################bInput is: " + bInput);
-		String scopeResult = (String)fscopePa(bInput);
-		//System.out.println("##################scopeResult is: " + scopeResult);		
-		if (scopeResult.equals(EMPTY)){
-			//sc = fprocessPaType(ftypePa(firstSender));			
-			sc = fprocessPaType(ftypePa(bInput));				//??????
+		//System.out.println("##################pa2scopeMap is: " + pa2scopeMap);
+		if (((String)fscopePa(bInput)).equals(EMPTY)){
+			sc = fprocessPaType(ftypePa(firstSender));			
+			//sc = fprocessPaType(ftypePa(bInput));				//??????
 		}
 		else
 		{
@@ -498,13 +482,24 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		//System.out.println("####################pa2scopeMap is: " + pa2scopeMap);
 		//System.out.println("####sc is: " + sc);
 		Set<PartnerLink> partnerLinkSet1 = new HashSet<PartnerLink>();
+		if(sc2plMap.containsKey(sc)){
+			partnerLinkSet1 = sc2plMap.get(sc);
+		}
 		partnerLinkSet1.add(pl1);
-		fpartnerLinksScope(sc, partnerLinkSet1);						//?????? why use set here?
+		fpartnerLinksScope(sc, partnerLinkSet1);					
 		//System.out.println("####sc2plMap is: " + sc2plMap);
 		//System.out.println("pl1 is: " + pl1.getName());
 		//System.out.println("#############################" + ml2bindSenderToMap);
-		if (ml2bindSenderToMap.get(ml).equals(EMPTY) || fscopePa(ml2bindSenderToMap.get(ml)).equals(EMPTY)){
-			sc = fprocessPaType(ftypePa(bInput));
+		//TODO: which one is right?
+		if (ml2bindSenderToMap.get(ml).equals(EMPTY) || 
+				(fscopePa(ml2bindSenderToMap.get(ml))).equals(EMPTY) ||
+				fscopePa(bInput).equals(EMPTY)){
+/*			if (ml2bindSenderToMap.get(ml).equals(EMPTY) || 
+					(fscopePa(ml2bindSenderToMap.get(ml))).equals(EMPTY)){
+*/					
+			if(!AInput.isEmpty()){
+				sc = fprocessPaType(ftypePa(bInput));
+			}
 		}
 		else
 		{
@@ -513,10 +508,15 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		//System.out.println("####pa2scopeMap is: " + pa2scopeMap);
 		//System.out.println("####sc is: " + sc);
 		Set<PartnerLink> partnerLinkSet2 = new HashSet<PartnerLink>();
+		if(sc2plMap.containsKey(sc)){
+			partnerLinkSet2 = sc2plMap.get(sc);
+		}
 		partnerLinkSet2.add(pl2);
-		fpartnerLinksScope(sc, partnerLinkSet2);						//?????? why use set here?
+		if(!sc.equals(EMPTY)){
+			fpartnerLinksScope(sc, partnerLinkSet2);						
+		}
 		//System.out.println("####sc2plMap is: " + sc2plMap);
-		//System.out.println("s2 is: " + pl2.getName());
+		//System.out.println("pl2 is: " + pl2.getName());
 		// modify the remaining functions
 		ftypePL(pl1, plt);
 		ftypePL(pl2, plt);

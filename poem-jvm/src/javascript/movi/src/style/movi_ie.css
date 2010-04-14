@@ -11,6 +11,5 @@ html, body {
 }
 
 .movi-node {
-	background: white;
-	filter:alpha(opacity:0);
+	background: url('../img/s.gif') repeat 0 0;
 }

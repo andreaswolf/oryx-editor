@@ -97,7 +97,7 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 		definitions.setAttribute("xmlns:plnk", plnkNS);
 		
 		// add a partner link type declaration for each element of PLType
-		System.out.println("plTypeSet is: " + plTypeSet);
+		//System.out.println("plTypeSet is: " + plTypeSet);
 		if(!plTypeSet.isEmpty()){
 			Iterator<String> it = plTypeSet.iterator();
 			while(it.hasNext()){
@@ -112,7 +112,7 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 				c 	 = comm.getPt1();
 				b	 = comm.getPa2();
 				d	 = comm.getPt2();
-				System.out.println(comm.getElement());
+				//System.out.println(comm.getElement());
 				// create the first role element and add it to the partner link type declaration
 				role = declareNewRole(b,d);											// algorithm 3.20
 				partnerLinkType.appendChild(role);

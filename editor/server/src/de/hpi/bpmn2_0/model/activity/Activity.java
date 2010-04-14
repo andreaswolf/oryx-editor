@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -127,9 +126,9 @@ public abstract class Activity
     })
 	protected List<ActivityResource> activityResource;
     
-    @XmlElements({
-    	@XmlElement(type = StandardLoopCharacteristics.class),
-    	@XmlElement(type = MultiInstanceLoopCharacteristics.class)
+    @XmlElementRefs({
+    	@XmlElementRef(type = StandardLoopCharacteristics.class),
+    	@XmlElementRef(type = MultiInstanceLoopCharacteristics.class)
     })
     protected LoopCharacteristics loopCharacteristics;
     
@@ -266,7 +265,7 @@ public abstract class Activity
      * 
      * @param value
      *     allowed object is
-     *     {@link TInputOutputSpecification }
+     *     {@link InputOutputSpecification }
      *     
      */
     public void setIoSpecification(InputOutputSpecification value) {

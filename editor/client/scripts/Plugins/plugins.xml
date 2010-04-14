@@ -26,7 +26,10 @@
 		</plugin>	
 		
 		<plugin source="jpdlSupport.js" name="ORYX.Plugins.JPDLSupport">
-			<requires namespace="http://b3mn.org/stencilset/bpmn1.1#"/>	
+			<requires namespace="http://b3mn.org/stencilset/bpmn1.1#"/>
+			<!-- plugin loads dynamically the needed extension 
+				<requires namespace="http://oryx-editor.org/stencilsets/extensions/jbpm#"/>
+			-->
 		</plugin>	
 
 		<!-- User Interface Aggregation -->
@@ -82,7 +85,7 @@
 		<plugin source="overlay.js" name="ORYX.Plugins.Overlay" />		
 		<plugin source="edit.js" name="ORYX.Plugins.Edit" />
 		<plugin source="keysMove.js" name="ORYX.Plugins.KeysMove" />
-		<!--plugin source="Layouter/containerLayouter.js" name="ORYX.Plugins.ContainerLayouter" /-->
+		<plugin source="Layouter/containerLayouter.js" name="ORYX.Plugins.ContainerLayouter" />
 
 		<!-- plugin for PNML export and deployment -->
 		<plugin source="pnmlexport.js" name="ORYX.Plugins.Pnmlexport">
@@ -264,9 +267,11 @@
             <requires namespace="http://b3mn.org/stencilset/bpmn#"/>
         </plugin>
 		
+		<!-- Replaced by BPMN2XPDL 2.0 
 		<plugin source="bpmn2xpdl.js" name="ORYX.Plugins.BPMN2XPDL">
 			<requires namespace="http://b3mn.org/stencilset/bpmn1.1#"/>	
 		</plugin>
+		 -->
 		
 		<plugin source="bpmn2xhtml.js" name="ORYX.Plugins.BPMN2XHTML">
 			<requires namespace="http://b3mn.org/stencilset/bpmn1.1#"/>	
@@ -324,6 +329,7 @@
 		<plugin source="bpmn.js" name="ORYX.Plugins.BPMN" />
 		
 		
+		
 		<plugin source="feedback.js" name="ORYX.Plugins.Feedback">
 			<property name="cssfile" value="/oryx/css/feedback.css" />
 			<!-- configure subjects and info in localization: /editor/data/I18N#ORYX.I18N.Feedback.subjects  -->
@@ -333,7 +339,12 @@
 		
 		<plugin source="fileRepository.js" name="ORYX.Plugins.FileRepositorySave" />
 
+		<plugin source="bpmn2xpdl20.js" name="ORYX.Plugins.BPMN2XPDL20" >
+			<requires namespace="http://b3mn.org/stencilset/bpmn1.1#"/>
+		</plugin>
+			
 	</plugins>
+	
 	
 	<properties>
 		<property group="File" index="1" />

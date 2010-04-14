@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-package de.hpi.bpmn2_0.model.activity;
+package de.hpi.bpmn2_0.model.activity.misc;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
@@ -45,19 +45,18 @@ import javax.xml.bind.annotation.XmlEnumValue;
  * 
  */
 @XmlEnum
-public enum UserTaskImplementation {
+public enum ServiceImplementation {
 
     @XmlEnumValue("unspecified")
     UNSPECIFIED("unspecified"),
     @XmlEnumValue("other")
     OTHER("other"),
     @XmlEnumValue("webService")
-    WEB_SERVICE("webService"),
-    @XmlEnumValue("humanTaskWebService")
-    HUMAN_TASK_WEB_SERVICE("humanTaskWebService");
+    WEB_SERVICE("webService");
+    
     private final String value;
 
-    UserTaskImplementation(String v) {
+    ServiceImplementation(String v) {
         value = v;
     }
 
@@ -65,13 +64,19 @@ public enum UserTaskImplementation {
         return value;
     }
 
-    public static UserTaskImplementation fromValue(String v) {
-        for (UserTaskImplementation c: UserTaskImplementation.values()) {
+    public static ServiceImplementation fromValue(String v) {
+        for (ServiceImplementation c: ServiceImplementation.values()) {
             if (c.value.equalsIgnoreCase(v)) {
                 return c;
+            } else {
+            	/* Return default value otherwise */
+            	return WEB_SERVICE;
             }
+            	
         }
         throw new IllegalArgumentException(v);
     }
 
 }
+
+

@@ -23,6 +23,8 @@ package de.hpi.bpmn2_0.factory;
  * SOFTWARE.
  */
 
+import javax.xml.namespace.QName;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +35,10 @@ import de.hpi.bpmn2_0.annotations.StencilId;
 import de.hpi.bpmn2_0.exceptions.BpmnConverterException;
 import de.hpi.bpmn2_0.model.FormalExpression;
 import de.hpi.bpmn2_0.model.activity.Task;
-import de.hpi.bpmn2_0.model.activity.UserTaskImplementation;
+import de.hpi.bpmn2_0.model.activity.misc.BusinessRuleTaskImplementation;
+import de.hpi.bpmn2_0.model.activity.misc.Operation;
+import de.hpi.bpmn2_0.model.activity.misc.ServiceImplementation;
+import de.hpi.bpmn2_0.model.activity.misc.UserTaskImplementation;
 import de.hpi.bpmn2_0.model.activity.resource.ActivityResource;
 import de.hpi.bpmn2_0.model.activity.resource.HumanPerformer;
 import de.hpi.bpmn2_0.model.activity.resource.Performer;
@@ -47,6 +52,7 @@ import de.hpi.bpmn2_0.model.activity.type.ScriptTask;
 import de.hpi.bpmn2_0.model.activity.type.SendTask;
 import de.hpi.bpmn2_0.model.activity.type.ServiceTask;
 import de.hpi.bpmn2_0.model.activity.type.UserTask;
+import de.hpi.bpmn2_0.model.data_object.Message;
 import de.hpi.bpmn2_0.model.diagram.activity.ActivityShape;
 
 /**
@@ -144,7 +150,31 @@ public class TaskFactory extends AbstractActivityFactory {
 
 		task.setId(shape.getResourceId());
 		task.setName(shape.getProperty("name"));
-
+		
+		/* Implementation */
+		String implementation = shape.getProperty("implementation");
+		if(implementation != null && !implementation.isEmpty())
+			task.setImplementation(ServiceImplementation.fromValue(implementation));
+		
+		/* Define Operation of the service task */
+		String operationString = shape.getProperty("operationref");
+		if(operationString != null && !operationString.isEmpty()) {
+			task.setOperationRef(new QName(operationString));
+		}
+		
+		/* Message */
+		String messageString = shape.getProperty("messageref");
+		if(messageString != null && !messageString.isEmpty()) {
+			task.setMessageRef(new QName(messageString));
+		}
+		
+		/* Handle initiate flag */
+		String instantiate = shape.getProperty("instantiate");
+		if(instantiate != null && instantiate.equalsIgnoreCase("true"))
+			task.setInstantiate(true);
+		else
+			task.setInstantiate(false);
+		
 		return task;
 	}
 
@@ -154,6 +184,27 @@ public class TaskFactory extends AbstractActivityFactory {
 
 		task.setId(shape.getResourceId());
 		task.setName(shape.getProperty("name"));
+		
+		/* Implementation */
+		String implementation = shape.getProperty("implementation");
+		if(implementation != null && !implementation.isEmpty())
+			task.setImplementation(ServiceImplementation.fromValue(implementation));
+		
+		/* Define Operation of the service task */
+		String operationString = shape.getProperty("operationref");
+		if(operationString != null && !operationString.isEmpty()) {
+			Operation operation = new Operation();
+			operation.setId(operationString);
+			task.setOperationRef(operation);
+		}
+		
+		/* Message */
+		String messageString = shape.getProperty("messageref");
+		if(messageString != null && !messageString.isEmpty()) {
+			Message message = new Message();
+			message.setId(messageString);
+			task.setMessageRef(message);
+		}
 
 		return task;
 	}
@@ -184,6 +235,11 @@ public class TaskFactory extends AbstractActivityFactory {
 
 		task.setId(shape.getResourceId());
 		task.setName(shape.getProperty("name"));
+		
+		/* Implementation */
+		String implementation = shape.getProperty("implementation");
+		if(implementation != null && !implementation.isEmpty())
+			task.setImplementation(BusinessRuleTaskImplementation.fromValue(implementation));
 
 		return task;
 	}
@@ -194,6 +250,18 @@ public class TaskFactory extends AbstractActivityFactory {
 
 		task.setId(shape.getResourceId());
 		task.setName(shape.getProperty("name"));
+		
+		String implementation = shape.getProperty("implementation");
+		if(implementation != null && !implementation.isEmpty())
+			task.setImplementation(ServiceImplementation.fromValue(implementation));
+		
+		/* Define Operation of the service task */
+		String operationString = shape.getProperty("operationref");
+		if(operationString != null && !operationString.isEmpty()) {
+			Operation operation = new Operation();
+			operation.setId(operationString);
+			task.setOperationRef(new QName(operationString));
+		}
 
 		return task;
 	}
@@ -266,4 +334,22 @@ public class TaskFactory extends AbstractActivityFactory {
 			// ignore resources property
 		}
 	}
+	
+//	private Operation createOperation(Shape shape) {
+//		Operation operation = new Operation();
+//		operation.setId(OryxUUID.generate());
+//		operation.setName(shape.getProperty("operationname"));
+//		
+//		/* Handle in and out messages */
+////		operation.setInMessageRef(this.createMessage(prefix, shape))
+//		
+//		return operation;
+//	}
+	
+//	private Message createMessage(String prefix, Shape shape) {
+//		Message msg = new Message();
+//		msg.setName(shape.getProperty(prefix + "messagename"));
+//		
+//		return msg;
+//	}
 }

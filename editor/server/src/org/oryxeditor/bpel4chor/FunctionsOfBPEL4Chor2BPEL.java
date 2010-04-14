@@ -140,14 +140,15 @@ public class FunctionsOfBPEL4Chor2BPEL {
 
 	// 3.5: process set
 	public Set<String> processSet = new HashSet<String>();
-
+	public HashMap<String, String> paType2PBDMap = new HashMap<String, String>();
+	
 	// for the function 3.6 fprocessPaType
 	public HashMap<String, String> paType2processMap = new HashMap<String, String>();
 
 
 	/***********************Method of ParticipantType*************************/
 	/**
-	 * function 3.4: To create the participantTypeSet
+	 * function 3.4: To create the participantTypeSet (create the mapping between "name" and "participantBehaviorDescription")
 	 * 
 	 * @param {Element} currentElement     The current Element
 	 * @return {Set}    paTypeSet          The participantType set
@@ -161,6 +162,8 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			// analyze name space of participantType node
 			String paType = currentElement.getAttribute("name");
 			paTypeSet.add(paType);
+//			String paTypePBD = currentElement.getAttribute("participantBehaviorDescription");
+//			paType2PBDMap.put(paType, paTypePBD);
 		}
 
 		NodeList childNodes = currentElement.getChildNodes();
@@ -173,7 +176,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 		}
 		return paTypeSet;
 	}
-
+	
 	/**
 	 * function 3.5: To create the processSet
 	 * 
@@ -185,12 +188,21 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			return null;
 		}
 
+/*		if(currentElement.getNodeName().equals("participant")){
+			String processLocalName = currentElement.getAttribute("name");
+			String processType = currentElement.getAttribute("type");
+			String prefixOfProcess = fnsprefixProcess(paType2PBDMap.get(processType));
+			String processName = prefixOfProcess + ":" + processLocalName;
+			processSet.add(processName);
+		}
+*/
+		
 		if(currentElement.getNodeName().equals("participantType")){
 			// analyze namespace of participantType node
 			String pbd = currentElement.getAttribute("participantBehaviorDescription");
 			processSet.add(pbd);
 		}
-
+		
 		NodeList childNodes = currentElement.getChildNodes();
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
@@ -213,6 +225,19 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			return null;
 		}
 
+/*		if(currentElement.getNodeName().equals("participant") && 
+				!currentElement.getParentNode().getNodeName().equals("participantSet")){
+
+			// analyze namespace of participantType node
+			String processLocalName = currentElement.getAttribute("name");
+			String processType = currentElement.getAttribute("type");
+			String processPrefix = fnsprefixProcess(paType2PBDMap.get(processType));
+			String process = processPrefix + ":" + processLocalName;
+			//String pbd = currentElement.getAttribute("participantBehaviorDescription");
+			paType2processMap.put(processType, process);
+		}
+*/
+		
 		if(currentElement.getNodeName().equals("participantType")){
 
 			// analyze namespace of participantType node
@@ -220,7 +245,7 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			String pbd = currentElement.getAttribute("participantBehaviorDescription");
 			paType2processMap.put(paName, pbd);
 		}
-
+		
 		NodeList childNodes = currentElement.getChildNodes();
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
@@ -394,12 +419,13 @@ public class FunctionsOfBPEL4Chor2BPEL {
 			while (it.hasNext()){
 				String participantType = (String)it.next();
 				try{
-					if(pa2paTypeMap.get(participant).equals(participantType)){
+					if(pa2paTypeMap.containsKey(participant) && pa2paTypeMap.get(participant).equals(participantType)){
 						return participantType;
 					}
 				}
 				catch (Exception e){
 					e.printStackTrace();
+					System.out.println(participant + " has problem");
 				}
 			}
 		}

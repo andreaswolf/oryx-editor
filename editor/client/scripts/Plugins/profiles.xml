@@ -8,7 +8,7 @@
 		<plugin name="ORYX.Plugins.ShapeRepository"/>
 		<plugin name="ORYX.Plugins.PropertyWindow"/>
 		<plugin name="ORYX.Plugins.CanvasResize"/>
-		<plugin name="ORYX.Plugins.View"/>
+		<!-- plugin name="ORYX.Plugins.View"/ -->
 		<plugin name="ORYX.Plugins.DragDropResize"/>
 		<plugin name="ORYX.Plugins.RenameShapes" />
 		<plugin name="ORYX.Plugins.ERDFSupport" />
@@ -31,8 +31,10 @@
 		<plugin name="ORYX.Plugins.PluginLoader"/>
 		<plugin name="ORYX.Plugins.File"/>
 		<plugin name="ORYX.Plugins.Save"/>
-		<!--plugin source="Layouter/containerLayouter.js" name="ORYX.Plugins.ContainerLayouter" /-->
-		<plugin source="Layouter/edgeLayouter.js" name="ORYX.Plugins.Layouter.EdgeLayouter"/>				
+		<plugin source="Layouter/containerLayouter.js" name="ORYX.Plugins.ContainerLayouter" />
+		<plugin source="Layouter/edgeLayouter.js" name="ORYX.Plugins.Layouter.EdgeLayouter"/>
+		
+				
 	</profile>
 	<profile name="bpmn" depends="default" stencilset="stencilsets/bpmn1.1/bpmn1.1.json">
 		<plugin name="ORYX.Plugins.BPMN2XForms"/>
@@ -47,7 +49,7 @@
 		<plugin name="ORYX.Plugins.QueryResultHighlighter"/>
 		<plugin name="ORYX.Plugins.BpmnLayouter"/>
 		<plugin name="ORYX.Plugins.PNExport"/>
-		<plugin name="ORYX.Plugins.BPMN2XPDL"/>
+		<plugin name="ORYX.Plugins.BPMN2XPDL20"/>
 		<plugin name="ORYX.Plugins.BPMN2DTRPXMI"/>
 	</profile>
 	<profile name="bpmn2.0" depends="default" stencilset="stencilsets/bpmn2.0/bpmn2.0.json">
@@ -135,9 +137,6 @@
 		<plugin name="ORYX.Plugins.CPNToolsSupport"/>	
 	</profile>
 	
-	<profile name="pms" depends="default">
-		<plugin name="ORYX.Plugins.FileRepositorySave" />
-	</profile>
 	<profile name="uml2.2" depends="default" stencilset="stencilsets/uml2.2/uml2.2.json">
 		
 		<plugin name="ORYX.Plugins.UML"/>

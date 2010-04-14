@@ -117,6 +117,7 @@ public class DataObjectFactory extends AbstractBpmnFactory {
 		if(dataObject == null)
 			throw new BpmnConverterException("Error while creating DataObject: null value");
 		
+		this.setCommonAttributes(dataObject, shape);
 		dataObject.setId(shape.getResourceId());		
 		
 		return dataObject;

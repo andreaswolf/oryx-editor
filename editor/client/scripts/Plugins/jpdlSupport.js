@@ -28,8 +28,6 @@ ORYX.Plugins.JPDLSupport = ORYX.Plugins.AbstractPlugin.extend({
 
 	facade: undefined,
 	
-	jPDLImporterUrl: 'backend/poem/new_jpdl',
-	jPDLExporterUrlSuffix: '/jpdl',
 	
 	stencilSetExtensionNamespace: 'http://oryx-editor.org/stencilsets/extensions/jbpm#',
 	stencilSetExtensionDefinition: 'jbpm/jbpm.json',
@@ -91,16 +89,25 @@ ORYX.Plugins.JPDLSupport = ORYX.Plugins.AbstractPlugin.extend({
 	 * 
 	 */
 	exportJPDL: function(){
-		// TODO: save?
-		var loc = location.href;
-		var jpdlLoc ;
-		if ( loc.length > 4 && loc.substring(loc.length - 5) == "/self" ) {
-			jpdlLoc = loc.substring(0, loc.length - 5) + this.jPDLExporterUrlSuffix;
-		} else {
-			alert("TODO: Integrate existing export with new models.. ");
-			return ;
-		}
-		this._doExport( jpdlLoc );
+		// raise loading enable event
+        this.facade.raiseEvent({
+            type: ORYX.CONFIG.EVENT_LOADING_ENABLE
+        });
+            
+		// asynchronously ...
+        window.setTimeout((function(){
+			
+			// ... save synchronously
+    		this._doExport();			
+			// raise loading disable event.
+            this.facade.raiseEvent({
+                type: ORYX.CONFIG.EVENT_LOADING_DISABLE
+            });
+			
+        }).bind(this), 10);
+
+		return true;
+
 		
 	},
 	
@@ -207,12 +214,13 @@ ORYX.Plugins.JPDLSupport = ORYX.Plugins.AbstractPlugin.extend({
 	 * Opens an export window / tab.
 	 * 
 	 */
-	_doExport: function( url ){
-		
+	_doExport: function(){
+		var serialized_json = this.facade.getSerializedJSON();
+
 		this._sendRequest(
-			url,
-			'GET',
-			{ },
+			ORYX.CONFIG.JPDLEXPORTURL,
+			'POST',
+			{ data:serialized_json },
 			function( result ) { 
 				var parser = new DOMParser();
 				var parsedResult = parser.parseFromString(result, "text/xml");
@@ -285,7 +293,7 @@ ORYX.Plugins.JPDLSupport = ORYX.Plugins.AbstractPlugin.extend({
 							var jpdlString =  form.items.items[2].getValue();
 							
 							this._sendRequest(
-									this.jPDLImporterUrl,
+									ORYX.CONFIG.JPDLIMPORTURL,
 									'POST',
 									{ 'data' : jpdlString },
 									function( arg ) { this._loadJSON( arg );  loadMask.hide();  dialog.hide(); }.bind(this),

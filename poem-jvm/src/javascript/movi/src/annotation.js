@@ -304,6 +304,18 @@ MOVI.namespace("util");
 			}
 			// set the z-index of parent marker to maximum+1
 			this._marker.markerRect.setStyle("z-index", maxZIndex+1);
+		},
+		
+		/**
+	     * Specfiy a new marker to which the annotation is attached
+	     * @method setMarker
+		 * @param {MOVI.util.Marker} marker The marker element the annotation shall be attached to
+	     */
+		setMarker: function(marker) {
+			this._canvas = undefined;
+			this._marker = marker;
+			this._marker.onChanged(this._update, this);
+			this._update();
 		}
 		
 	});

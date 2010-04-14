@@ -6,17 +6,6 @@
  		{
  			"name":"baseAttributes",
  			"properties": [
- 				{
-					"id":"id",
-					"type":"String",
-					"title":"Id",
-					"value":"",
-					"description":"This attribute is used to uniquely identify BPMN elements.",
-					"description_de":"Definiert eine eindeutige ID, um einzelne BPMN-Elemente technisch unterscheiden zu können.",
-					"readonly":false,
-					"optional":false,
-					"length":"50"
-				},
 				{
 					"id":"name",
 					"type":"String",
@@ -103,6 +92,22 @@
 					"readonly":false,
 					"optional":false,
 					"popular":true
+				}
+			]
+		},
+		{
+			"name":"boundaryevent",
+			"properties":[
+				{
+					"id":"boundarycancelactivity",
+					"type":"Boolean",
+					"title":"CancelActivity",
+					"title_de":"Aktivität abbrechen",
+					"value":"",
+					"description":"Denotes whether the activity should be cancelled or not, i.e., whether the boundary catch event acts as an error or an escalation. If the activity is not cancelled, multiple instances of that handler can run concurrently.",
+					"description_de":"Kennzeichnet ob eine Aktivität abgebrochen werden soll.",
+					"readonly":false,
+					"optional":true
 				}
 			]
 		},
@@ -1359,30 +1364,6 @@
 					]
 				},
 				{
-					"id":"inmessage",
-					"type":"String",
-					"title":"InMessage",
-					"title_de":"Eingangsnachricht",
-					"value":"",
-					"description":"",
-					"readonly":false,
-					"optional":false,
-					"refToView":"",
-					"length":"50"
-				},
-				{
-					"id":"outmessage",
-					"type":"String",
-					"title":"OutMessage",
-					"title_de":"Ausgangsnachricht",
-					"value":"",
-					"description":"",
-					"readonly":false,
-					"optional":false,
-					"refToView":"",
-					"length":"50"
-				},
-				{
 					"id":"implementation",
 					"type":"Choice",
 					"title":"Implementation",
@@ -1520,11 +1501,10 @@
 					"title":"OperationRef",
 					"title_de":"Operations-Referenz",
 					"value":"",
-					"description":"",
+					"description":"ID-Reference to an operation definition.",
+					"description_de":"ID-Referenz zur Definition einer Operation.",
 					"readonly":false,
-					"optional":false,
-					"refToView":"",
-					"length":"50"
+					"optional":true
 				},
 				{
 					"id":"instantiate",
@@ -3886,6 +3866,7 @@
 			"propertyPackages":[
 				"baseAttributes",
 				"interrupting",
+				"boundaryevent",
 				"bgColor"
 			],
 			"roles":[
@@ -3931,6 +3912,7 @@
 			"propertyPackages":[
 				"baseAttributes",
 				"interrupting",
+				"boundaryevent",
 				"bgColor"
 			],
 			"roles":[
@@ -3978,6 +3960,7 @@
 				"baseAttributes",
 				"catchEventAttributes",
 				"interrupting",
+				"boundaryevent",
 				"bgColor"
 			],
 			"roles":[
@@ -4021,6 +4004,7 @@
 				"baseAttributes",
 				"catchEventAttributes",
 				"interrupting",
+				"boundaryevent",
 				"condition",
 				"bgColor"
 			],
@@ -4119,6 +4103,7 @@
 			"propertyPackages":[
 				"baseAttributes",
 				"catchEventAttributes",
+				"boundaryevent",
 				"bgColor"
 			],
 			"roles":[
@@ -4160,6 +4145,7 @@
 			"propertyPackages":[
 				"baseAttributes",
 				"catchEventAttributes",
+				"boundaryevent",
 				"bgColor"
 			],
 			"roles":[
@@ -4201,8 +4187,9 @@
 			"propertyPackages":[
 				"baseAttributes",
 				"catchEventAttributes",
-				"bgColor",
-				"compensation"
+				"boundaryevent",
+				"compensation",
+				"bgColor"
 			],
 			"roles":[
 				"all",
@@ -4243,6 +4230,7 @@
 				"baseAttributes",
 				"catchEventAttributes",
 				"interrupting",
+				"boundaryevent",
 				"bgColor"
 			],
 			"roles":[
@@ -4289,6 +4277,7 @@
 				"baseAttributes",
 				"catchEventAttributes",
 				"interrupting",
+				"boundaryevent",
 				"bgColor"
 			],
 			"roles":[
@@ -4336,6 +4325,7 @@
 				"baseAttributes",
 				"catchEventAttributes",
 				"interrupting",
+				"boundaryevent",
 				"bgColor"
 			],
 			"roles":[

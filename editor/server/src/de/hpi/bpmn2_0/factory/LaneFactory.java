@@ -124,11 +124,13 @@ public class LaneFactory extends AbstractBpmnFactory {
 			Participant participant = new Participant();
 			participant.setName(shape.getProperty("name"));
 			participant.setId(shape.getResourceId());
+			this.setCommonAttributes(participant, shape);
 			return participant;
 		}
 
 		if (shape.getStencilId().equals("Pool")) {
 			LaneSet poolLaneSet = new LaneSet();
+			this.setCommonAttributes(poolLaneSet, shape);
 			poolLaneSet.setId(shape.getResourceId());
 			
 			/* Process type */
@@ -146,6 +148,7 @@ public class LaneFactory extends AbstractBpmnFactory {
 		}
 
 		Lane lane = new Lane();
+		this.setCommonAttributes(lane, shape);
 		lane.setId(shape.getResourceId());
 		lane.setName(shape.getProperty("name"));
 		lane.setLane(lane);

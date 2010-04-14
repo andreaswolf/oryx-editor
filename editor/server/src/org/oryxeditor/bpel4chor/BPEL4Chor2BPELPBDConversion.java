@@ -145,15 +145,11 @@ public class BPEL4Chor2BPELPBDConversion extends FunctionsOfBPEL4Chor2BPEL {
 		
 		sc = buildQName(process_nsprefix, localName);		// the global name of the current scope or process and the corresponding 
 															// element of (scopeSet U processSet)
-		//System.out.println("sc: " + sc);
-		//System.out.println("scopeSet: " + scopeSet);
-		//System.out.println("processSet: " + processSet);
 		if (scopeSet.contains(sc) || processSet.contains(sc)){
 			// sc is a process or a single participant reference is limited to the scope sc
 			// thus the function fpartnerLinksScope can be used on sc
 			// determine the set of partner link declarations that need to be declared
 			partnerLinkSet = (Set<PartnerLink>)fpartnerLinksScope(sc);
-			//System.out.println("partnerLinkSet: " + partnerLinkSet);
 			//System.out.println("sc2plMap: " + sc2plMap);
 			if(partnerLinkSet != null){
 				// There are partner links to be declared
@@ -328,6 +324,7 @@ public class BPEL4Chor2BPELPBDConversion extends FunctionsOfBPEL4Chor2BPEL {
 		}
 		
 		// add a portType attribute to the message construct
+		//System.out.println(mc);
 		pt = fportTypeMC(mc);
 		if(pt != null){															// when no mapping between mc and pt then null
 			construct.setAttribute("portType", pt);
@@ -422,12 +419,20 @@ public class BPEL4Chor2BPELPBDConversion extends FunctionsOfBPEL4Chor2BPEL {
 			}
 			// enclose the <startCounterValue> and the <finalCounterValue> constructs before the <completionCondition>
 			// construct and the <scope> activity of the <forEach> activity
-			forEach.removeChild(completionCondition);
-			forEach.removeChild(fEScope);
+			if(completionCondition != null){
+				forEach.removeChild(completionCondition);
+			}
+			if(fEScope != null){
+				forEach.removeChild(fEScope);
+			}
 			forEach.appendChild(startCounter);
 			forEach.appendChild(finalCounter);
-			forEach.appendChild(completionCondition);
-			forEach.appendChild(fEScope);
+			if(completionCondition != null){
+				forEach.appendChild(completionCondition);
+			}
+			if(fEScope != null){
+				forEach.appendChild(fEScope);
+			}
 			// add the <assign> activities to copy the endpoint references on the partner links
 			Set<PartnerLink> plSetForEach = fpartnerLinksScope(fe);
 			//System.out.println("scopeSet is: " + scopeSet);
@@ -631,18 +636,17 @@ public class BPEL4Chor2BPELPBDConversion extends FunctionsOfBPEL4Chor2BPEL {
 	 * @return {Element}returnElement      
 	 */
 	private Element getChildElement(Element currentElement, String childElement){
-		Element returnElement = null;
 		if (currentElement.hasChildNodes()){
 			NodeList nl = currentElement.getChildNodes();
 			Node child;
 			for(int i=0; i<nl.getLength(); i++){
 				child = nl.item(i);
 				if (child instanceof Element && child.getNodeName().equals(childElement)){
-					return returnElement = (Element)child;
+					return (Element)child;
 				}
 			}
 		}
-		return returnElement;
+		return null;
 	}
 	
 	/**************************main*******************************/

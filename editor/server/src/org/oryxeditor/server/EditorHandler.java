@@ -94,11 +94,12 @@ public class EditorHandler extends HttpServlet {
 	        "if(!ORYX) var ORYX = {};" +
 	        "if(!ORYX.CONFIG) ORYX.CONFIG = {};" +
 	        "ORYX.CONFIG.PLUGINS_CONFIG  =			ORYX.CONFIG.PROFILE_PATH + '"+profiles.get(0)+".xml';" +
-	        "ORYX.CONFIG.SSEXTS="+
-	        extString+
-	        ";"+
+	        "ORYX.CONFIG.SSET='" + sset +"';" +
+	        "ORYX.CONFIG.SSEXTS=" + extString + ";"+
 
-	        "if (!onOryxResourcesLoaded) function onOryxResourcesLoaded(){" +
+	        "if ('undefined' == typeof(window.onOryxResourcesLoaded)) { " +
+	        	"ORYX.Log.warn('No adapter to repository specified, default used. You need a function window.onOryxResourcesLoaded that obtains model-JSON from your repository');" +
+	        	"window.onOryxResourcesLoaded = function() {" +
                 "if (location.hash.slice(1).length == 0 || location.hash.slice(1).indexOf('new')!=-1){" +
                 "var stencilset=ORYX.Utils.getParamFromUrl('stencilset')?ORYX.Utils.getParamFromUrl('stencilset'):'"+sset+"';"+
                 "new ORYX.Editor({"+
@@ -112,7 +113,7 @@ public class EditorHandler extends HttpServlet {
                   "id: 'oryx-canvas123'" +
           		"});" +
           	  "};" +
-          	  "}" +
+          	  "}}" +
           	"</script>";
 		response.setContentType("application/xhtml+xml");
 		

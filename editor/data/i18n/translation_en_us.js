@@ -491,6 +491,14 @@ Ext.MessageBox.buttonText.ok = "OK";
 if(!ORYX.I18N.BPMN2XPDL) ORYX.I18N.BPMN2XPDL = {};
 ORYX.I18N.BPMN2XPDL.group = "Export";
 ORYX.I18N.BPMN2XPDL.xpdlExport = "Export to XPDL";
+ORYX.I18N.BPMN2XPDL.xpdlImport = "Import from XPDL";
+ORYX.I18N.BPMN2XPDL.importGroup = "Import";
+ORYX.I18N.BPMN2XPDL.selectFile = "Select a XPDL (.xml) file or type in the XPDL to import it!";
+ORYX.I18N.BPMN2XPDL.file = "File";
+ORYX.I18N.BPMN2XPDL.impXPDL = "Import XPDL";
+ORYX.I18N.BPMN2XPDL.impBtn = "Import";
+ORYX.I18N.BPMN2XPDL.impProgress = "Importing...";
+ORYX.I18N.BPMN2XPDL.close = "Close";
 
 /** Resource Perspective Additions: 24 March 2009 */
 if(!ORYX.I18N.ResourcesSoDAdd) ORYX.I18N.ResourcesSoDAdd = {};
@@ -815,6 +823,7 @@ ORYX.I18N.cpntoolsSupport.importLable = "Import";
 ORYX.I18N.cpntoolsSupport.close = "Close";
 ORYX.I18N.cpntoolsSupport.wrongCPNFile = "Not chosen correct CPN - File.";
 ORYX.I18N.cpntoolsSupport.noPageSelection = "No page has been selected.";
+ORYX.I18N.cpntoolsSupport.group = "Export";
 ORYX.I18N.cpntoolsSupport.importProgress = "Importing ...";
 ORYX.I18N.cpntoolsSupport.exportProgress = "Exporting ...";
 ORYX.I18N.cpntoolsSupport.exportDescription = "Export to CPN Tools";

@@ -34,7 +34,7 @@ import org.b3mn.poem.jbpm.JsonToJpdl;
 import org.b3mn.poem.util.ExportHandler;
 import org.json.JSONObject;
 
-@ExportHandler(uri="/jpdl", formatName="jPDL", iconUrl="/backend/images/silk/jbpm.png")
+//@ExportHandler(uri="/jpdl", formatName="jPDL", iconUrl="/backend/images/silk/jbpm.png")
 public class JpdlExporter extends HandlerBase {
 	
 	@Override

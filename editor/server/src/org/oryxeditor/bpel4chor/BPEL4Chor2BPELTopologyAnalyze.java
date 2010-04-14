@@ -67,36 +67,11 @@ public class BPEL4Chor2BPELTopologyAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 */
 	public void paTypeAnalyze (Document currentDocument){
 		
-		paTypeSet = new HashSet<String>();
-		processSet = new HashSet<String>();
-		paType2processMap = new HashMap<String, String>();
-
 		paTypeSet = getPaTypeSet((Element)currentDocument.getFirstChild());
 		processSet = getProcessSet((Element)currentDocument.getFirstChild());
 		paType2processMap = getPaType2ProcessMap((Element)currentDocument.getFirstChild());
 		//System.out.println("paTypeSet" + paTypeSet);
 		//System.out.println("processSet" + processSet);
-		
-		
-		/*if (!paTypeSet.isEmpty()){
-			Iterator<String> it = paTypeSet.iterator();
-			while (it.hasNext()){
-				String paType = (String)it.next();
-			    fprocessPaType(paType);
-			}
-		}		
-
-		// namespace prefix of process
-		if (!processSet.isEmpty()){
-			Iterator<String> it = processSet.iterator();
-			while (it.hasNext()){
-				String process = (String)it.next();
-				if(process.contains(":")){
-					System.out.println("namespace prefix of process " + process + " is: " 
-							+ fnsprefixProcess(process));
-				}
-			}
-		}*/
 	}
 	
 	/**
@@ -105,12 +80,7 @@ public class BPEL4Chor2BPELTopologyAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 	 * @param {Document} currentDocument     The document of topology.xml
 	 */
 	public void paAnalyze (Document currentDocument){
-		paSet = new HashSet<String>();
-		scopeSet = new HashSet<String>();
-		pa2paTypeMap = new HashMap<String, String>();
-		pa2scopeMap = new HashMap<String, Object>();
-		pa2foreachInScopeMap = new HashMap<String, String>();
-		
+				
 		paSet = getPaSet((Element)currentDocument.getFirstChild());
 		//System.out.println("paSet is: " + paSet);
 		

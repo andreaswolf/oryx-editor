@@ -113,7 +113,17 @@
 		<servlet-name>BPEL4ChorExporter</servlet-name>
 		<servlet-class>org.oryxeditor.server.BPEL4ChorExporter</servlet-class>
 	</servlet>
+		<servlet>
+		<display-name>Oryx JPDL IMPORTER</display-name>
+		<servlet-name>JPDLImporter</servlet-name>
+		<servlet-class>org.oryxeditor.server.JPDLImporter</servlet-class>
+	</servlet>
 	
+	<servlet>
+		<display-name>Oryx JPDL EXPORTER</display-name>
+		<servlet-name>JPDLExporter</servlet-name>
+		<servlet-class>org.oryxeditor.server.JPDLExporter</servlet-class>
+	</servlet>
 	<servlet>
 		<display-name>Oryx BPEL4CHOR2BPEL EXPORTER</display-name>
 		<servlet-name>BPEL4Chor2BPELExporter</servlet-name>
@@ -133,6 +143,16 @@
 		<servlet-name>DesynchronizabilityServlet</servlet-name>
 		<servlet-class>
 			org.oryxeditor.server.DesynchronizabilityServlet
+		</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<display-name>
+			Oryx XPDL Export Import
+		</display-name>
+		<servlet-name>BPMN2XPDLServlet</servlet-name>
+		<servlet-class>
+			org.oryxeditor.server.BPMN2XPDLServlet
 		</servlet-class>
 	</servlet>
 	
@@ -444,7 +464,15 @@
 		<servlet-name>BPELExporter</servlet-name>
 		<url-pattern>/bpelexporter</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>JPDLImporter</servlet-name>
+		<url-pattern>/jpdlimporter</url-pattern>
+	</servlet-mapping>
 	
+	<servlet-mapping>
+		<servlet-name>JPDLExporter</servlet-name>
+		<url-pattern>/jpdlexporter</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>BPEL4ChorImporter</servlet-name>
 		<url-pattern>/bpel4chorimporter</url-pattern>
@@ -518,6 +546,11 @@
     <servlet-mapping>
         <servlet-name>BPMN2PNServlet</servlet-name>
         <url-pattern>/bpmn2pn</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>BPMN2XPDLServlet</servlet-name>
+        <url-pattern>/bpmn2xpdl</url-pattern>
     </servlet-mapping>
 
 <!--

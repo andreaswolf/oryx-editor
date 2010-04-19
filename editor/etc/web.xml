@@ -415,6 +415,14 @@
 		</servlet-class>
 	</servlet>
 	
+	<servlet>
+		<display-name>TBPM Import Servlet</display-name>
+		<servlet-name>TBPMServlet</servlet-name>
+		<servlet-class>
+			org.oryxeditor.server.TBPMServlet
+		</servlet-class>
+	</servlet>
+	
 	<!-- Gerardo's Posts for CPNTools Support --> 
 	<servlet>
 		<display-name>Colored Petri Net to CPN Tools</display-name>
@@ -684,6 +692,13 @@
 		<url-pattern>/bpmn2migration</url-pattern>
 	</servlet-mapping>
 	
+
+	<servlet-mapping>
+		<servlet-name>TBPMServlet</servlet-name>
+		<url-pattern>/tbpmimport</url-pattern>
+	</servlet-mapping>
+	
+
 	<!-- Gerardo's Mapping for CPNTool support -->
 	<servlet-mapping>
 		<servlet-name>CPNToolsExporter</servlet-name>
@@ -696,6 +711,7 @@
 	</servlet-mapping>
 	<!-- Gerardo's Mapping finished -->
 	
+
 	<jsp-config>
 		<taglib>
 			<taglib-uri>http://java.sun.com/jstl/core</taglib-uri>

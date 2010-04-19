@@ -21,49 +21,20 @@
  * DEALINGS IN THE SOFTWARE.
  ****************************************/
 
-package org.b3mn.poem.sketching;
+package de.hpi.tbpm;
 
-public class PathSection {
-	
-	private String type;
-	private double[] point;
-	
-	public PathSection(String type, double[] point) {
-		this.type = type;
-		this.point = point;
-	}
+import de.hpi.util.Bounds;
 
-	public String getType() {
-		return type;
-	}
+import name.audet.samuel.javacv.jna.cxcore.IplImage;
+import name.audet.samuel.javacv.jna.cxcore.CvScalar.ByValue;
 
-	public void setType(String type) {
-		this.type = type;
-	}
+public interface ShapeStructure {
 
-	public double[] getPoint() {
-		return point;
-	}
-
-	public void setPoint(double[] point) {
-		this.point = point;
-	}
+	void drawShape(IplImage img, ByValue color);
 	
-	public double getX() {
-		return point[0];
-	}
+	int[] getCoordinates();
 	
-	public double getY() {
-		return point[1];
-	}
+	int getX();
 	
-	public void setX(double x) {
-		this.point[0] = x;
-	}
-	
-	public void setY(double y) {
-		this.point[1] = y;
-	}
-	
-
+	Bounds getBounds(double ratio);
 }

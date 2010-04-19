@@ -2,6 +2,7 @@ package org.oryxeditor.bpel4chor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -63,6 +64,72 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 	
 	public Document currentDocument;
 	public Set<String> nsprefixSet;
+	
+	final static String EMPTY = "";
+	public Set<String> messageLinkSet = new HashSet<String>();
+
+	// 3.20: fportTypeMC()
+	public HashMap<String, String> ml2ptMap = new HashMap<String, String>();
+
+	// 3.21: foperationMC()
+	public HashMap<String, String> ml2opMap = new HashMap<String, String>();
+
+	// 3.22: partnerLink Set
+	public Set<String> plSet = new HashSet<String>();
+
+	// 3.23: messageConstruct --> partnerLink Mapping
+	public HashMap<String, PartnerLink> mc2plMap = new HashMap<String, PartnerLink>();
+
+	// 3.24: scope --> partnerLinkSet Mapping
+	public HashMap<String, Set<PartnerLink>> sc2plMap = new HashMap<String, Set<PartnerLink>>();
+
+	// 3.25: partnerLinkType Set
+	public Set<String> plTypeSet = new HashSet<String>();
+
+	// 3.26: partnerLink --> partnerLinkType
+	public HashMap<String, String> pl2plTypeMap = new HashMap<String, String>();
+
+	// 3.29: communication --> partnerLinkType
+	public HashMap<Comm, String> comm2pltMap = new HashMap<Comm, String>();
+
+	// 3.30: partnerLink --> myRole 
+	public HashMap<String, String> pl2myRoleMap = new HashMap<String, String>();
+
+	// 3.31: partnerLink --> partnerRole
+	public HashMap<String, String> pl2partnerRoleMap = new HashMap<String, String>();
+
+	// for function 3.11 fscopePa
+	public HashMap<String, Object> pa2scopeMap = new HashMap<String, Object>();
+
+	// used by 3.34
+	public HashMap<String, String> corrPropName2propertyMap = new HashMap<String, String>();
+
+	// used by 3.35
+	public HashMap<String, String> property2nsprefixOfPropMap = new HashMap<String, String>();
+
+	// used by 3.36
+	public Set<String> namespaceSet = new HashSet<String>();
+
+	// 3.2: record all name space prefixes of QName
+	public Set<String> namespacePrefixSet = new HashSet<String>();
+	public HashMap<String, String> ns2prefixMap = new HashMap<String, String>();
+	public String topologyNS;					// it will be used in conversion of PBD
+
+	// 3.4: participant types set
+	public Set<String> paTypeSet = new HashSet<String>();
+
+	// for the function 3.6 fprocessPaType
+	public HashMap<String, String> paType2processMap = new HashMap<String, String>();
+
+
+	// for function 3.9 ftypePa
+	public HashMap<String, String> pa2paTypeMap = new HashMap<String, String>();
+
+	public HashMap<String, Object> ml2mcMap = new HashMap<String, Object>();
+
+	public HashMap<String, Object> ml2paMap = new HashMap<String, Object>();
+
+
 	/**************************create a matched WSDL file to current PBD***************************/
 	/** 
 	 * Algorithm 3.19 Procedure declarePartnerLinkTypes
@@ -157,7 +224,56 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 		// return the new <plnk:role> construct
 		return role;
 	}
+
+	/**
+	 * function 3.18: nsprefixPT: PT -> NSPrefix
+	 * 
+	 * @param {String} portType     The port type
+	 * @return {String} nsprefix    The name space prefix
+	 */
+	private String fnsprefixPT(String portType){
+		String[] nsprefixSplit;
+		if(portType.contains(":")){
+			nsprefixSplit = portType.split(":");
+			return nsprefixSplit[0];
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.29: pltComm: Comm -> PLType
+	 * 
+	 * @param {Comm}    comm            The communication((A,c),(b,d))
+	 * @return {String} partnerLinkType The partner link type
+	 */
+	private String fpltComm(Comm comm){
+		if(comm2pltMap.containsKey(comm)){
+			return comm2pltMap.get(comm);
+		}
+		return EMPTY;
+	}
 	
+	/**
+	 * function pltCommReverse: 
+	 * according the input partnerLinkType of comm2pltMap to output the communication
+	 * 
+	 * @param {String} plt       The partner link type
+	 * @return {Comm}  comm      The communication
+	 */
+	private Comm fpltCommReverse(String plt){
+		if(comm2pltMap.containsValue(plt)){
+			Set<Comm> ks = comm2pltMap.keySet();
+			Iterator<Comm> it = ks.iterator();
+			while(it.hasNext()){
+				Comm comm = (Comm)it.next();
+				if(fpltComm(comm).equals(plt)){
+					return comm;
+				}
+			}
+		}
+		return null;
+	}
+
 	/**************************main*******************************/
 	public static void main(String argv[]) throws ParserConfigurationException, 
 										SAXException, IOException, TransformerFactoryConfigurationError, TransformerException{
@@ -200,33 +316,7 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 			groundAnaly.nsAnalyze(docGround);
 			groundAnaly.mlAnalyze(docGround);
 			groundAnaly.propertyAnalyze(docGround);
-			
-			pbdCon.scopeSet = topoAnaly.scopeSet;							// will be used in Conversion of PBD
-			pbdCon.processSet = topoAnaly.processSet;						// will be used in Conversion of PBD
-			pbdCon.topologyNS = topoAnaly.topologyNS;						// will be used in Conversion of PBD
-			pbdCon.forEach2setMap = topoAnaly.forEach2setMap;				// will be used in Conversion of PBD
-			pbdCon.paSet = topoAnaly.paSet;									// will be used in Conversion of PBD
-			pbdCon.pa2scopeMap = topoAnaly.pa2scopeMap; 					// will be used in Conversion of PBD
-			pbdCon.ns2prefixMap = groundAnaly.ns2prefixMap;					// will be used in Conversion of PBD
-			pbdCon.namespacePrefixSet = groundAnaly.namespacePrefixSet;		// will be used in Conversion of PBD
-			pbdCon.plSet = groundAnaly.plSet;									// will be used in Conversion of PBD
-			pbdCon.sc2plMap = groundAnaly.sc2plMap;							// will be used in Conversion of PBD
-			pbdCon.pl2plTypeMap = groundAnaly.pl2plTypeMap;					// will be used in Conversion of PBD
-			pbdCon.pl2myRoleMap = groundAnaly.pl2myRoleMap;					// will be used in Conversion of PBD
-			pbdCon.pl2partnerRoleMap = groundAnaly.pl2partnerRoleMap;			// will be used in Conversion of PBD
-			pbdCon.messageConstructsSet = groundAnaly.messageConstructsSet;	// will be used in Conversion of PBD
-			pbdCon.mc2plMap = groundAnaly.mc2plMap;							// will be used in Conversion of PBD
-			pbdCon.ml2mcMap = groundAnaly.ml2mcMap;							// will be used in Conversion of PBD
-			pbdCon.messageLinkSet = groundAnaly.messageLinkSet;				// will be used in Conversion of PBD
-			pbdCon.ml2ptMap = groundAnaly.ml2ptMap;							// will be used in Conversion of PBD
-			pbdCon.ml2opMap = groundAnaly.ml2opMap;							// will be used in Conversion of PBD
-			pbdCon.corrPropName2propertyMap = groundAnaly.corrPropName2propertyMap;  // will be used in Conversion of PBD
-			pbdCon.property2nsprefixOfPropMap = groundAnaly.property2nsprefixOfPropMap; // will be used in Conversion of PBD
-			
-			//PBD conversion
-			pbdCon.currentDocument = docPBD;
-			pbdCon.convertPBD((Element)docPBD.getFirstChild());
-			
+
 			//WSDL creation
 			wsdlCreate.currentDocument = docPBD;
 			wsdlCreate.topologyNS = topoAnaly.topologyNS;

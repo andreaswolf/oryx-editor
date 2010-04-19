@@ -136,7 +136,7 @@ public abstract class AbstractBpmnFactory {
 			IllegalAccessException, InvocationTargetException {
 
 		for (Method method : Arrays
-				.asList(this.getClass().getDeclaredMethods())) {
+				.asList(this.getClass().getMethods())) {
 			Property property = method.getAnnotation(Property.class);
 
 			if (property != null

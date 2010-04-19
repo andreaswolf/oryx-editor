@@ -21,49 +21,18 @@
  * DEALINGS IN THE SOFTWARE.
  ****************************************/
 
-package org.b3mn.poem.sketching;
+package de.hpi.tbpm;
 
-public class PathSection {
-	
-	private String type;
-	private double[] point;
-	
-	public PathSection(String type, double[] point) {
-		this.type = type;
-		this.point = point;
-	}
+import java.util.Comparator;
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public double[] getPoint() {
-		return point;
-	}
-
-	public void setPoint(double[] point) {
-		this.point = point;
-	}
+public class XComparator implements Comparator<Object> {
 	
-	public double getX() {
-		return point[0];
+	public int compare(Object one, Object other){
+		if ( ((ShapeStructure) one).getX() < ((ShapeStructure) other).getX() )
+			return -1;
+		if ( ((ShapeStructure) one).getX() ==  ((ShapeStructure) other).getX())
+			return 0;
+		return 1;
 	}
-	
-	public double getY() {
-		return point[1];
-	}
-	
-	public void setX(double x) {
-		this.point[0] = x;
-	}
-	
-	public void setY(double y) {
-		this.point[1] = y;
-	}
-	
 
 }

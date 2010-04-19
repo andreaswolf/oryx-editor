@@ -15,8 +15,7 @@
 		<plugin source="renameShapes.js" name="ORYX.Plugins.RenameShapes" />
 		<plugin source="erdfSupport.js" name="ORYX.Plugins.ERDFSupport" />
 		<plugin source="jsonSupport.js" name="ORYX.Plugins.JSONSupport">
-			<property name="color" value="red"/>
-				
+			<property name="color" value="red"/>		
 		</plugin>
 		<plugin source="rdfExport.js" name="ORYX.Plugins.RDFExport" />
 		<plugin source="undo.js" name="ORYX.Plugins.Undo" />
@@ -188,6 +187,10 @@
 		<plugin source="bpmn2.0/bpmn2.0serialization.js" name="ORYX.Plugins.BPMN2_0Serialization">
 			<requires namespace="http://b3mn.org/stencilset/bpmn2.0#" />
 			<requires namespace="http://b3mn.org/stencilset/bpmn2.0conversation#" />
+		</plugin>
+		
+		<plugin source="tbpmsupport.js" name="ORYX.Plugins.TBPMSupport">
+			<requires namespace="http://b3mn.org/stencilset/bpmn2.0#" />
 		</plugin>
 		
 		<!-- End: BPMN2.0 specific plugins -->

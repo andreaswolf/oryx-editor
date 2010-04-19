@@ -563,6 +563,22 @@ ORYX.I18N.JSONSupport = {
     }
 };
 
+ORYX.I18N.TBPMSupport = {
+    imp: {
+        name: "Import from PNG/JPEG",
+        desc: "Imports a model from a TPBM photo",
+        group: "Export",
+        selectFile: "Select an image (.png/.jpeg) file!",
+        file: "File",
+        btnImp: "Import",
+        btnClose: "Close",
+        progress: "Importing ...",
+        syntaxError: "Syntax error",
+        impFailed: "Request for import of document failed.",
+        confirm: "Confirm import of highlighted shapes!",
+    }
+};
+
 /** New Language Properties: 08.05.2009 */
 if(!ORYX.I18N.BPMN2XHTML) ORYX.I18N.BPMN2XHTML = {};
 ORYX.I18N.BPMN2XHTML.group = "Export";

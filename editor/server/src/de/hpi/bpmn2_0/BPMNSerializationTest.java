@@ -35,7 +35,7 @@ public class BPMNSerializationTest {
 	final static String schemaFilePath = "C:\\Users\\Sven Wagner-Boysen\\workspace\\oryx3\\editor\\lib\\xsd\\bpmn20\\Bpmn20.xsd";
 	
 	final static String batchPath = "C:\\Users\\Sven Wagner-Boysen\\Documents\\oryx\\BPMN2.0\\TestProcesses";
-	final static boolean doBatchTest = true;
+	final static boolean doBatchTest = false;
 	/**
 	 * @param args
 	 * @throws Exception
@@ -144,7 +144,7 @@ public class BPMNSerializationTest {
       	
       	
         
-      	File directory = new File("build/editor/classes/" + path);
+      	File directory = new File("bin/" + path);
       	directory.getAbsolutePath();
 
         ArrayList<Class<? extends T>> classes = new ArrayList<Class<? extends T>>();

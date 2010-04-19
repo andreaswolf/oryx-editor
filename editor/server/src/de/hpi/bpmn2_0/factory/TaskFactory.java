@@ -112,7 +112,7 @@ public class TaskFactory extends AbstractActivityFactory {
 	}
 
 	@Property(name = "tasktype", value = "None")
-	protected Task createTask(Shape shape) {
+	public Task createTask(Shape shape) {
 		Task task = new Task();
 
 		task.setId(shape.getResourceId());
@@ -122,7 +122,7 @@ public class TaskFactory extends AbstractActivityFactory {
 	}
 
 	@Property(name = "tasktype", value = "User")
-	protected UserTask createUserTask(Shape shape) {
+	public UserTask createUserTask(Shape shape) {
 		UserTask task = new UserTask();
 
 		task.setId(shape.getResourceId());
@@ -145,7 +145,7 @@ public class TaskFactory extends AbstractActivityFactory {
 	}
 
 	@Property(name = "tasktype", value = "Receive")
-	protected ReceiveTask createReceiveTask(Shape shape) {
+	public ReceiveTask createReceiveTask(Shape shape) {
 		ReceiveTask task = new ReceiveTask();
 
 		task.setId(shape.getResourceId());
@@ -179,7 +179,7 @@ public class TaskFactory extends AbstractActivityFactory {
 	}
 
 	@Property(name = "tasktype", value = "Send")
-	protected SendTask createSendTask(Shape shape) {
+	public SendTask createSendTask(Shape shape) {
 		SendTask task = new SendTask();
 
 		task.setId(shape.getResourceId());
@@ -210,7 +210,7 @@ public class TaskFactory extends AbstractActivityFactory {
 	}
 
 	@Property(name = "tasktype", value = "Script")
-	protected ScriptTask createScriptTask(Shape shape) {
+	public ScriptTask createScriptTask(Shape shape) {
 		ScriptTask task = new ScriptTask();
 
 		task.setId(shape.getResourceId());
@@ -230,7 +230,7 @@ public class TaskFactory extends AbstractActivityFactory {
 	}
 
 	@Property(name = "tasktype", value = "Business Rule")
-	protected BusinessRuleTask createBusinessRuleTask(Shape shape) {
+	public BusinessRuleTask createBusinessRuleTask(Shape shape) {
 		BusinessRuleTask task = new BusinessRuleTask();
 
 		task.setId(shape.getResourceId());
@@ -245,7 +245,7 @@ public class TaskFactory extends AbstractActivityFactory {
 	}
 
 	@Property(name = "tasktype", value = "Service")
-	protected ServiceTask createServiceTask(Shape shape) {
+	public ServiceTask createServiceTask(Shape shape) {
 		ServiceTask task = new ServiceTask();
 
 		task.setId(shape.getResourceId());
@@ -267,7 +267,7 @@ public class TaskFactory extends AbstractActivityFactory {
 	}
 
 	@Property(name = "tasktype", value = "Manual")
-	protected ManualTask createManualTask(Shape shape) {
+	public ManualTask createManualTask(Shape shape) {
 		ManualTask task = new ManualTask();
 
 		task.setId(shape.getResourceId());

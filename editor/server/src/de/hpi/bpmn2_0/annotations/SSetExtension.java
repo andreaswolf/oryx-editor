@@ -1,9 +1,8 @@
-package org.oryxeditor.bpel4chor;
+package de.hpi.bpmn2_0.annotations;
 
 /**
- * Copyright (c) 2009-2010 
- * 
- * Changhua Li
+ * Copyright (c) 2009
+ * Philipp Giese, Sven Wagner-Boysen
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +23,21 @@ package org.oryxeditor.bpel4chor;
  * SOFTWARE.
  */
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class FunctionsOfBPEL4Chor2BPEL {
-	//no useful anymore
+/**
+ * This Annotation defines the required SSetExtensions for a stencil set factory.
+ * 
+ * @author Sven Wagner-Boysen
+ */
+
+@Target({
+	ElementType.TYPE
+})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface SSetExtension {
+	String[] value();
 }

@@ -2,6 +2,8 @@ package org.oryxeditor.bpel4chor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -60,16 +62,72 @@ import org.xml.sax.SAXException;
  * It is the procedure of conversion for an PBD , which was designed in the Studien Arbeit
  * of Peter Reimann(2008)
  */
-public class BPEL4Chor2BPELPBDConversion extends FunctionsOfBPEL4Chor2BPEL {
+public class BPEL4Chor2BPELPBDConversion {//extends FunctionsOfBPEL4Chor2BPEL {
 	
 	public Document currentDocument;
-	protected static String process_nsprefix = "";					// the name space prefix of the target name space of the current PBD
-	protected static Set<String> paSetList = new HashSet<String>();	// a list of sets of participant references over which the 
+	private static String process_nsprefix = "";					// the name space prefix of the target name space of the current PBD
+	private static Set<String> paSetList = new HashSet<String>();	// a list of sets of participant references over which the 
 																	// set-based <forEach> activities in this process iterate
 																	// they are used as names of variables containing an array of
 																	// endpoint references
 	// attention: global name space prefix set here is namespacePrefixSet !!
+
+	final static String EMPTY = "";
+	public Set<String> messageLinkSet = new HashSet<String>();
+	// 3.20: fportTypeMC()
+	public HashMap<String, String> ml2ptMap = new HashMap<String, String>();
+
+	// 3.21: foperationMC()
+	public HashMap<String, String> ml2opMap = new HashMap<String, String>();
+
+	// 3.22: partnerLink Set
+	public Set<String> plSet = new HashSet<String>();
+
+	// 3.23: messageConstruct --> partnerLink Mapping
+	public HashMap<String, PartnerLink> mc2plMap = new HashMap<String, PartnerLink>();
+
+	// 3.24: scope --> partnerLinkSet Mapping
+	public HashMap<String, Set<PartnerLink>> sc2plMap = new HashMap<String, Set<PartnerLink>>();
+
+	// 3.26: partnerLink --> partnerLinkType
+	public HashMap<String, String> pl2plTypeMap = new HashMap<String, String>();
+
+	// 3.30: partnerLink --> myRole 
+	public HashMap<String, String> pl2myRoleMap = new HashMap<String, String>();
+
+	// 3.31: partnerLink --> partnerRole
+	public HashMap<String, String> pl2partnerRoleMap = new HashMap<String, String>();
+
+	// for function 3.11 fscopePa
+	public HashMap<String, Object> pa2scopeMap = new HashMap<String, Object>();
+
+	// used by 3.34
+	public HashMap<String, String> corrPropName2propertyMap = new HashMap<String, String>();
+
+	// used by 3.35
+	public HashMap<String, String> property2nsprefixOfPropMap = new HashMap<String, String>();
+
+	// 3.2: record all name space prefixes of QName
+	public Set<String> namespacePrefixSet = new HashSet<String>();
+	public HashMap<String, String> ns2prefixMap = new HashMap<String, String>();
+	public String topologyNS;					// it will be used in conversion of PBD
+	public HashMap<String, String> forEach2setMap = new HashMap<String, String>();
+
+	public HashMap<String, Object> ml2mcMap = new HashMap<String, Object>();
+
+
+	// 3.5: process set
+	public Set<String> processSet = new HashSet<String>();
+	//private HashMap<String, String> paType2PBDMap = new HashMap<String, String>();
 	
+	// 3.8: participant set
+	public Set<String> paSet = new HashSet<String>();
+
+	// 3.10: scopes set
+	public Set<String> scopeSet = new HashSet<String>();
+	public Set<String> messageConstructsSet;
+
+
 	/**
 	 * Algorithm 3.5 and Algorithm 3.17 Conversion of one PBD into BPEL
 	 * 
@@ -647,6 +705,189 @@ public class BPEL4Chor2BPELPBDConversion extends FunctionsOfBPEL4Chor2BPEL {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * function 3.24: partnerLinksScope: (Scope U Process) -> 2^PL
+	 * 
+	 * @param {String} sc             The element of scopeSet and processSet
+	 * @return {Set}   partnerLinkSet The partner link set
+	 */
+	private Set<PartnerLink> fpartnerLinksScope(String sc){
+		if(sc2plMap.containsKey(sc)){
+			return sc2plMap.get(sc);
+		}
+		return null;
+	}
+
+	/**
+	 * function 3.26: typePL: PL -> PLType
+	 * 
+	 * @param {PartnerLink} pl       The partner link
+	 * @return {String}     plType   The partner link type
+	 */
+	private String ftypePL(PartnerLink pl){
+		if(pl2plTypeMap.containsKey(pl.getName())){
+			return pl2plTypeMap.get(pl.getName());
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.18: nsprefixPT: PT -> NSPrefix
+	 * 
+	 * @param {String} portType     The port type
+	 * @return {String} nsprefix    The name space prefix
+	 */
+	private String fnsprefixPT(String portType){
+		String[] nsprefixSplit;
+		if(portType.contains(":")){
+			nsprefixSplit = portType.split(":");
+			return nsprefixSplit[0];
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function for 3.20: To create a mapping[messageConstruct, messageLink] 
+	 * we assume here, that we have already messageLinkSet, ml2mcMap, constrctsML from topologyAnalyze
+	 *  
+	 * @return {HashMap} mc2mlMap     The mapping of messageConstruct to messageLink
+	 */
+	private HashMap<String, String> getMc2mlMap(){
+		HashMap<String, String> mc2mlMap = new HashMap<String, String>();
+		ArrayList<String> valueList = new ArrayList<String>();
+		Iterator<String> it = messageLinkSet.iterator();
+		while (it.hasNext()){
+			String ml = (String)it.next();
+			valueList = (ArrayList<String>)ml2mcMap.get(ml);
+			String mc1Str = valueList.get(0).toString().split(":")[1];
+			String mc2Str = valueList.get(1).toString().split(":")[1];
+			mc2mlMap.put(mc1Str, ml);
+			mc2mlMap.put(mc2Str, ml);
+		}
+		return mc2mlMap;
+	}
+
+	/**
+	 * function 3.20: portTypeMC: MC -> PT
+	 * 
+	 * @param {String}  mc          The message construct
+	 * @return {String} portType    The port type
+	 */
+	private String fportTypeMC(String mc){
+		HashMap<String, String> mc2mlMap = getMc2mlMap();
+		if(ml2ptMap.containsKey(mc2mlMap.get((mc.split(":"))[1]))){
+			return ml2ptMap.get(mc2mlMap.get((mc.split(":"))[1]));
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.21: operationMC: MC -> O
+	 * 
+	 * @param {String}  mc         The message construct
+	 * @return {String} operation  The operation
+	 */
+	private String foperationMC(String mc){
+		HashMap<String, String> mc2mlMap = getMc2mlMap();
+		if(ml2opMap.containsKey(mc2mlMap.get((mc.split(":"))[1]))){
+			return ml2opMap.get(mc2mlMap.get((mc.split(":"))[1]));
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.23: partnerLinkMC: MC -> PL
+	 * 
+	 * @param {String}       mc       The message construct
+	 * @return {PartnerLink} pl       The partner link
+	 */
+	private PartnerLink fpartnerLinkMC(String mc){
+		if(mc2plMap.containsKey(mc)){
+			return mc2plMap.get(mc);
+		}
+		return null;
+	}
+
+	/**
+	 * function 3.30: myRolePL: PL -> Pa U {EMPTY}
+	 * 
+	 * @param {PartnerLink} pl           The partner link
+	 * @return {String}     myRoleValue  The value of myRole in partner link
+	 */
+	private String fmyRolePL(PartnerLink pl){
+		if(pl2myRoleMap.containsKey(pl.getName())){
+			return pl2myRoleMap.get(pl.getName());
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.31: partnerRolePL: PL -> Pa U {EMPTY}
+	 * 
+	 * @param {PartnerLink} pl                The partner link
+	 * @return {String}     partnerRoleValue  The value of partnerRole in partner link
+	 */
+	private String fpartnerRolePL(PartnerLink pl){
+		if(pl2partnerRoleMap.containsKey(pl.getName())){
+			return pl2partnerRoleMap.get(pl.getName());
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.34: assigning a property to each property name. 
+	 *                propertyCorrPropName: CorrPropName -> Property
+	 * 
+	 * @param  {String} propNameInput      The property name
+	 * @return {String} property           The WSDLproperty value
+	 */
+	private String fpropertyCorrPropName(String propNameInput){
+		if(corrPropName2propertyMap.containsKey(propNameInput)){
+			return corrPropName2propertyMap.get(propNameInput);
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.35: assigning a name space prefix to each WSDL property. 
+	 *                nsprefixProperty: property -> nsprefix
+	 * 
+	 * @param  {String} propertyInput        The WSDLproperty value in grounding
+	 * @return {String} nsprefix             The name space prefix of this value
+	 */
+	private String fnsprefixProperty(String propertyInput){
+		if(property2nsprefixOfPropMap.containsKey(propertyInput)){
+			return property2nsprefixOfPropMap.get(propertyInput);
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.36: assigning a set of participant references to each <forEach> activity
+	 * Attention: the following functions of 3.36 will be just used within the tag <participantSet> of XML files.
+	 * 
+	 * @param  {String} sc         The QName of <scope> or <forEach> activity
+	 * @return {String} paSetName  The name of <participantSet>
+	 */
+	private String fsetForEach(String sc){
+		if(forEach2setMap.containsKey(sc)){
+			return forEach2setMap.get(sc);
+		}
+		return EMPTY;
+	}
+
+	
+	/**
+	 * function: To build QName for function 3.12 
+	 * 
+	 * @param {String} prefix     The prefix
+	 * @param {String} NCName     The NCName
+	 * @return {String} QName     The QName
+	 */
+	private static String buildQName(String prefix, String NCName){
+		return prefix + ":" + NCName;
 	}
 	
 	/**************************main*******************************/

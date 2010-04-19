@@ -1,6 +1,7 @@
 package org.oryxeditor.bpel4chor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -47,6 +48,7 @@ import org.w3c.dom.NodeList;
  * of Peter Reimann(2008)
  */
 
+	
 
 /**
  * This class is for relation Communication 3.27 of SA 
@@ -180,7 +182,92 @@ class PartnerLink {
 	}
 }
 
-public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
+public class BPEL4Chor2BPELGroundingAnalyze {
+	
+	final static String EMPTY = "";
+	public Set<String> messageLinkSet = new HashSet<String>();
+
+	// 3.4: participant types set
+	public Set<String> paTypeSet = new HashSet<String>();
+
+	// for the function 3.6 fprocessPaType
+	public HashMap<String, String> paType2processMap = new HashMap<String, String>();
+
+	// for function 3.9 ftypePa
+	public HashMap<String, String> pa2paTypeMap = new HashMap<String, String>();
+
+	public HashMap<String, Object> ml2mcMap = new HashMap<String, Object>();
+
+	public HashMap<String, Object> ml2paMap = new HashMap<String, Object>();
+
+	//in fbindSenderToML defined and for grounding Analyze
+	public HashMap<String, String> ml2bindSenderToMap = new HashMap<String, String>();
+	public Set<String> messageConstructsSet; 
+	
+	// 3.20: fportTypeMC()
+	public HashMap<String, String> ml2ptMap = new HashMap<String, String>();
+
+	// 3.21: foperationMC()
+	public HashMap<String, String> ml2opMap = new HashMap<String, String>();
+
+	// 3.22: partnerLink Set
+	public Set<String> plSet = new HashSet<String>();
+
+	// 3.23: messageConstruct --> partnerLink Mapping
+	public HashMap<String, PartnerLink> mc2plMap = new HashMap<String, PartnerLink>();
+
+	// 3.24: scope --> partnerLinkSet Mapping
+	public HashMap<String, Set<PartnerLink>> sc2plMap = new HashMap<String, Set<PartnerLink>>();
+
+	// 3.25: partnerLinkType Set
+	public Set<String> plTypeSet = new HashSet<String>();
+
+	// 3.26: partnerLink --> partnerLinkType
+	public HashMap<String, String> pl2plTypeMap = new HashMap<String, String>();
+
+	// 3.29: communication --> partnerLinkType
+	public HashMap<Comm, String> comm2pltMap = new HashMap<Comm, String>();
+
+	// 3.30: partnerLink --> myRole 
+	public HashMap<String, String> pl2myRoleMap = new HashMap<String, String>();
+
+	// 3.31: partnerLink --> partnerRole
+	public HashMap<String, String> pl2partnerRoleMap = new HashMap<String, String>();
+
+	// for function 3.11 fscopePa
+	public HashMap<String, Object> pa2scopeMap = new HashMap<String, Object>();
+
+	// used by 3.34
+	public HashMap<String, String> corrPropName2propertyMap = new HashMap<String, String>();
+
+	// used by 3.35
+	public HashMap<String, String> property2nsprefixOfPropMap = new HashMap<String, String>();
+
+	// used by 3.36
+	public Set<String> namespaceSet = new HashSet<String>();
+
+	// 3.2: record all name space prefixes of QName
+	public Set<String> namespacePrefixSet = new HashSet<String>();
+	public HashMap<String, String> ns2prefixMap = new HashMap<String, String>();
+	private String topologyNS;					// it will be used in conversion of PBD
+
+	// 3.17: to save the portType of messageLink of grounding
+	private Set<String> ptSet = new HashSet<String>();
+
+	// 3.19: to save the operation of messageLink of grounding
+	private Set<String> oSet = new HashSet<String>();
+	// 3.28: communication --> partnerLink X partnerLink
+	private HashMap<Comm, Object> comm2plsMap = new HashMap<Comm, Object>();
+	// relation COMM ((A,c),(b,d))
+	private Set<Object> commSet = new HashSet<Object>();
+	
+	// 3.32: set of NCNames of correlation properties 
+	private Set<String> corrPropNameSet = new HashSet<String>();
+
+	// 3.33: set of WSDL properties
+	private Set<String> propertySet = new HashSet<String>();
+
+	
 	
 	/************************Name space of Grounding********************/
 	/**
@@ -317,7 +404,7 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		String a = A.iterator().next().toString();
 		Set<String> bSet = new HashSet<String>();
 		bSet.add(b);
-
+		System.out.println(commSet);
 		if(!commSet.isEmpty()){
 			Iterator<Object> it = commSet.iterator();
 			while(it.hasNext()){
@@ -542,16 +629,17 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		//System.out.println("+++++partnerRole of pl2 is: " + pl2.getPartnerRole());
 		//System.out.println("+++++commSet is: " + commSet);
 		//System.out.println("====================================================");
-		//Iterator it = partnerLinkSet1.iterator();
-		//while (it.hasNext()){
-		//	String partnerlinkName = ((PartnerLink)it.next()).getName();
-		//	System.out.println("####partnerLinkSet is: " + partnerlinkName);
-		//}
-		//Iterator it2 = partnerLinkSet2.iterator();
-		//while (it2.hasNext()){
-		//	String partnerlinkName = ((PartnerLink)it2.next()).getName();
-		//	System.out.println("####partnerLinkSet is: " + partnerlinkName);
-		//}
+/*		Iterator it = partnerLinkSet1.iterator();
+		while (it.hasNext()){
+			String partnerlinkName = ((PartnerLink)it.next()).getName();
+			System.out.println("####partnerLinkSet is: " + partnerlinkName);
+		}
+		Iterator it2 = partnerLinkSet2.iterator();
+		while (it2.hasNext()){
+			String partnerlinkName = ((PartnerLink)it2.next()).getName();
+			System.out.println("####partnerLinkSet is: " + partnerlinkName);
+		}
+*/
 	}
 	
 	/**
@@ -597,7 +685,357 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		fnsprefixProperty(property, getAttributeNamespacePrefix(construct, "WSDLproperty"));
 	}
 	
-	/*****************Other Functions****************/
+	/**
+	 * function 3.18: nsprefixPT: PT -> NSPrefix
+	 * 
+	 * @param {String} portType     The port type
+	 * @return {String} nsprefix    The name space prefix
+	 */
+	private String fnsprefixPT(String portType){
+		String[] nsprefixSplit;
+		if(portType.contains(":")){
+			nsprefixSplit = portType.split(":");
+			return nsprefixSplit[0];
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.20: portTypeMC: MC -> PT
+	 * 
+	 * @param {Element} currentElement     The current element
+	 * @param {String}  mc                 The message construct
+	 */
+	private void fportTypeMC(Element currentElement, String mc){
+		NodeList childNodes = currentElement.getElementsByTagName("messageLink");
+		Node child;
+		for (int i=0; i<childNodes.getLength(); i++){
+			child = childNodes.item(i);
+			if(child instanceof Element){
+				String ml = ((Element)child).getAttribute("name");
+				String pt = ((Element)child).getAttribute("portType");
+				// create messageLinkSet of grounding
+				//messageLinkSet.add(ml);
+				// create ml2ptMap for 3.20 function 
+				ml2ptMap.put(ml, pt);
+			}
+		}
+	}
+
+	/**
+	 * function 3.21: operationMC: MC -> O
+	 * 
+	 * @param {Element} currentElement     The current Element
+	 * @param {String}  mc                 The message construct
+	 */
+	private void foperationMC (Element currentElement, String mc){
+		NodeList childNodes = currentElement.getElementsByTagName("messageLink");
+		Node child;
+		for (int i=0; i<childNodes.getLength(); i++){
+			child = childNodes.item(i);
+			if(child instanceof Element){
+				String ml = ((Element)child).getAttribute("name");
+				String op = ((Element)child).getAttribute("operation");
+				if(!op.contains(":")){
+					op = fnsprefixPT(((Element)child).getAttribute("portType")) + ":" + op;
+				}
+				// create messageLinkSet of grounding
+				//messageLinkSet.add(ml);
+				// create ml2opMap for 3.21 function 
+				ml2opMap.put(ml, op);
+			}
+		}
+	}
+
+	/**
+	 * function 3.23: partnerLinkMC: MC -> PL
+	 * create a mapping mc2plMap(mc, pl)
+	 * 
+	 * @param {String}      mc        The message construct
+	 * @param {PartnerLink} pl        The partner link
+	 */
+	private void fpartnerLinkMC(String mc, PartnerLink pl){
+		mc2plMap.put(mc, pl);
+	}
+	
+	/**
+	 * function 3.24: partnerLinksScope: (Scope U Process) -> 2^PL
+	 * create a mapping sc2plMap [sc, partnerLinkSet]
+	 * 
+	 * @param {String} sc             The element of scopeSet and processSet
+	 * @param {Set}    partnerLinkSet The partner link set
+	 */
+	private void fpartnerLinksScope(String sc, Set<PartnerLink> partnerLinkSet){
+		sc2plMap.put(sc, partnerLinkSet);
+	}
+
+	/**
+	 * function 3.26: typePL: PL -> PLType
+	 * create a mapping pl2plTypeMap[pl.getName(), plType]
+	 * 
+	 * @param {PartnerLink} pl       The partner link
+	 * @param {String}      plType   The partner link type
+	 */
+	private void ftypePL(PartnerLink pl, String plType){
+		pl2plTypeMap.put(pl.getName(), plType);
+		pl.setPartnerRole(plType);
+	}
+
+	/**
+	 * function 3.28: partnerLinksComm: Comm -> PL x PL
+	 * create a mapping comm2plsMap[comm, plsPair]
+	 * 
+	 * @param {Comm}      comm     The communication((A,c),(b,d))
+	 * @param {ArrayList} plsPair  The pair of partner link(pl1, pl2)
+	 */
+	private void fpartnerLinksComm(Comm comm, ArrayList<Object> plsPair){
+		comm2plsMap.put(comm, plsPair);
+	}
+
+	/**
+	 * function 3.28: partnerLinksComm: Comm -> PL x PL
+	 * 
+	 * @param {Comm}       comm     The communication((A,c),(b,d))
+	 * @return {ArrayList} plsPair  The pair of partner link(pl1, pl2)
+	 */
+	private ArrayList<Object> fpartnerLinksComm(Comm comm){
+		ArrayList<Object> plsPair = null;
+		if(comm2plsMap.containsKey(comm)){
+			return (ArrayList<Object>) comm2plsMap.get(comm);
+		}
+		return plsPair;
+	}
+
+	/**
+	 * function 3.29: pltComm: Comm -> PLType
+	 * create a mapping comm2pltMap[comm, plType]
+	 * 
+	 * @param {Comm}   comm            The communication((A,c),(b,d))
+	 * @param {String} partnerLinkType The partner link type
+	 */
+	private void fpltComm(Comm comm, String plType){
+		comm2pltMap.put(comm, plType);
+	}
+
+	/**
+	 * function 3.29: pltComm: Comm -> PLType
+	 * 
+	 * @param {Comm}    comm            The communication((A,c),(b,d))
+	 * @return {String} partnerLinkType The partner link type
+	 */
+	private String fpltComm(Comm comm){
+		if(comm2pltMap.containsKey(comm)){
+			return comm2pltMap.get(comm);
+		}
+		return EMPTY;
+	}
+	
+	/**
+	 * function 3.30: myRolePL: PL -> Pa U {EMPTY}
+	 * create a mapping pl2myRoleMap[pl.getName(), myRoleValue]
+	 * 
+	 * @param {PartnerLink} pl           The partner link
+	 * @param {String}      myRoleValue  The value of myRole in partner link
+	 */
+	private void fmyRolePL(PartnerLink pl, String myRoleValue){
+		pl2myRoleMap.put(pl.getName(), myRoleValue);
+		pl.setMyRole(myRoleValue);
+	}
+
+	/**
+	 * function 3.31: partnerRolePL: PL -> Pa U {EMPTY}
+	 * create a mapping pl2partnerRoleMap[pl.getName(), partnerRoleValue]
+	 * 
+	 * @param {PartnerLink} pl                The partner link
+	 * @param {String}      partnerRoleValue  The value of partnerRole in partner link
+	 */
+	private void fpartnerRolePL(PartnerLink pl, String partnerRoleValue){
+		pl2partnerRoleMap.put(pl.getName(), partnerRoleValue);
+		pl.setPartnerRole(partnerRoleValue);
+	}
+
+	/**
+	 * function 3.34: the function assigning a property to each property name. 
+	 *                propertyCorrPropName: CorrPropName -> Property
+	 * create a mapping corrPropName2propertyMap[propNameInput, propertyInput]
+	 * 
+	 * @param {String} propNameInput      The property name
+	 * @param {String} propertyInput      The WSDLproperty value
+	 */
+	private void fpropertyCorrPropName(String propNameInput, String propertyInput){
+		corrPropName2propertyMap.put(propNameInput, propertyInput);
+	}
+
+	/**
+	 * function 3.35: assigning a name space prefix to each WSDL property. 
+	 *                nsprefixProperty: property -> nsprefix
+	 * create a mapping property2nsprefixOfPropMap[propertyInput, nsprefixInput]
+	 * 
+	 * @param {String} propertyInput        The WSDLproperty value in grounding
+	 * @param {String} nsprefixInput        The name space prefix of this value
+	 */
+	private void fnsprefixProperty(String propertyInput, String nsprefixInput){
+		property2nsprefixOfPropMap.put(propertyInput, nsprefixInput);
+	}
+
+
+	/**
+	 * to create the Sets: namespaceSet, namespaceprefixSet and Mapping: ns2prefixMap
+	 * 
+	 * @param {Node}   currentNode     The current node of the XML file
+	 * @param {String} nodeName        The name of the Node
+	 */
+	private void getNamespaceSet(Node currentNode, String nodeName){
+		if(!(currentNode instanceof Element || currentNode instanceof Document)){
+			return;
+		}
+
+		String str;
+		String[] strSplit, prefixSplit;
+
+		if(currentNode.getNodeName().equals(nodeName)){
+			for(int i=0; i<currentNode.getAttributes().getLength(); i++){
+				str = currentNode.getAttributes().item(i).toString();
+				strSplit = str.split("=");
+				if(strSplit[0].contains("xmlns") || (strSplit[0].equals("targetNamespace")) 
+						|| (strSplit[0].equals("topology"))){
+					if(strSplit[0].equals("targetNamespace")){
+						ns2prefixMap.put(strSplit[0], strSplit[1].replaceAll("\"", ""));
+						String valueOfTopologyNS = strSplit[1].replaceAll("\"", "");
+						topologyNS = strSplit[1].replaceAll("\"", "");
+						ns2prefixMap.put("topologyNS", valueOfTopologyNS);
+						String targetNS = "targetNamespace";
+						namespacePrefixSet.add(targetNS);
+						namespaceSet.add(valueOfTopologyNS);
+					}
+					if(strSplit[0].contains("xmlns:")){
+						prefixSplit = strSplit[0].split(":");
+						namespacePrefixSet.add(prefixSplit[1]);
+						namespaceSet.add(strSplit[1].replaceAll("\"", ""));
+						ns2prefixMap.put(prefixSplit[1],strSplit[1].replaceAll("\"", ""));
+					}
+					if(strSplit[0].equals("xmlns")){
+						namespaceSet.add(strSplit[1].replaceAll("\"", ""));
+						ns2prefixMap.put(strSplit[0],strSplit[1].replaceAll("\"", ""));
+					}
+					if(strSplit[0].equals("topology")){
+						ns2prefixMap.put(strSplit[0], strSplit[1].replaceAll("\"", ""));
+						String valueOfTopologyInGrounding = strSplit[1].replaceAll("\"", "");
+						namespacePrefixSet.add(strSplit[0]);
+						namespaceSet.add(valueOfTopologyInGrounding);
+					}
+				}
+			}
+		}
+		// recursive to search name space 
+		NodeList childNodes = currentNode.getChildNodes();
+		Node child;
+		for(int i=0; i<childNodes.getLength(); i++){
+			child = childNodes.item(i);
+			if(child instanceof Element){
+				getNamespaceSet(child, nodeName);
+			}	
+		}
+	}
+	
+	/**
+	 * function 3.14: constructsML: ML -> MC x MC
+	 * for each messageLink. to specified a send and a receive activity.
+	 * 
+	 * @param {String} mlName               The message link
+	 * @return {ArrayList} mcSenderReceiver The ArrayList [senderNS:senderActivity, receiverNS:receiverActivity]
+	 */
+	private ArrayList<String> fconstructsML(String ml){
+		ArrayList<String> mcSenderReceiver = new ArrayList<String>();
+		if(!ml2mcMap.isEmpty()){
+			mcSenderReceiver = (ArrayList<String>)ml2mcMap.get(ml);
+		}
+		return mcSenderReceiver;
+	}
+	
+	/**
+	 * function: To build QName for function 3.12 
+	 * 
+	 * @param {String} prefix     The prefix
+	 * @param {String} NCName     The NCName
+	 * @return {String} QName     The QName
+	 */
+	private static String buildQName(String prefix, String NCName){
+		return prefix + ":" + NCName;
+	}
+
+	/**
+	 * function 3.15: parefsML: ML -> 2^Pa x Pa
+	 * 
+	 * @param {String} ml                             The message link
+	 * @return {ArrayList} outputSenderReceiverPaList The ArrayList [[senderArrayListPa], receiverPa]
+	 */
+	private ArrayList<Object> fparefsML(String ml){
+		ArrayList<Object> outputSenderReceiverPaList = new ArrayList<Object>();
+		if(!(ml2paMap.isEmpty())){
+			outputSenderReceiverPaList = (ArrayList<Object>)ml2paMap.get(ml);
+		}
+		return outputSenderReceiverPaList;
+	}
+	/**
+	 * function 3.11: scopePa: Pa -> Scope U {EMPTY}
+	 * 
+	 * @param {String} participant     The participant
+	 * @return {Object} EMPTY or ArrayList for <forEach> activity
+	 */
+	private Object fscopePa(String participant){
+		try{
+			if(pa2scopeMap.containsKey(participant)){
+				return pa2scopeMap.get(participant);
+			}
+			else
+				return EMPTY;	
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return EMPTY;
+	}
+	
+	/**
+	 * function 3.9: typePa: Pa -> paType
+	 * 
+	 * @param {String} participant       The participant
+	 * @return {String} participantType  The participantType
+	 */
+	private String ftypePa (String participant){
+		if(!paTypeSet.isEmpty()){
+			Iterator<String> it = paTypeSet.iterator();
+			while (it.hasNext()){
+				String participantType = (String)it.next();
+				try{
+					if(pa2paTypeMap.containsKey(participant) && pa2paTypeMap.get(participant).equals(participantType)){
+						return participantType;
+					}
+				}
+				catch (Exception e){
+					e.printStackTrace();
+					System.out.println(participant + " has problem");
+				}
+			}
+		}
+		return EMPTY;
+	}
+
+	/**
+	 * function 3.6: processPaType: PaType -> Process
+	 * 
+	 * @param {String} paType     The participant type
+	 * @return {String} process   The process 
+	 */
+	private String fprocessPaType(String paType){
+		if(!paType.isEmpty() && paType2processMap.containsKey(paType)){
+			return paType2processMap.get(paType);
+		}
+		return EMPTY;
+	}
+	
 	/**
 	 * replace the ":" in the inputStr with "_"
 	 * 
@@ -611,16 +1049,7 @@ public class BPEL4Chor2BPELGroundingAnalyze extends FunctionsOfBPEL4Chor2BPEL{
 		return inputStr;
 	}
 	
-	/**
-	 * return the class type of the input object
-	 * 
-	 * @param {Object} inputObj     The input object
-	 * @return {String}             The output of the class for the input object
-	 */
-/*	private String dt(Object inputObj){
-		return inputObj.getClass().getSimpleName();
-	}
-*/
+
 	/**
 	 * return the name space prefix of the attribute which having the "name", it
 	 * will return the first NCName of its value if this is a QName, otherwise it

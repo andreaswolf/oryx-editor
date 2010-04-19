@@ -57,6 +57,7 @@
 		<plugin name="ORYX.Plugins.BPMN2_0"/>
 		<plugin name="ORYX.Plugins.BPMN2_0Serialization"/>
 		<plugin name="ORYX.Plugins.Bpmn2_0Choreography"/>
+		<plugin name="ORYX.Plugins.TBPMSupport"/>
 	</profile>
 	<profile name="bpmn2.0Choreography" depends="default" stencilset="stencilsets/bpmn2.0/bpmn2.0.json">
 		<stencilsetextension namespace="http://oryx-editor.org/stencilsets/extensions/bpmn2.0choreography#"/>
@@ -138,8 +139,6 @@
 	</profile>
 	
 	<profile name="uml2.2" depends="default" stencilset="stencilsets/uml2.2/uml2.2.json">
-		
 		<plugin name="ORYX.Plugins.UML"/>
 	</profile>
-
 </profiles>

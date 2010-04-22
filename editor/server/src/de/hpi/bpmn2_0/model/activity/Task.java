@@ -72,6 +72,24 @@ import de.hpi.bpmn2_0.model.activity.type.UserTask;
 public class Task
     extends Activity
 {
+	
+	/**
+	 * Default constructor
+	 */
+	public Task() {
+		
+	}
+	
+	/**
+	 * Copy constructor
+	 * 
+	 * @param task
+	 * 		The {@link Task} to copy
+	 */
+	public Task(Task task) {
+		super(task);
+	}
+	
 	/**
 	 * Transforming a task to its JSON-based shape representation.
 	 */

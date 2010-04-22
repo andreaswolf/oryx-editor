@@ -95,7 +95,7 @@
 		<plugin name="ORYX.Plugins.RowLayouting"/>
 		<plugin name="ORYX.Plugins.XForms"/>
 	</profile>
-	<profile name="bpmnQ" depends="default" stencilset="stencilsets/bpmnq/bpmnq.json">
+	<profile name="bpmnq" depends="default" stencilset="stencilsets/bpmnq/bpmnq.json">
 		<plugin name="ORYX.Plugins.QueryEvaluator"/>
 	</profile>
 	<profile name="interactionpetrinets" depends="default" stencilset="stencilsets/interactionpetrinets/interactionpetrinets.json">

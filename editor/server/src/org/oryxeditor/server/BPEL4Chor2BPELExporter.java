@@ -26,19 +26,15 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.oryxeditor.bpel4chor.BPEL4Chor2BPELGroundingAnalyze;
+import org.oryxeditor.bpel4chor.BPEL4Chor2BPELPBDConversion;
+import org.oryxeditor.bpel4chor.BPEL4Chor2BPELTopologyAnalyze;
+import org.oryxeditor.bpel4chor.BPEL4Chor2BPELWSDLCreate;
+import org.oryxeditor.bpel4chor.BPELExportPostprocessor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-/**
- * Import the transformation for BPEL4Chor to BPEL 
- */
-import org.oryxeditor.bpel4chor.BPEL4Chor2BPELTopologyAnalyze;
-import org.oryxeditor.bpel4chor.BPEL4Chor2BPELGroundingAnalyze;
-import org.oryxeditor.bpel4chor.BPEL4Chor2BPELPBDConversion;
-import org.oryxeditor.bpel4chor.BPEL4Chor2BPELWSDLCreate;
-import org.oryxeditor.bpel4chor.BPELExportPostprocessor;
 
 /**
  * Copyright (c) 2010 
@@ -1008,10 +1004,10 @@ public class BPEL4Chor2BPELExporter extends HttpServlet {
 		BPEL4Chor2BPELWSDLCreate wsdlCreate = new BPEL4Chor2BPELWSDLCreate();
 
 		//topology analyze
-		topoAnaly.nsAnalyze(docTopo);
-		topoAnaly.paTypeAnalyze(docTopo);
-		topoAnaly.paAnalyze(docTopo);
-		topoAnaly.mlAnalyze(docTopo);
+		topoAnaly.nsAnalyze((Element) docTopo.getFirstChild());
+		topoAnaly.paTypeAnalyze((Element) docTopo.getFirstChild());
+		topoAnaly.paAnalyze((Element) docTopo.getFirstChild());
+		topoAnaly.mlAnalyze((Element) docTopo.getFirstChild());
 		topoAnaly.getMl2BindSenderToMap(((Element)docTopo.getFirstChild()));
 
 		//grounding analyze
@@ -1028,10 +1024,10 @@ public class BPEL4Chor2BPELExporter extends HttpServlet {
 		groundAnaly.pa2paTypeMap = topoAnaly.pa2paTypeMap;              // will be used in Alg. 3.4 createPartnerLinkDeclarations
 		groundAnaly.paType2processMap = topoAnaly.paType2processMap;    // will be used in Alg. 3.4 createPartnerLinkDeclarations
 
-		groundAnaly.nsAnalyze(docGround);
-		groundAnaly.mlAnalyze(docGround);
-		groundAnaly.propertyAnalyze(docGround);
-
+		groundAnaly.nsAnalyze((Element) docGround.getFirstChild());
+		groundAnaly.mlAnalyze((Element) docGround.getFirstChild());
+		groundAnaly.propertyAnalyze((Element) docGround.getFirstChild());
+		
 		//processes analyze
 		Iterator<String> processListIter = processList.iterator();
 		String processString = "";
@@ -1063,8 +1059,7 @@ public class BPEL4Chor2BPELExporter extends HttpServlet {
 			pbdCon.property2nsprefixOfPropMap = groundAnaly.property2nsprefixOfPropMap; 
 
 			//PBD conversion
-			pbdCon.currentDocument = docPBD;
-			pbdCon.convertPBD((Element)docPBD.getFirstChild());
+			pbdCon.convertPBD(docPBD);
 			String processName = ((Element)docPBD.getFirstChild()).getAttribute("name");
 
 			//output of the converted PBD

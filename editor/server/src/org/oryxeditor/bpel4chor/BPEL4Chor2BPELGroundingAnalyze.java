@@ -273,14 +273,14 @@ public class BPEL4Chor2BPELGroundingAnalyze {
 	/**
 	 * To analyze the name spaces of <grounding> of grounding.bpel 
 	 *  
-	 * @param {Document} currentDocument      The document of grounding.bpel 
+	 * @param {Document} grounding      The <grounding> element of grounding.bpel 
 	 */
-	public void nsAnalyze(Document currentDocument){
+	public void nsAnalyze(Element grounding){
 		//System.out.println(messageConstructsSet);
 		//System.out.println(ml2mcMap);
 		//System.out.println(messageLinkSet);
 	
-		getNamespaceSet(currentDocument, "grounding");
+		getNamespaceSet(grounding, "grounding");
 		//System.out.println("ns2prefixMap of grounding is: " + ns2prefixMap);
 		//System.out.println("namespaces prefix Set of grounding is: " + namespacePrefixSet);
 		//System.out.println("namespaces Set of grounding is: " + namespaceSet);
@@ -293,9 +293,9 @@ public class BPEL4Chor2BPELGroundingAnalyze {
 	 * executes the derivation of the sets, functions and the relation defined in 
 	 * definitions 3.17 to 3.31 for one message link. 
 	 *  
-	 * @param {Document} currentDocument      The document of grounding.bpel 
+	 * @param {Element} currentDocument      The <grounding> element of grounding.bpel 
 	 */
-	public void mlAnalyze(Document currentDocument){
+	public void mlAnalyze(Element currentDocument){
 		/*
 		 * ml :             member of messageLinkSet and inherits of NCName
 		 * mc1, mc2 :       member of messageConstructsSet and inherits of QName
@@ -314,7 +314,7 @@ public class BPEL4Chor2BPELGroundingAnalyze {
 		String b = "";
 		Set<Object> ASet = new HashSet<Object>();
 		
-		NodeList childNodes = ((Element)currentDocument.getFirstChild()).getElementsByTagName("messageLink");
+		NodeList childNodes = currentDocument.getElementsByTagName("messageLink");
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
 			child = childNodes.item(i);
@@ -645,10 +645,10 @@ public class BPEL4Chor2BPELGroundingAnalyze {
 	/**
 	 * To analyze the part <property> of grounding.bpel 
 	 *  
-	 * @param {Document} currentDocument      The document of grounding.bpel 
+	 * @param {Document} currentDocument      The element <grounding> of grounding.bpel 
 	 */
-	public void propertyAnalyze(Document currentDocument){
-		NodeList childNodes = ((Element)currentDocument.getFirstChild()).getElementsByTagName("property");
+	public void propertyAnalyze(Element currentDocument){
+		NodeList childNodes = currentDocument.getElementsByTagName("property");
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
 			child = childNodes.item(i);
@@ -882,14 +882,10 @@ public class BPEL4Chor2BPELGroundingAnalyze {
 	/**
 	 * to create the Sets: namespaceSet, namespaceprefixSet and Mapping: ns2prefixMap
 	 * 
-	 * @param {Node}   currentNode     The current node of the XML file
-	 * @param {String} nodeName        The name of the Node
+	 * @param {Element} currentNode     The current element of the XML file
+	 * @param {String}  nodeName        The name of the Node
 	 */
-	private void getNamespaceSet(Node currentNode, String nodeName){
-		if(!(currentNode instanceof Element || currentNode instanceof Document)){
-			return;
-		}
-
+	private void getNamespaceSet(Element currentNode, String nodeName){
 		String str;
 		String[] strSplit, prefixSplit;
 
@@ -933,7 +929,7 @@ public class BPEL4Chor2BPELGroundingAnalyze {
 		for(int i=0; i<childNodes.getLength(); i++){
 			child = childNodes.item(i);
 			if(child instanceof Element){
-				getNamespaceSet(child, nodeName);
+				getNamespaceSet((Element) child, nodeName);
 			}	
 		}
 	}

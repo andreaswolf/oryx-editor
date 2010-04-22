@@ -275,6 +275,9 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 	}
 
 	/**************************main*******************************/
+	/**
+	 * FIXME: include in BPEL4Chor2BPEL
+	 */
 	public static void main(String argv[]) throws ParserConfigurationException, 
 										SAXException, IOException, TransformerFactoryConfigurationError, TransformerException{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -293,10 +296,10 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 			BPEL4Chor2BPELWSDLCreate wsdlCreate = new BPEL4Chor2BPELWSDLCreate();
 
 			//topology analyze
-			topoAnaly.nsAnalyze(docTopo);
-			topoAnaly.paTypeAnalyze(docTopo);
-			topoAnaly.paAnalyze(docTopo);
-			topoAnaly.mlAnalyze(docTopo);
+			topoAnaly.nsAnalyze((Element) docTopo.getFirstChild());
+			topoAnaly.paTypeAnalyze((Element) docTopo.getFirstChild());
+			topoAnaly.paAnalyze((Element) docTopo.getFirstChild());
+			topoAnaly.mlAnalyze((Element) docTopo.getFirstChild());
 			topoAnaly.getMl2BindSenderToMap(((Element)docTopo.getFirstChild()));
 			
 			groundAnaly.namespacePrefixSet = topoAnaly.namespacePrefixSet;    // will be used in grounding nsAnalyze
@@ -313,9 +316,9 @@ public class BPEL4Chor2BPELWSDLCreate extends BPEL4Chor2BPELPBDConversion{
 			groundAnaly.paType2processMap = topoAnaly.paType2processMap;      // will be used in Alg. 3.4 createPartnerLinkDeclarations
 			
 			//grounding analyze
-			groundAnaly.nsAnalyze(docGround);
-			groundAnaly.mlAnalyze(docGround);
-			groundAnaly.propertyAnalyze(docGround);
+			groundAnaly.nsAnalyze((Element) docGround.getFirstChild());
+			groundAnaly.mlAnalyze((Element) docGround.getFirstChild());
+			groundAnaly.propertyAnalyze((Element) docGround.getFirstChild());
 
 			//WSDL creation
 			wsdlCreate.currentDocument = docPBD;

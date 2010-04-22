@@ -151,10 +151,55 @@ public abstract class Activity
     protected Object _default;
 	
 	@XmlTransient
-	private ArrayList<HashMap<String, IoOption>> inputSetInfo;
+	private List<HashMap<String, IoOption>> inputSetInfo;
 	
 	@XmlTransient
-	private ArrayList<HashMap<String, IoOption>> outputSetInfo;
+	private List<HashMap<String, IoOption>> outputSetInfo;
+	
+	/**
+	 * Default constructor
+	 */
+	public Activity() {
+		
+	}
+	
+	/**
+	 * Copy constructor
+	 * 
+	 * @param act
+	 * 		The {@link Activity} to copy
+	 */
+	public Activity(Activity act) {
+		super(act);
+		
+		if(act.getProperty().size() > 0)
+			this.getProperty().addAll(act.getProperty());
+		
+		if(act.getDataInputAssociation().size() > 0)
+			this.getDataInputAssociation().addAll(act.getDataInputAssociation());
+		
+		if(act.getDataOutputAssociation().size() > 0)
+			this.getDataOutputAssociation().addAll(act.getDataOutputAssociation());
+		
+		if(act.getActivityResource().size() > 0)
+			this.getActivityResource().addAll(act.getActivityResource());
+		
+		if(act.getBoundaryEventRefs().size() > 0)
+			this.getBoundaryEventRefs().addAll(act.getBoundaryEventRefs());
+		
+		if(act.getInputSetInfo().size() > 0)
+			this.getInputSetInfo().addAll(act.getInputSetInfo());
+		
+		if(act.getOutputSetInfo().size() > 0)
+			this.getOutputSetInfo().addAll(act.getOutputSetInfo());
+		
+		this.setIoSpecification(act.getIoSpecification());
+		this.setLoopCharacteristics(act.getLoopCharacteristics());
+		this.setIsForCompensation(act.isForCompensation);
+		this.setStartQuantity(act.getStartQuantity());
+		this.setCompletionQuantity(act.getCompletionQuantity());
+		this.setDefault(act.getDefault());
+	}
 	
 	/* Transformation logic methods */
 	
@@ -531,7 +576,7 @@ public abstract class Activity
 	/**
 	 * @return the inputSetInfo
 	 */
-	public ArrayList<HashMap<String, IoOption>> getInputSetInfo() {
+	public List<HashMap<String, IoOption>> getInputSetInfo() {
 		if(this.inputSetInfo == null)
 			this.inputSetInfo = new ArrayList<HashMap<String,IoOption>>();
 		return inputSetInfo; 
@@ -541,7 +586,7 @@ public abstract class Activity
 	/**
 	 * @return the outputSetInfo
 	 */
-	public ArrayList<HashMap<String, IoOption>> getOutputSetInfo() {
+	public List<HashMap<String, IoOption>> getOutputSetInfo() {
 		if(this.outputSetInfo == null) 
 			this.outputSetInfo = new ArrayList<HashMap<String,IoOption>>();
 		return outputSetInfo;

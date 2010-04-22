@@ -64,7 +64,7 @@ import org.xml.sax.SAXException;
  */
 public class BPEL4Chor2BPELPBDConversion {//extends FunctionsOfBPEL4Chor2BPEL {
 	
-	public Document currentDocument;
+	private Document currentDocument;								// the current document to handle
 	private static String process_nsprefix = "";					// the name space prefix of the target name space of the current PBD
 	private static Set<String> paSetList = new HashSet<String>();	// a list of sets of participant references over which the 
 																	// set-based <forEach> activities in this process iterate
@@ -131,9 +131,13 @@ public class BPEL4Chor2BPELPBDConversion {//extends FunctionsOfBPEL4Chor2BPEL {
 	/**
 	 * Algorithm 3.5 and Algorithm 3.17 Conversion of one PBD into BPEL
 	 * 
-	 * @param {Element} currentElement     The current element
+	 * FIXME: This method should work on an element and return a new element containing the converted process (instead of MODIFYING the element!)
+	 * 
+	 * @param {Element} docPBD - the process element
 	 */
-	public void convertPBD(Element currentElement){
+	public void convertPBD(Document docPBD){
+		this.setCurrentDocument(docPBD);
+		Element currentElement = (Element)docPBD.getFirstChild();
 		if(!(currentElement.getNodeName().equals("process"))){
 			return;
 		}
@@ -212,14 +216,14 @@ public class BPEL4Chor2BPELPBDConversion {//extends FunctionsOfBPEL4Chor2BPEL {
 			if(partnerLinkSet != null){
 				// There are partner links to be declared
 				//System.out.println(partnerLinkSet.iterator().next().getName());
-				partnerLinks = currentDocument.createElement("partnerLinks");
+				partnerLinks = getCurrentDocument().createElement("partnerLinks");
 				currentElement.appendChild(partnerLinks);					// adding a <partnerLinks> declaration
 				//System.out.println("partnerLinks is: " + partnerLinks.getTagName());
 				Iterator<PartnerLink> it = partnerLinkSet.iterator();
 				while(it.hasNext()){
 					pl = (PartnerLink)it.next();
 					// create a new partner link declaration for pl
-					partnerLink = currentDocument.createElement("partnerLink");
+					partnerLink = getCurrentDocument().createElement("partnerLink");
 					partnerLink.setAttribute("name", pl.getName());
 					s = ftypePL(pl);
 					partnerLink.setAttribute("partnerLinkType", "plt:" + s);	// "plt" is the name space prefix of the name space of
@@ -451,8 +455,8 @@ public class BPEL4Chor2BPELPBDConversion {//extends FunctionsOfBPEL4Chor2BPEL {
 		// <scope> activity nested in the <forEach> activity, and the input id is its wsu:id
 		String fe;																// name of <Scope> inherits of QName
 		String set;																// name of <Participant> inherits of NCName
-		Element startCounter = currentDocument.createElement("startCounterValue");	// the <startCounterValue>
-		Element finalCounter = currentDocument.createElement("finalCounterValue");  // the <finalCounterValue>
+		Element startCounter = getCurrentDocument().createElement("startCounterValue");	// the <startCounterValue>
+		Element finalCounter = getCurrentDocument().createElement("finalCounterValue");  // the <finalCounterValue>
 		Element completionCondition = getChildElement(forEach, "completionCondition");// the optional <completionCondition>
 																					// construct of the current <forEach>
 		fe = buildQName(process_nsprefix, id);
@@ -522,12 +526,12 @@ public class BPEL4Chor2BPELPBDConversion {//extends FunctionsOfBPEL4Chor2BPEL {
 			}
 		}
 
-		Element sequence = currentDocument.createElement("sequence");				// the new <sequence> activity
-		Element assign   = currentDocument.createElement("assign");					// the new <assign> activity
-		Element copy	 = currentDocument.createElement("copy");					// the new <copy> activity
-		Element from	 = currentDocument.createElement("from");					// the new <from> activity
-		Element query	 = currentDocument.createElement("query");					// the new <query> activity
-		Element to		 = currentDocument.createElement("to");						// the new <to> activity
+		Element sequence = getCurrentDocument().createElement("sequence");				// the new <sequence> activity
+		Element assign   = getCurrentDocument().createElement("assign");					// the new <assign> activity
+		Element copy	 = getCurrentDocument().createElement("copy");					// the new <copy> activity
+		Element from	 = getCurrentDocument().createElement("from");					// the new <from> activity
+		Element query	 = getCurrentDocument().createElement("query");					// the new <query> activity
+		Element to		 = getCurrentDocument().createElement("to");						// the new <to> activity
 		
 		fEScope.removeChild(nestedActivity);										// remove the nested activity
 		from.setAttribute("variable", set);											// specify the <copy> construct
@@ -565,7 +569,7 @@ public class BPEL4Chor2BPELPBDConversion {//extends FunctionsOfBPEL4Chor2BPEL {
 			// add a <variables> declaration
 			//System.out.println(getChildElement(construct, "variables"));
 			if((getChildElement(construct, "variables")) == null){
-				variables = currentDocument.createElement("variables");
+				variables = getCurrentDocument().createElement("variables");
 				construct.appendChild(variables);
 			}
 			// variables becomes the <variables> declaration
@@ -577,7 +581,7 @@ public class BPEL4Chor2BPELPBDConversion {//extends FunctionsOfBPEL4Chor2BPEL {
 				paSetElement = it.next();
 				if(paSetList.contains(paSetElement)){
 					// variable becomes a new <variable> declaration
-					variable = currentDocument.createElement("variable");
+					variable = getCurrentDocument().createElement("variable");
 					// add a name and a type attribute to the <variable> declaration
 					variable.setAttribute("name", paSetElement);
 					variable.setAttribute("type", "srefs:service-refs");
@@ -889,83 +893,13 @@ public class BPEL4Chor2BPELPBDConversion {//extends FunctionsOfBPEL4Chor2BPEL {
 	private static String buildQName(String prefix, String NCName){
 		return prefix + ":" + NCName;
 	}
-	
-	/**************************main*******************************/
-	public static void main(String argv[]) throws ParserConfigurationException, 
-										SAXException, IOException, TransformerFactoryConfigurationError, TransformerException{
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		factory.setIgnoringComments(true);
-		factory.setIgnoringElementContentWhitespace(true);
-		DocumentBuilder docBuilder = factory.newDocumentBuilder();
-		if(docBuilder.isNamespaceAware()){
-			Document docGround = docBuilder.parse("/home/eysler/work/DiplomArbeit/oryx-editor/editor/server/src/org/oryxeditor/bpel4chor/testFiles/groundingSA.bpel");
-			Document docTopo = docBuilder.parse("/home/eysler/work/DiplomArbeit/oryx-editor/editor/server/src/org/oryxeditor/bpel4chor/testFiles/topologySA.xml");
-			Document docPBD = docBuilder.parse("/home/eysler/work/DiplomArbeit/oryx-editor/editor/server/src/org/oryxeditor/bpel4chor/testFiles/processSA.bpel");
-			
-			BPEL4Chor2BPELTopologyAnalyze topoAnaly = new BPEL4Chor2BPELTopologyAnalyze();
-			BPEL4Chor2BPELGroundingAnalyze grouAnaly = new BPEL4Chor2BPELGroundingAnalyze();
-			BPEL4Chor2BPELPBDConversion pbdCon = new BPEL4Chor2BPELPBDConversion();
 
-			//topology analyze
-			topoAnaly.nsAnalyze(docTopo);
-			topoAnaly.paTypeAnalyze(docTopo);
-			topoAnaly.paAnalyze(docTopo);
-			topoAnaly.mlAnalyze(docTopo);
-			topoAnaly.getMl2BindSenderToMap(((Element)docTopo.getFirstChild()));
-			
-			grouAnaly.namespacePrefixSet = topoAnaly.namespacePrefixSet;    // will be used in grounding nsAnalyze
-			grouAnaly.namespaceSet = topoAnaly.namespaceSet;				// will be used in grounding nsAnalyze
-			grouAnaly.ns2prefixMap = topoAnaly.ns2prefixMap;				// will be used in grounding nsAnalyze
-			grouAnaly.messageConstructsSet = topoAnaly.messageConstructsSet;
-			grouAnaly.messageLinkSet = topoAnaly.messageLinkSet;
-			grouAnaly.ml2mcMap = topoAnaly.ml2mcMap;
-			grouAnaly.ml2paMap = topoAnaly.ml2paMap; 						// will be used in fparefsML() and in Alg. 3.4
-			grouAnaly.ml2bindSenderToMap = topoAnaly.ml2bindSenderToMap; 	// will be used in mlAnalyze
-			grouAnaly.pa2scopeMap = topoAnaly.pa2scopeMap; 					// will be used in Alg. 3.4 createPartnerLinkDeclarations
-			grouAnaly.paTypeSet = topoAnaly.paTypeSet;                      // will be used in Alg. 3.4 createPartnerLinkDeclarations
-			grouAnaly.pa2paTypeMap = topoAnaly.pa2paTypeMap;              	// will be used in Alg. 3.4 createPartnerLinkDeclarations
-			grouAnaly.paType2processMap = topoAnaly.paType2processMap;      // will be used in Alg. 3.4 createPartnerLinkDeclarations
-			
-			//grounding analyze
-			grouAnaly.nsAnalyze(docGround);
-			grouAnaly.mlAnalyze(docGround);
-			grouAnaly.propertyAnalyze(docGround);
-			
-			pbdCon.scopeSet = topoAnaly.scopeSet;							// will be used in Conversion of PBD
-			pbdCon.processSet = topoAnaly.processSet;						// will be used in Conversion of PBD
-			pbdCon.topologyNS = topoAnaly.topologyNS;						// will be used in Conversion of PBD
-			pbdCon.forEach2setMap = topoAnaly.forEach2setMap;				// will be used in Conversion of PBD
-			pbdCon.paSet = topoAnaly.paSet;									// will be used in Conversion of PBD
-			pbdCon.pa2scopeMap = topoAnaly.pa2scopeMap; 					// will be used in Conversion of PBD
-			pbdCon.ns2prefixMap = grouAnaly.ns2prefixMap;					// will be used in Conversion of PBD
-			pbdCon.namespacePrefixSet = grouAnaly.namespacePrefixSet;		// will be used in Conversion of PBD
-			pbdCon.plSet = grouAnaly.plSet;									// will be used in Conversion of PBD
-			pbdCon.sc2plMap = grouAnaly.sc2plMap;							// will be used in Conversion of PBD
-			pbdCon.pl2plTypeMap = grouAnaly.pl2plTypeMap;					// will be used in Conversion of PBD
-			pbdCon.pl2myRoleMap = grouAnaly.pl2myRoleMap;					// will be used in Conversion of PBD
-			pbdCon.pl2partnerRoleMap = grouAnaly.pl2partnerRoleMap;			// will be used in Conversion of PBD
-			pbdCon.messageConstructsSet = grouAnaly.messageConstructsSet;	// will be used in Conversion of PBD
-			pbdCon.mc2plMap = grouAnaly.mc2plMap;							// will be used in Conversion of PBD
-			pbdCon.ml2mcMap = grouAnaly.ml2mcMap;							// will be used in Conversion of PBD
-			pbdCon.messageLinkSet = grouAnaly.messageLinkSet;				// will be used in Conversion of PBD
-			pbdCon.ml2ptMap = grouAnaly.ml2ptMap;							// will be used in Conversion of PBD
-			pbdCon.ml2opMap = grouAnaly.ml2opMap;							// will be used in Conversion of PBD
-			pbdCon.corrPropName2propertyMap = grouAnaly.corrPropName2propertyMap;  // will be used in Conversion of PBD
-			pbdCon.property2nsprefixOfPropMap = grouAnaly.property2nsprefixOfPropMap; // will be used in Conversion of PBD
-			
-			//PBD conversion
-			pbdCon.currentDocument = docPBD;
-			pbdCon.convertPBD((Element)docPBD.getFirstChild());
-
-			/**************************output of the converted PBD******************************/
-			Source sourceBPEL = new DOMSource(docPBD);
-			File bpelFile = new File("/home/eysler/work/DiplomArbeit/oryx-editor/editor/server/src/org/oryxeditor/bpel4chor/testFiles/PBDConvertion.bpel");
-			Result resultBPEL = new StreamResult(bpelFile);
-			 
-			// Write the converted docPBD to the file
-			Transformer xformer = TransformerFactory.newInstance().newTransformer();
-			xformer.transform(sourceBPEL, resultBPEL);
-		}
+	private void setCurrentDocument(Document currentDocument) {
+		this.currentDocument = currentDocument;
 	}
+
+	private Document getCurrentDocument() {
+		return currentDocument;
+	}
+
 }

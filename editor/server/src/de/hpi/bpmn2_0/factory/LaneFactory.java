@@ -122,7 +122,12 @@ public class LaneFactory extends AbstractBpmnFactory {
 
 		if (shape.getStencilId().equals("CollapsedPool")) {
 			Participant participant = new Participant();
-			participant.setName(shape.getProperty("name"));
+			
+			/* Set name attribute */
+			String name = shape.getProperty("name");
+			if(name != null && !name.isEmpty())
+				participant.setName(name);
+			
 			participant.setId(shape.getResourceId());
 			this.setCommonAttributes(participant, shape);
 			return participant;
@@ -150,7 +155,12 @@ public class LaneFactory extends AbstractBpmnFactory {
 		Lane lane = new Lane();
 		this.setCommonAttributes(lane, shape);
 		lane.setId(shape.getResourceId());
-		lane.setName(shape.getProperty("name"));
+		
+		/* Set name attribute */
+		String name = shape.getProperty("name");
+		if(name != null && !name.isEmpty())
+			lane.setName(name);
+		
 		lane.setLane(lane);
 
 		if (this.hasChildLanes(shape)) {

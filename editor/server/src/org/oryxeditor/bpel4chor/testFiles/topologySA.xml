@@ -1,4 +1,4 @@
-<topology name="bookingtopology" targetNamespace="urn:booking" xmlns:agency="urn:booking:agency">
+<topology name="bookingtopology" targetNamespace="urn:booking" xmlns:agency="urn:booking:agency" xmlns="urn:HPI_IAAS:choreography:schemas:choreography:topology:2006/12">
 <participantTypes>
 	<participantType name="Agency" participantBehaviorDescription="agency:agency" />
 	<participantType name="Traveler" participantBehaviorDescription="traveler:traveler" />

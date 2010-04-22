@@ -98,9 +98,9 @@ public class BPEL4Chor2BPELTopologyAnalyze {
 	/**
 	 * To analyze the name spaces of <topology> of topology.xml with the node name "topology"
 	 * 
-	 * @param {Document} currentDocument      The document of topology.xml 
+	 * @param {Document} currentDocument      The element <topology> of topology.xml 
 	 */
-	public void nsAnalyze (Document currentDocument){
+	public void nsAnalyze (Element currentDocument){
 		
 		getNamespaceSet(currentDocument, "topology");
 		
@@ -112,13 +112,13 @@ public class BPEL4Chor2BPELTopologyAnalyze {
 	/**
 	 * To analyze the part <participantTypes> of topology.xml
 	 * 
-	 * @param {Document} currentDocument     The document of topology.xml 
+	 * @param {Document} currentDocument     The element <topology> of topology.xml 
 	 */
-	public void paTypeAnalyze (Document currentDocument){
+	public void paTypeAnalyze (Element currentDocument){
 		
-		paTypeSet = getPaTypeSet((Element)currentDocument.getFirstChild());
-		processSet = getProcessSet((Element)currentDocument.getFirstChild());
-		paType2processMap = getPaType2ProcessMap((Element)currentDocument.getFirstChild());
+		paTypeSet = getPaTypeSet(currentDocument);
+		processSet = getProcessSet(currentDocument);
+		paType2processMap = getPaType2ProcessMap(currentDocument);
 		
 		//System.out.println("paTypeSet" + paTypeSet);
 		//System.out.println("processSet" + processSet);
@@ -128,18 +128,18 @@ public class BPEL4Chor2BPELTopologyAnalyze {
 	/**
 	 * To analyze the part <participants> of topology.xml
 	 * 
-	 * @param {Document} currentDocument     The document of topology.xml
+	 * @param {Element} topology     The element <topology> of topology.xml
 	 */
-	public void paAnalyze (Document currentDocument){
+	public void paAnalyze (Element topology){
 				
-		paSet = getPaSet((Element)currentDocument.getFirstChild());
-		paTypeSet = getPaTypeSet((Element)currentDocument.getFirstChild());
+		paSet = getPaSet(topology);
+		paTypeSet = getPaTypeSet(topology);
 		
-		getPa2PaTypeMap((Element)currentDocument.getFirstChild());
+		getPa2PaTypeMap(topology);
 
-		scopeSet = getScopeSet((Element)currentDocument.getFirstChild());
+		scopeSet = getScopeSet(topology);
 		
-		getPa2ScopeMap((Element)currentDocument.getFirstChild());
+		getPa2ScopeMap(topology);
 				
 		//System.out.println("pa2scopeMap is: " + pa2scopeMap);
 		//System.out.println("pa2paTypeMap is:" + pa2paTypeMap);
@@ -152,9 +152,9 @@ public class BPEL4Chor2BPELTopologyAnalyze {
 	/**
 	 * To analyze the part <messageLinks> of topology.xml
 	 * 
-	 * @param {Document} currentDocument     The document of topology.xml
+	 * @param {Element} topology     The element <topology> of topology.xml
 	 */
-	public void mlAnalyze(Document currentDocument){
+	public void mlAnalyze(Element topology){
 		
 		messageLinkSet = new HashSet<String>();		  // ML Set
 		messageConstructsSet = new HashSet<String>(); // MC Set
@@ -167,7 +167,7 @@ public class BPEL4Chor2BPELTopologyAnalyze {
 		
 		// during the analyze of messageLink of topology to get the messageLinkSet, 
 		// messageConstructsSet, ml2mcMap, ml2paMap, 
-		NodeList childNodes = ((Element)currentDocument.getFirstChild()).getElementsByTagName("messageLink");
+		NodeList childNodes = topology.getElementsByTagName("messageLink");
 		Node child;
 		for (int i=0; i<childNodes.getLength(); i++){
 			child = childNodes.item(i);
@@ -246,11 +246,7 @@ public class BPEL4Chor2BPELTopologyAnalyze {
 	 * @param {Node}   currentNode     The current node of the XML file
 	 * @param {String} nodeName        The name of the Node
 	 */
-	private void getNamespaceSet(Node currentNode, String nodeName){
-		if(!(currentNode instanceof Element || currentNode instanceof Document)){
-			return;
-		}
-
+	private void getNamespaceSet(Element currentNode, String nodeName){
 		String str;
 		String[] strSplit, prefixSplit;
 
@@ -294,7 +290,7 @@ public class BPEL4Chor2BPELTopologyAnalyze {
 		for(int i=0; i<childNodes.getLength(); i++){
 			child = childNodes.item(i);
 			if(child instanceof Element){
-				getNamespaceSet(child, nodeName);
+				getNamespaceSet((Element) child, nodeName);
 			}	
 		}
 	}

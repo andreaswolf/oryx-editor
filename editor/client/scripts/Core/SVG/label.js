@@ -338,7 +338,7 @@ ORYX.Core.SVG.Label = Clazz.extend({
 							for (var i = 0; i < numOfChars; i++) {
 								var sslength = this._getRenderedTextLength(tspan, startIndex, i-startIndex, fontSize);
 								
-								if (sslength > refBoxLength - 2) {
+								if (sslength > refBoxLength - 3) {
 									var newtspan = this.node.ownerDocument.createElementNS(ORYX.CONFIG.NAMESPACE_SVG, 'tspan');
 									if (lastSeperatorIndex <= startIndex) {
 										lastSeperatorIndex = (i == 0) ? i : i-1;

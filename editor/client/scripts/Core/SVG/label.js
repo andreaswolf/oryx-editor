@@ -322,7 +322,14 @@ ORYX.Core.SVG.Label = Clazz.extend({
 						
 						var textLength = this._getRenderedTextLength(tspan, undefined, undefined, fontSize);
 						
-						if (textLength > refbb.width) {
+						/* Depending on the rotation of the text element, take
+						 * the width or height as reference respectively. */
+						var refBoxLength = (this._rotate != 0 
+								&& this._rotate % 180 != 0 
+								&& this._rotate % 90 == 0 ? 
+										refbb.height : refbb.width);
+						
+						if (textLength > refBoxLength) {
 						
 							var startIndex = 0;
 							var lastSeperatorIndex = 0;
@@ -331,7 +338,7 @@ ORYX.Core.SVG.Label = Clazz.extend({
 							for (var i = 0; i < numOfChars; i++) {
 								var sslength = this._getRenderedTextLength(tspan, startIndex, i-startIndex, fontSize);
 								
-								if (sslength > refbb.width - 2) {
+								if (sslength > refBoxLength - 2) {
 									var newtspan = this.node.ownerDocument.createElementNS(ORYX.CONFIG.NAMESPACE_SVG, 'tspan');
 									if (lastSeperatorIndex <= startIndex) {
 										lastSeperatorIndex = (i == 0) ? i : i-1;

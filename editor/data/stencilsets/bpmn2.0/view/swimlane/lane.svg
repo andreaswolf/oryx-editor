@@ -60,6 +60,7 @@
 		id="text_name" 
 		oryx:align="middle center" 
 		oryx:anchors="left"
+		oryx:fittoelem="caption"
 		fill="black" 
 		stroke="black">
 	</text>

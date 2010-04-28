@@ -127,7 +127,6 @@
 	<classpathentry kind="lib" path="editor/lib/activation.jar"/>
 	<classpathentry kind="lib" path="editor/lib/mail.jar"/>
 	<classpathentry kind="lib" path="editor/lib/SuperCSV-1.52.jar"/>
-	<classpathentry kind="lib" path="editor/lib/bpmnq-1.0.3-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="editor/lib/jaxb-api.jar"/>
 	<classpathentry kind="lib" path="editor/lib/jaxb-impl.jar"/>
 	<classpathentry kind="lib" path="editor/lib/jaxb-xjc.jar"/>

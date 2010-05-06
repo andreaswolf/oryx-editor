@@ -42,6 +42,8 @@ new function(){
 						"http://b3mn.org/stencilset/jbpm4#SequenceFlow", 
 						"http://b3mn.org/stencilset/bpmn2.0#MessageFlow",
 						"http://b3mn.org/stencilset/bpmn2.0#SequenceFlow", 
+						"http://b3mn.org/stencilset/bpmn2.0choreography#MessageFlow",
+						"http://b3mn.org/stencilset/bpmn2.0choreography#SequenceFlow", 
 						"http://b3mn.org/stencilset/bpmn2.0conversation#ConversationLink",
 						"http://b3mn.org/stencilset/epc#ControlFlow",
 						"http://www.signavio.com/stencilsets/processmap#ProcessLink",

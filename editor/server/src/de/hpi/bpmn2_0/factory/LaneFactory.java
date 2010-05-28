@@ -138,6 +138,12 @@ public class LaneFactory extends AbstractBpmnFactory {
 			this.setCommonAttributes(poolLaneSet, shape);
 			poolLaneSet.setId(shape.getResourceId());
 			
+			/* Name */
+			String name = shape.getProperty("name");
+			if(name != null && !name.isEmpty()) {
+				poolLaneSet.setName(name);
+			}
+			
 			/* Process type */
 			String processType = shape.getProperty("processtype");
 			if(processType != null && !processType.isEmpty()) {

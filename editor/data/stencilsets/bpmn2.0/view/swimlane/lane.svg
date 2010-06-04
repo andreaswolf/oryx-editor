@@ -8,7 +8,7 @@
    height="250"
    version="1.0">
   <defs></defs>
-  <g pointer-events="painted" >
+  <g pointer-events="none" >
   
      <defs>
 		<radialGradient id="background" cx="0%" cy="10%" r="100%" fx="20%" fy="10%">
@@ -17,8 +17,8 @@
 		</radialGradient>
 	</defs>
 	
-  	<rect id="border_invisible" class="stripable-element-force" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" fill="none" stroke-width="10" stroke="white" visibility="hidden"/>
-	<rect id="border" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" stroke="black" stroke-width="1" fill="none" />
+  	<rect id="border_invisible" class="stripable-element-force" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" fill="none" stroke-width="10" stroke="white" visibility="hidden" pointer-events="stroke"/>
+	<rect id="border" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" stroke="black" stroke-width="1" fill="url(#background)" fill-opacity="0.3" pointer-events="none" />
 	
 	<rect 
 		id="caption"
@@ -32,13 +32,15 @@
 		fill="white"
 		visibility="hidden"
 		class="stripable-element-force"
+		pointer-events="all"
 	/>
 	
 	<path
          style="fill:none;stroke:#000000;stroke-width:1"
          d="M 0,0 L 0,250"
          oryx:anchors="left top bottom"
-         id="captionDisableAntialiasing" />
+         id="captionDisableAntialiasing"
+    />
 	
 	<!--rect 
 		id="captionDisableAntialiasing"
@@ -56,7 +58,7 @@
 		x="13"
 		y="125" 
 		oryx:rotate="270" 
-		font-size="14" 
+		font-size="12" 
 		id="text_name" 
 		oryx:align="middle center" 
 		oryx:anchors="left"

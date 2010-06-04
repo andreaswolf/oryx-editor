@@ -15,8 +15,7 @@
   	<oryx:magnet oryx:cx="299" oryx:cy="0" oryx:anchors="top" />
   	<oryx:magnet oryx:cx="299" oryx:cy="124" oryx:default="yes" />
   </oryx:magnets>
-  <g pointer-events="painted" >
-
+  <g pointer-events="none" >
     <defs>
 		<radialGradient id="background" cx="0%" cy="10%" r="100%" fx="20%" fy="10%">
 			<stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
@@ -24,8 +23,31 @@
 		</radialGradient>
 	</defs>
 	  	
-  	<rect id="border" class="stripable-element-force" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" fill="none" stroke-width="9" stroke="white" visibility="hidden"/>
-    <rect id="c" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" stroke="black" fill="none" />
+  	<rect
+  		id="border"
+  		class="stripable-element-force"
+  		oryx:resize="vertical horizontal"
+  		x="0"
+  		y="0"
+  		width="600"
+  		height="250"
+  		fill="none"
+  		stroke-width="9"
+  		stroke="transparent"
+  		visibility="visible"
+  		pointer-events="stroke"
+  	/>
+    <rect
+    	id="c"
+    	oryx:resize="vertical horizontal"
+    	x="0"
+    	y="0"
+    	width="600" 
+    	height="250" 
+    	stroke="black" 
+    	fill="url(#background) white"
+    	fill-opacity="0.3" 
+    />
     
 	<rect 
 		id="caption"
@@ -36,7 +58,8 @@
 		height="250"
 		stroke="black"
 		stroke-width="1"
-		fill="white"
+		fill="url(#background) white"
+		pointer-events="all"
 	/>
 	
 	<rect 
@@ -49,9 +72,10 @@
 		stroke="black"
 		stroke-width="1"
 		fill="url(#background) white"
+		pointer-events="all"
 	/>
 	
-    <text x="10" y="125" font-size="14" id="text_name" oryx:fittoelem="caption" oryx:align="middle center" oryx:anchors="left" oryx:rotate="270" fill="black" stroke="black"></text>
+    <text x="13" y="125" font-size="12" id="text_name" oryx:fittoelem="caption" oryx:align="middle center" oryx:anchors="left" oryx:rotate="270" fill="black" stroke="black"></text>
 	
 	<g id="multiInstance">
 		<path oryx:anchors="bottom" fill="none" stroke="black" d="M296 240 v8 M300 240 v8 M304 240 v8" stroke-width="2" />

@@ -33,7 +33,7 @@
   		height="250"
   		fill="none"
   		stroke-width="9"
-  		stroke="transparent"
+  		stroke="none"
   		visibility="visible"
   		pointer-events="stroke"
   	/>

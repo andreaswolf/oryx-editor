@@ -3063,11 +3063,11 @@
 					"type":"Color",
 					"title":"BackgroundColor",
 					"title_de":"Hintergrundfarbe",
-					"value":"#ffffff",
+					"value":"",
 					"description":"",
 					"readonly":false,
-					"optional":false,
-					"refToView":"fill_el",
+					"optional":true,
+					"refToView":["fill_el", "fill_white_el"],
 					"fill":true,
 					"stroke":false
 				}	

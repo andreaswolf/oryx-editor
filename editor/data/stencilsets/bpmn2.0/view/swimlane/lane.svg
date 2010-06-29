@@ -12,21 +12,12 @@
   
      <defs>
 		<radialGradient id="background" cx="0%" cy="10%" r="200%" fx="20%" fy="10%">
-			<stop offset="0%" stop-color="#ffffff" stop-opacity="0.1" oryx:default-stop-opacity="0.1"/>
+			<stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
 			<stop id="fill_el" offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-		</radialGradient>
-		<radialGradient id="background_white" cx="0" cy="0" r="0" fx="0" fy="0">
-			<stop class="ignore-adjust" offset="0%" stop-color="#ffffff" stop-opacity="0"/>
-			<stop class="ignore-adjust" offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-			<stop id="fill_white_el" offset="100%" stop-color="#ffffff" stop-opacity="0"/>
 		</radialGradient>
 	</defs>
 	
-  	<rect id="border_invisible" class="stripable-element-force" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" fill="none" stroke-width="10" stroke="white" visibility="hidden" pointer-events="stroke"/>
-		
-	
-	<rect id="border_white" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" stroke="none" stroke-width="0" fill="url(#background_white) white" pointer-events="none" fill-opacity="1" />
-	
+  	<rect id="border_invisible" class="stripable-element-force" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" fill="none" stroke-width="10" stroke="white" visibility="hidden" pointer-events="stroke"/>		
 	<rect id="border" oryx:resize="vertical horizontal" x="0" y="0" width="600" height="250" stroke="black" stroke-width="1" fill="url(#background) white" pointer-events="none" />
 	
 	

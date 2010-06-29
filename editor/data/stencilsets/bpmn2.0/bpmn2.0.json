@@ -2995,7 +2995,8 @@
 					"optional":false,
 					"refToView":"fill_el",
 					"fill":true,
-					"stroke":false
+					"stroke":false,
+					"lightness" : 0.5
 				}
 			],
 			"roles" :		 	[
@@ -3067,9 +3068,10 @@
 					"description":"",
 					"readonly":false,
 					"optional":true,
-					"refToView":["fill_el", "fill_white_el"],
+					"refToView":["fill_el"],
 					"fill":true,
-					"stroke":false
+					"stroke":false,
+					"lightness": 0.5
 				}	
 			],
 			"roles": 			[

@@ -186,19 +186,6 @@ ORYX.Plugins.ShapeMenuPlugin = {
 	
 	createMorphMenu: function() {
 		
-		this.morphMenu = new Ext.menu.Menu({
-			id: 'Oryx_morph_menu',
-			items: []
-		});
-		
-		this.morphMenu.on("mouseover", function() {
-			this.morphMenuHovered = true;
-		}, this);
-		this.morphMenu.on("mouseout", function() {
-			this.morphMenuHovered = false;
-		}, this);
-		
-		
 		// Create the button to show the morph menu
 		var button = new ORYX.Plugins.ShapeMenuButton({
 			hovercallback: 	(ORYX.CONFIG.ENABLE_MORPHMENU_BY_HOVER ? this.showMorphMenu.bind(this) : undefined), 
@@ -208,11 +195,22 @@ ORYX.Plugins.ShapeMenuPlugin = {
 			align: 			ORYX.CONFIG.SHAPEMENU_BOTTOM,
 			group:			0,
 			msg:			ORYX.I18N.ShapeMenuPlugin.morphMsg
-		});				
+		});
+		this.morphMenu = new Ext.menu.Menu({
+			id: 'Oryx_morph_menu',
+			items: [],
+			renderTo: button.node
+		})
+
+		this.morphMenu.on("mouseover", function() {
+			this.morphMenuHovered = true;
+		}, this);
+		this.morphMenu.on("mouseout", function() {
+			this.morphMenuHovered = false;
+		}, this);
 		
 		this.shapeMenu.setNumberOfButtonsPerLevel(ORYX.CONFIG.SHAPEMENU_BOTTOM, 1)
 		this.shapeMenu.addButton(button);
-		this.morphMenu.getEl().appendTo(button.node);
 		this.morphButton = button;
 	},
 	

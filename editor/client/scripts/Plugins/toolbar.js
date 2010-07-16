@@ -185,7 +185,7 @@ ORYX.Plugins.Toolbar = Clazz.extend({
                 
                 this.toolbar.add(button);
 
-                button.getEl().onclick = function() {this.blur()}
+                button.on('click', function() {this.blur()} );
             }
 			     
 			value['buttonInstance'] = button;

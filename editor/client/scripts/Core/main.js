@@ -422,7 +422,7 @@ ORYX.Editor = {
 	 */
 	addToRegion: function(region, component, title) {
 		
-		if (region.toLowerCase && this.layout_regions[region.toLowerCase()]) {
+		if (region.toLowerCase() && this.layout_regions[region.toLowerCase()]) {
 			var current_region = this.layout_regions[region.toLowerCase()];
 
 			current_region.add(component);

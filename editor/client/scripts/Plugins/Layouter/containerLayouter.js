@@ -57,16 +57,16 @@ ORYX.Plugins.ContainerLayouter = {
 	handleLayoutContainerDockers: function(event) {
 		var sh = event.shape;
 		
-		if (!this.hashedContainers[sh.resourceId]) {
-			this.hashedContainers[sh.resourceId] = sh.bounds.clone();
+		if (this.hashedContainers.get(sh.resourceId) == undefined) {
+			this.hashedContainers.set(sh.resourceId, sh.bounds.clone());
 			return;
 		}
 		
 		var offset = sh.bounds.upperLeft();
-		offset.x -= this.hashedContainers[sh.resourceId].upperLeft().x;
-		offset.y -= this.hashedContainers[sh.resourceId].upperLeft().y;
+		offset.x -= this.hashedContainers.get(sh.resourceId).upperLeft().x;
+		offset.y -= this.hashedContainers.get(sh.resourceId).upperLeft().y;
 		
-		this.hashedContainers[sh.resourceId] = sh.bounds.clone();
+		this.hashedContainers.set(sh.resourceId, sh.bounds.clone());
 		
 		this.moveChildDockers(sh, offset);
 	},
@@ -183,7 +183,7 @@ ORYX.Plugins.ContainerLayouter = {
 			
 			/* Update hashed bounds for docker positioning */
 			if(changeBounds) {
-				this.hashedContainers[shape.resourceId] = bounds.clone();
+				this.hashedContainers.set(shape.resourceId, bounds.clone());
 			}
 			
 			this.moveChildsBy(shape, {x: xMovement, y: yMovement}, ignoreList);
@@ -393,3 +393,4 @@ ORYX.Plugins.ContainerLayouter = {
 }
 
 ORYX.Plugins.ContainerLayouter = ORYX.Plugins.AbstractPlugin.extend(ORYX.Plugins.ContainerLayouter);
+

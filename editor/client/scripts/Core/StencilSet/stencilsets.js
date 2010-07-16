@@ -55,12 +55,12 @@ ORYX.Core.StencilSet._rulesByEditorInstance = new Hash();
  * 					the editor with the editorId.
  */
 ORYX.Core.StencilSet.stencilSets = function(editorId) {
-	var stencilSetNSs = ORYX.Core.StencilSet._StencilSetNSByEditorInstance[editorId];
+	var stencilSetNSs = ORYX.Core.StencilSet._StencilSetNSByEditorInstance.get(editorId);
 	var stencilSets = new Hash();
 	if(stencilSetNSs) {
 		stencilSetNSs.each(function(stencilSetNS) {
 			var stencilSet = ORYX.Core.StencilSet.stencilSet(stencilSetNS)
-			stencilSets[stencilSet.namespace()] = stencilSet;
+			stencilSets.set(stencilSet.namespace(), stencilSet);
 		});
 	}
 	return stencilSets;
@@ -83,7 +83,7 @@ ORYX.Core.StencilSet.stencilSet = function(namespace) {
 	var splitted = namespace.split("#", 1);
 	if(splitted.length === 1) {
 		ORYX.Log.trace("Getting stencil set %0", splitted[0]);
-		return ORYX.Core.StencilSet._stencilSetsByNamespace[splitted[0] + "#"];
+		return ORYX.Core.StencilSet._stencilSetsByNamespace.get(splitted[0] + "#");
 	} else {
 		return undefined;
 	}
@@ -118,10 +118,10 @@ ORYX.Core.StencilSet.stencil = function(id) {
  * 									specified by its editor id.
  */
 ORYX.Core.StencilSet.rules = function(editorId) {
-	if(!ORYX.Core.StencilSet._rulesByEditorInstance[editorId]) {
-		ORYX.Core.StencilSet._rulesByEditorInstance[editorId] = new ORYX.Core.StencilSet.Rules();;
+	if(ORYX.Core.StencilSet._rulesByEditorInstance.get(editorId) == undefined) {
+		ORYX.Core.StencilSet._rulesByEditorInstance.set(editorId, new ORYX.Core.StencilSet.Rules());
 	}
-	return ORYX.Core.StencilSet._rulesByEditorInstance[editorId];
+	return ORYX.Core.StencilSet._rulesByEditorInstance.get(editorId);
 };
 
 /**
@@ -134,35 +134,35 @@ ORYX.Core.StencilSet.rules = function(editorId) {
  * initializes the Rules object for the editor instance.
  */
 ORYX.Core.StencilSet.loadStencilSet = function(url, editorId) {
-	var stencilSet = ORYX.Core.StencilSet._stencilSetsByUrl[url];
+	var stencilSet = ORYX.Core.StencilSet._stencilSetsByUrl.get(url);
 
 	if(!stencilSet) {
 		//load stencil set
 		stencilSet = new ORYX.Core.StencilSet.StencilSet(url);
 		
 		//store stencil set
-		ORYX.Core.StencilSet._stencilSetsByNamespace[stencilSet.namespace()] = stencilSet;
+		ORYX.Core.StencilSet._stencilSetsByNamespace.set(stencilSet.namespace(), stencilSet);
 		
 		//store stencil set by url
-		ORYX.Core.StencilSet._stencilSetsByUrl[url] = stencilSet;
+		ORYX.Core.StencilSet._stencilSetsByUrl.set(url, stencilSet);
 	}
 	
 	var namespace = stencilSet.namespace();
 	
 	//store which editorInstance loads the stencil set
-	if(ORYX.Core.StencilSet._StencilSetNSByEditorInstance[editorId]) {
-		ORYX.Core.StencilSet._StencilSetNSByEditorInstance[editorId].push(namespace);
+	if(ORYX.Core.StencilSet._StencilSetNSByEditorInstance.get(editorId) != undefined) {
+		ORYX.Core.StencilSet._StencilSetNSByEditorInstance.get(editorId).push(namespace);
 	} else {
-		ORYX.Core.StencilSet._StencilSetNSByEditorInstance[editorId] = [namespace];
+		ORYX.Core.StencilSet._StencilSetNSByEditorInstance.set(editorId, [namespace]);
 	}
 
 	//store the rules for the editor instance
-	if(ORYX.Core.StencilSet._rulesByEditorInstance[editorId]) {
-		ORYX.Core.StencilSet._rulesByEditorInstance[editorId].initializeRules(stencilSet);
+	if(ORYX.Core.StencilSet._rulesByEditorInstance.get(editorId) != undefined) {
+		ORYX.Core.StencilSet._rulesByEditorInstance.get(editorId).initializeRules(stencilSet);
 	} else {
 		var rules = new ORYX.Core.StencilSet.Rules();
 		rules.initializeRules(stencilSet);
-		ORYX.Core.StencilSet._rulesByEditorInstance[editorId] = rules;
+		ORYX.Core.StencilSet._rulesByEditorInstance.set(editorId, rules);
 	}
 };
 

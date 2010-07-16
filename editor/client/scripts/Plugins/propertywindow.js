@@ -55,7 +55,7 @@ ORYX.Plugins.PropertyWindow = {
 		this.properties = [];
 		
 		/* The currently selected shapes whos properties will shown */
-		this.shapeSelection = new Hash();
+		this.shapeSelection = new Object();
 		this.shapeSelection.shapes = new Array();
 		this.shapeSelection.commonProperties = new Array();
 		this.shapeSelection.commonPropertiesValues = new Hash();
@@ -240,7 +240,7 @@ ORYX.Plugins.PropertyWindow = {
 		
 		this.oldValues = new Hash();
 		this.shapeSelection.shapes.each(function(shape){
-			this.oldValues[shape.getId()] = shape.properties[key];
+			this.oldValues.set(shape.getId(), shape.properties[key]);
 		}.bind(this)); 
 	},
 
@@ -278,7 +278,7 @@ ORYX.Plugins.PropertyWindow = {
 			},
 			rollback: function(){
 				this.selectedElements.each(function(shape){
-					shape.setProperty(this.key, this.oldValues[shape.getId()]);
+					shape.setProperty(this.key, this.oldValues.get(shape.getId()));
 				}.bind(this));
 				this.facade.setSelection(this.selectedElements);
 				this.facade.getCanvas().update();
@@ -331,7 +331,7 @@ ORYX.Plugins.PropertyWindow = {
 	updateAfterInvalid : function(key) {
 		this.shapeSelection.shapes.each(function(shape) {
 			if(!shape.getStencil().property(key).readonly()) {
-				shape.setProperty(key, this.oldValues[shape.getId()]);
+				shape.setProperty(key, this.oldValues.get(shape.getId()));
 				shape.update();
 			}
 		}.bind(this));
@@ -388,8 +388,7 @@ ORYX.Plugins.PropertyWindow = {
 			
 			/* Set property value */
 			if(!emptyValue) {
-				this.shapeSelection.commonPropertiesValues[key]
-					= firstShape.properties[key];
+				this.shapeSelection.commonPropertiesValues.set(key, firstShape.properties[key]);
 			}
 		}.bind(this));
 	},
@@ -401,7 +400,7 @@ ORYX.Plugins.PropertyWindow = {
 		var stencils = new Hash();
 		
 		this.shapeSelection.shapes.each(function(shape) {
-			stencils[shape.getStencil().id()] = shape.getStencil();
+			stencils.set(shape.getStencil().id(), shape.getStencil());
 		})
 		return stencils;
 	},
@@ -428,8 +427,8 @@ ORYX.Plugins.PropertyWindow = {
 			
 			/* put all properties of on stencil in a Hash */
 			firstStencil.properties().each(function(property){
-				properties[property.namespace() + '-' + property.id() 
-							+ '-' + property.type()] = property;
+				properties.set(property.namespace() + '-' + property.id() 
+							+ '-' + property.type(), property);
 			});
 			
 			/* Calculate intersection of properties. */
@@ -437,10 +436,10 @@ ORYX.Plugins.PropertyWindow = {
 			comparingStencils.each(function(stencil){
 				var intersection = new Hash();
 				stencil.properties().each(function(property){
-					if(properties[property.namespace() + '-' + property.id()
-									+ '-' + property.type()]){
-						intersection[property.namespace() + '-' + property.id()
-										+ '-' + property.type()] = property;
+					if(properties.get(property.namespace() + '-' + property.id()
+									+ '-' + property.type()) != undefined){
+						intersection.set(property.namespace() + '-' + property.id()
+										+ '-' + property.type(), property);
 					}
 				});
 				properties = intersection;	
@@ -494,7 +493,7 @@ ORYX.Plugins.PropertyWindow = {
 				// Get the property pair
 				var name		= pair.title();
 				var icons		= [];
-				var attribute	= this.shapeSelection.commonPropertiesValues[key];
+				var attribute	= this.shapeSelection.commonPropertiesValues.get(key);
 				
 				var editorGrid = undefined;
 				var editorRenderer = null;
@@ -913,7 +912,7 @@ Ext.extend(Ext.form.ComplexListField, Ext.form.TriggerField,  {
 		
 		for (var i = 0; i < items.length; i++) {
 			var id = items[i].id();
-			initial[id] = items[i].value();
+			initial.set(id, items[i].value());
 		}
 		
 		var RecordTemplate = Ext.data.Record.create(recordType);

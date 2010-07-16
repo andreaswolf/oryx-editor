@@ -298,7 +298,7 @@ ORYX.Plugins.ShapeMenuPlugin = {
 		if(elements.length != 1) return;
 
 		//TODO temporaere nutzung des stencilsets
-		var sset = this.facade.getStencilSets()[elements[0].getStencil().namespace()];
+		var sset = this.facade.getStencilSets().get(elements[0].getStencil().namespace());
 
 		// Get all available edges
 		var edges = this.facade.getRules().outgoingEdgeStencils({canvas:this.facade.getCanvas(), sourceShape:elements[0]});
@@ -411,7 +411,7 @@ ORYX.Plugins.ShapeMenuPlugin = {
 				delete option.backupOptions;
 			}
 
-			var stencilSet = this.facade.getStencilSets()[option.namespace];
+			var stencilSet = this.facade.getStencilSets().get(option.namespace);
 
 			var stencil = stencilSet.stencil(option.type);
 
@@ -564,7 +564,7 @@ ORYX.Plugins.ShapeMenuPlugin = {
 		option['position'] = pos;
 		option['connectedShape'] = this.currentShapes[0];
 		if(option['connectingType']) {
-			var stencilset = this.facade.getStencilSets()[option.namespace];
+			var stencilset = this.facade.getStencilSets().get(option.namespace);
 			var containedStencil = stencilset.stencil(option.type);
 			var args = { sourceShape: this.currentShapes[0], targetStencil: containedStencil };
 			option['connectingType'] = this.facade.getRules().connectMorph(args).id();
@@ -593,7 +593,7 @@ ORYX.Plugins.ShapeMenuPlugin = {
 	},
 
 	newShape: function(option, event) {
-		var stencilset = this.facade.getStencilSets()[option.namespace];
+		var stencilset = this.facade.getStencilSets().get(option.namespace);
 		var containedStencil = stencilset.stencil(option.type);
 
 		if(this.facade.getRules().canContain({
@@ -863,18 +863,18 @@ ORYX.Plugins.ShapeMenu = {
 	addButton: function(button) {
 		this.buttons.push(button);
 		// lazy grafting of the align containers
-		if(!this.alignContainers[button.align]) {
-			this.alignContainers[button.align] = ORYX.Editor.graft("http://www.w3.org/1999/xhtml", this.node,
-					['div', {'class':button.align}]);
-			this.node.appendChild(this.alignContainers[button.align]);
+		if(this.alignContainers.get(button.align) == undefined) {
+			this.alignContainers.set(button.align, ORYX.Editor.graft("http://www.w3.org/1999/xhtml", this.node,
+					['div', {'class':button.align}]));
+			this.node.appendChild(this.alignContainers.get(button.align));
 			
 			// add event listeners for hover effect
 			var onBubble = false;
-			this.alignContainers[button.align].addEventListener(ORYX.CONFIG.EVENT_MOUSEOVER, this.hoverAlignContainer.bind(this, button.align), onBubble);
-			this.alignContainers[button.align].addEventListener(ORYX.CONFIG.EVENT_MOUSEOUT, this.resetAlignContainer.bind(this, button.align), onBubble);
-			this.alignContainers[button.align].addEventListener(ORYX.CONFIG.EVENT_MOUSEUP, this.hoverAlignContainer.bind(this, button.align), onBubble);
+			this.alignContainers.get(button.align).addEventListener(ORYX.CONFIG.EVENT_MOUSEOVER, this.hoverAlignContainer.bind(this, button.align), onBubble);
+			this.alignContainers.get(button.align).addEventListener(ORYX.CONFIG.EVENT_MOUSEOUT, this.resetAlignContainer.bind(this, button.align), onBubble);
+			this.alignContainers.get(button.align).addEventListener(ORYX.CONFIG.EVENT_MOUSEUP, this.hoverAlignContainer.bind(this, button.align), onBubble);
 		}
-		this.alignContainers[button.align].appendChild(button.node);
+		this.alignContainers.get(button.align).appendChild(button.node);
 	},
 
 	deleteButton: function(button) {
@@ -1072,7 +1072,7 @@ ORYX.Plugins.ShapeMenu = {
 	 * will be rendered in 2 rows.
 	 */
 	setNumberOfButtonsPerLevel: function(align, number) {
-		this.numberOfButtonsPerLevel[align] = number;
+		this.numberOfButtonsPerLevel.set(align, number);
 	},
 	
 	/**
@@ -1080,8 +1080,8 @@ ORYX.Plugins.ShapeMenu = {
 	 * Default value is 1
 	 */
 	getNumberOfButtonsPerLevel: function(align) {
-		if(this.numberOfButtonsPerLevel[align])
-			return Math.min(this.getButtons(align,0).length, this.numberOfButtonsPerLevel[align]);
+		if(this.numberOfButtonsPerLevel.get(align))
+			return Math.min(this.getButtons(align,0).length, this.numberOfButtonsPerLevel.get(align));
 		else
 			return 1;
 	}

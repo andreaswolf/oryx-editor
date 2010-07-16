@@ -121,23 +121,23 @@ ORYX.Plugins.ShapeRepository = {
 				groups.each((function(group) {
 					
 					// If there is a new group
-					if(!treeGroups[group]) {
+					if(treeGroups.get(group) == undefined) {
 						// Create a new group
-						treeGroups[group] = new Ext.tree.TreeNode({
+						treeGroups.set(group, new Ext.tree.TreeNode({
 							text:group,					// Group-Name
 							allowDrag:false,
         					allowDrop:false,            
 							iconCls:'headerShapeRepImg', // Css-Class for Icon
 				            cls:'headerShapeRepChild',  // CSS-Class for Stencil-Group
-							singleClickExpand:true});
+							singleClickExpand:true}));
 						
 						// Add the Group to the ShapeRepository
-						stencilSetNode.appendChild(treeGroups[group]);
-						treeGroups[group].render();	
+						stencilSetNode.appendChild(treeGroups.get(group));
+						treeGroups.get(group).render();	
 					}
 					
 					// Create the Stencil-Tree-Node
-					this.createStencilTreeNode(treeGroups[group], value);	
+					this.createStencilTreeNode(treeGroups.get(group), value);	
 					
 				}).bind(this));
 				
@@ -320,7 +320,7 @@ ORYX.Plugins.ShapeRepository = {
 			// check containment rules
 			var option = Ext.dd.Registry.getHandle(target.DDM.currentTarget);
 
-			var stencilSet = this.facade.getStencilSets()[option.namespace];
+			var stencilSet = this.facade.getStencilSets().get(option.namespace);
 
 			var stencil = stencilSet.stencil(option.type);
 

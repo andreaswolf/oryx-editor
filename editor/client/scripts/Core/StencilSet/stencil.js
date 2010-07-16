@@ -188,12 +188,12 @@ ORYX.Core.StencilSet.Stencil = {
 		// init property packages
 		if(this._jsonStencil.propertyPackages && this._jsonStencil.propertyPackages instanceof Array) {
 			this._jsonStencil.propertyPackages.each((function(ppId) {
-				var pp = this._propertyPackages[ppId];
+				var pp = this._propertyPackages.get(ppId);
 				
 				if(pp) {
 					pp.each((function(prop){
 						var oProp = new ORYX.Core.StencilSet.Property(prop, this._namespace, this);
-						this._properties[oProp.prefix() + "-" + oProp.id()] = oProp;
+						this._properties.set(oProp.prefix() + "-" + oProp.id(), oProp);
 					}).bind(this));
 				}
 			}).bind(this));
@@ -203,7 +203,7 @@ ORYX.Core.StencilSet.Stencil = {
 		if(this._jsonStencil.properties && this._jsonStencil.properties instanceof Array) {
 			this._jsonStencil.properties.each((function(prop) {
 				var oProp = new ORYX.Core.StencilSet.Property(prop, this._namespace, this);
-				this._properties[oProp.prefix() + "-" + oProp.id()] = oProp;
+				this._properties.set(oProp.prefix() + "-" + oProp.id(), oProp);
 			}).bind(this));
 		}
 		
@@ -280,7 +280,7 @@ ORYX.Core.StencilSet.Stencil = {
 	},
 
 	property: function(id) {
-		return this._properties[id];
+		return this._properties.get(id);
 	},
 
 	roles: function() {
@@ -315,7 +315,7 @@ ORYX.Core.StencilSet.Stencil = {
 	addProperty: function(property, namespace) {
 		if(property && namespace) {
 			var oProp = new ORYX.Core.StencilSet.Property(property, namespace, this);
-			this._properties[oProp.prefix() + "-" + oProp.id()] = oProp;
+			this._properties.set(oProp.prefix() + "-" + oProp.id(), oProp);
 		}
 	},
 	
@@ -325,7 +325,7 @@ ORYX.Core.StencilSet.Stencil = {
 				return (propertyId == prop.id());
 			});
 			if(oProp)
-				delete this._properties[oProp.prefix() + "-" + oProp.id()];
+				this._properties.unset(oProp.prefix() + "-" + oProp.id());
 		}
 	},
 

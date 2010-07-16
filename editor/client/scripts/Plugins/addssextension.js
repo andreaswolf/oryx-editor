@@ -65,7 +65,7 @@ ORYX.Plugins.SSExtensionLoader = {
 					var stencilsets = this.facade.getStencilSets();
                     
                     var validExtensions = jsonObject.extensions.findAll(function(extension){
-                        var stencilset = stencilsets[extension["extends"]];
+                        var stencilset = stencilsets.get(extension["extends"]);
 						
 						if(stencilset) return true;
 						else return false;
@@ -73,7 +73,7 @@ ORYX.Plugins.SSExtensionLoader = {
                     
                     var loadedExtensions = validExtensions.findAll(function(extension) {
                     	return stencilsets.values().any(function(ss) { 
-                    		if(ss.extensions()[extension.namespace]) return true;
+                    		if(ss.extensions().get(extension.namespace)) return true;
                     		else return false;
                     	})
                     });

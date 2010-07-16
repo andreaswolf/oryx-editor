@@ -191,7 +191,7 @@ ORYX.Plugins.JPDLSupport = ORYX.Plugins.AbstractPlugin.extend({
 	},
 	
 	loadStencilSetExtension: function(stencilSetNamespace, stencilSetExtensionDefinition) {
-		var stencilset = this.facade.getStencilSets()[stencilSetNamespace];
+		var stencilset = this.facade.getStencilSets().get(stencilSetNamespace);
 		if (stencilset) {
 			stencilset.addExtension(ORYX.CONFIG.SS_EXTENSIONS_FOLDER + stencilSetExtensionDefinition);
 			this.facade.getRules().initializeRules(stencilset);

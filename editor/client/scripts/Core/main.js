@@ -219,12 +219,12 @@ ORYX.Editor = {
 		this._keydownEnabled = 	true;
 		this._keyupEnabled =  	true;
 
-		this.DOMEventListeners[ORYX.CONFIG.EVENT_MOUSEDOWN] = [];
-		this.DOMEventListeners[ORYX.CONFIG.EVENT_MOUSEUP] 	= [];
-		this.DOMEventListeners[ORYX.CONFIG.EVENT_MOUSEOVER] = [];
-		this.DOMEventListeners[ORYX.CONFIG.EVENT_MOUSEOUT] 	= [];
-		this.DOMEventListeners[ORYX.CONFIG.EVENT_SELECTION_CHANGED] = [];
-		this.DOMEventListeners[ORYX.CONFIG.EVENT_MOUSEMOVE] = [];
+		this.DOMEventListeners.set(ORYX.CONFIG.EVENT_MOUSEDOWN, []);
+		this.DOMEventListeners.set(ORYX.CONFIG.EVENT_MOUSEUP, []);
+		this.DOMEventListeners.set(ORYX.CONFIG.EVENT_MOUSEOVER, []);
+		this.DOMEventListeners.set(ORYX.CONFIG.EVENT_MOUSEOUT, []);
+		this.DOMEventListeners.set(ORYX.CONFIG.EVENT_SELECTION_CHANGED, []);
+		this.DOMEventListeners.set(ORYX.CONFIG.EVENT_MOUSEMOVE, []);
 				
 	},
 	
@@ -1153,7 +1153,7 @@ ORYX.Editor = {
 				return;
 			}
 			
-			var stencilset = this.getStencilSets()[extension["extends"]];
+			var stencilset = this.getStencilSets().get(extension["extends"]);
 			
 			if (!stencilset) {
 				return;
@@ -1179,7 +1179,7 @@ ORYX.Editor = {
 		}
 		if(this.DOMEventListeners.keys().member(eventType)) {
 			var value = this.DOMEventListeners.remove(eventType);
-			this.DOMEventListeners['disable_' + eventType] = value;
+			this.DOMEventListeners.set('disable_' + eventType, value);
 		}
 	},
 
@@ -1194,7 +1194,7 @@ ORYX.Editor = {
 		
 		if(this.DOMEventListeners.keys().member("disable_" + eventType)) {
 			var value = this.DOMEventListeners.remove("disable_" + eventType);
-			this.DOMEventListeners[eventType] = value;
+			this.DOMEventListeners.set(eventType, value);
 		}
 	},
 
@@ -1203,15 +1203,15 @@ ORYX.Editor = {
 	 */
 	registerOnEvent: function(eventType, callback) {
 		if(!(this.DOMEventListeners.keys().member(eventType))) {
-			this.DOMEventListeners[eventType] = [];
+			this.DOMEventListeners.set(eventType, []);
 		}
 
-		this.DOMEventListeners[eventType].push(callback);
+		this.DOMEventListeners.get(eventType).push(callback);
 	},
 
 	unregisterOnEvent: function(eventType, callback) {
 		if(this.DOMEventListeners.keys().member(eventType)) {
-			this.DOMEventListeners[eventType] = this.DOMEventListeners[eventType].without(callback);
+			this.DOMEventListeners.set(eventType, this.DOMEventListeners.get(eventType).without(callback));
 		} else {
 			// Event is not supported
 			// TODO: Error Handling
@@ -1520,7 +1520,7 @@ ORYX.Editor = {
 	*/
 	_executeEventImmediately: function(eventObj) {
 		if(this.DOMEventListeners.keys().member(eventObj.event.type)) {
-			this.DOMEventListeners[eventObj.event.type].each((function(value) {
+			this.DOMEventListeners.get(eventObj.event.type).each((function(value) {
 				value(eventObj.event, eventObj.arg);		
 			}).bind(this));
 		}

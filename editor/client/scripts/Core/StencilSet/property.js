@@ -139,7 +139,7 @@ ORYX.Core.StencilSet.Property = Clazz.extend({
             if (jsonProp.items && jsonProp.items instanceof Array) {
                 jsonProp.items.each((function(jsonItem){
                 	// why is the item's value used as the key???
-                    this._items[jsonItem.value] = new ORYX.Core.StencilSet.PropertyItem(jsonItem, namespace, this);
+                    this._items.set(jsonItem.value, new ORYX.Core.StencilSet.PropertyItem(jsonItem, namespace, this));
                 }).bind(this));
             }
             else {
@@ -151,7 +151,7 @@ ORYX.Core.StencilSet.Property = Clazz.extend({
             if (jsonProp.type === ORYX.CONFIG.TYPE_COMPLEX) {
                 if (jsonProp.complexItems && jsonProp.complexItems instanceof Array) {
                     jsonProp.complexItems.each((function(jsonComplexItem){
-                        this._complexItems[jsonComplexItem.id] = new ORYX.Core.StencilSet.ComplexPropertyItem(jsonComplexItem, namespace, this);
+                        this._complexItems.set(jsonComplexItem.id, new ORYX.Core.StencilSet.ComplexPropertyItem(jsonComplexItem, namespace, this));
                     }).bind(this));
                 }
                 else {
@@ -350,7 +350,7 @@ ORYX.Core.StencilSet.Property = Clazz.extend({
     },
     
     item: function(value){
-        return this._items[value];
+        return this._items.get(value);
     },
     
     toString: function(){
@@ -363,7 +363,7 @@ ORYX.Core.StencilSet.Property = Clazz.extend({
     },
     
     complexItem: function(id){
-        return this._complexItems[id];
+        return this._complexItems.get(id);
     },
     // extended by Kerstin (end)
     

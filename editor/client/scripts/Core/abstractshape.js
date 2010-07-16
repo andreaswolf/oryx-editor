@@ -67,8 +67,8 @@ ORYX.Core.AbstractShape = ORYX.Core.UIObject.extend(
 		//Initialization of property map and initial value.
 		this._stencil.properties().each((function(property) {
 			var key = property.prefix() + "-" + property.id();
-			this.properties[key] = property.value();
-			this.propertiesChanged[key] = true;
+			this.properties.set(key, property.value());
+			this.propertiesChanged.set(key, true);
 		}).bind(this));
 		
 		// if super stencil was defined, also regard stencil's properties:
@@ -76,9 +76,9 @@ ORYX.Core.AbstractShape = ORYX.Core.UIObject.extend(
 			stencil.properties().each((function(property) {
 				var key = property.prefix() + "-" + property.id();
 				var value = property.value();
-				var oldValue = this.properties[key];
-				this.properties[key] = value;
-				this.propertiesChanged[key] = true;
+				var oldValue = this.properties.get(key);
+				this.properties.set(key, value);
+				this.propertiesChanged.set(key, true);
 
 				// Raise an event, to show that the property has changed
 				// required for plugins like processLink.js
@@ -266,10 +266,10 @@ ORYX.Core.AbstractShape = ORYX.Core.UIObject.extend(
 	 * @param value {Object} Can be of type String or Number according to property type.
 	 */
 	setProperty: function(key, value, force) {
-		var oldValue = this.properties[key];
+		var oldValue = this.properties.get(key);
 		if(oldValue !== value || force === true) {
-			this.properties[key] = value;
-			this.propertiesChanged[key] = true;
+			this.properties.set(key, value);
+			this.propertiesChanged.set(key, true);
 			this._changed();
 			
 			// Raise an event, to show that the property has changed
@@ -300,12 +300,12 @@ ORYX.Core.AbstractShape = ORYX.Core.UIObject.extend(
 	setHiddenProperty: function(key, value) {
 		// IF undefined, Delete
 		if (value === undefined) {
-			delete this.hiddenProperties[key];
+			this.hiddenProperties.unset(key);
 			return;
 		}
-		var oldValue = this.hiddenProperties[key];
+		var oldValue = this.hiddenProperties.get(key);
 		if(oldValue !== value) {
-			this.hiddenProperties[key] = value;
+			this.hiddenProperties.set(key, value);
 		}
 	},
 	/**
@@ -343,7 +343,7 @@ ORYX.Core.AbstractShape = ORYX.Core.UIObject.extend(
 			var name = property.id();		// Get name
 			
 			//if(typeof this.properties[prefix+'-'+name] == 'boolean' || this.properties[prefix+'-'+name] != "")
-				serializedObject.push({name: name, prefix: prefix, value: this.properties[prefix+'-'+name], type: 'literal'});
+				serializedObject.push({name: name, prefix: prefix, value: this.properties.get(prefix+'-'+name), type: 'literal'});
 
 		}).bind(this));
 		

@@ -339,8 +339,10 @@ ORYX.Editor = {
 		// IF NOT, use a panel and render it to the given id
 		} else {
 			layout_config.renderTo 	= this.id;
-			layout_config.height 	= layoutHeight;
-			this.layout = new Ext.Panel( layout_config )
+			this.layout = Ext.ComponentMgr.get(this.id);
+			this.layout.removeAll();
+			this.layout.add(layout_config);
+			this.layout.doLayout();
 		}
 		
 		//Generates the ORYX-Header

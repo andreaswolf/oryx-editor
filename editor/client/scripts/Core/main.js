@@ -126,7 +126,7 @@ ORYX.Editor = {
         }
         
         // Defines if the editor should be fullscreen or not
-		this.fullscreen = model.fullscreen || true;
+		this.fullscreen = model.fullscreen != undefined ? model.fullscreen : true;
 		
 		// Initialize the eventlistener
 		this._initEventListener();
